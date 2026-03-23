@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team Facilitator</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f3; color: #1a1a1a; height: 100vh; display: flex; align-items: center; justify-content: center; }
+.shell { display: flex; width: 960px; height: 680px; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 4px 32px rgba(0,0,0,0.10); border: 1px solid #e5e5e3; }
+.sidebar { width: 220px; min-width: 220px; border-right: 1px solid #e5e5e3; display: flex; flex-direction: column; background: #fafaf8; }
+.sidebar-header { padding: 16px; border-bottom: 1px solid #e5e5e3; }
+.brand { font-size: 13px; font-weight: 600; color: #1a1a1a; }
+.brand-sub { font-size: 11px; color: #999; margin-top: 2px; }
+.nav { flex: 1; padding: 8px; overflow-y: auto; }
+.nav-section { font-size: 10px; font-weight: 600; color: #bbb; padding: 12px 10px 4px; text-transform: uppercase; letter-spacing: 0.07em; }
+.nav-item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 7px; cursor: pointer; font-size: 13px; color: #666; margin-bottom: 1px; user-select: none; }
+.nav-item:hover { background: #fff; color: #1a1a1a; }
+.nav-item.active { background: #fff; color: #1a1a1a; font-weight: 500; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.nav-item svg { flex-shrink: 0; opacity: 0.6; }
+.nav-item.active svg { opacity: 1; }
+.pulse { width: 7px; height: 7px; border-radius: 50%; background: #1D9E75; margin-left: auto; animation: pulse 2s infinite; }
+.bluedot { width: 7px; height: 7px; border-radius: 50%; background: #378ADD; margin-left: auto; }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.35} }
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+.topbar { padding: 12px 20px; border-bottom: 1px solid #e5e5e3; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.topbar-title { font-size: 14px; font-weight: 600; }
+.topbar-meta { font-size: 11px; color: #999; margin-top: 1px; }
+.badges { display: flex; gap: 5px; }
+.badge { padding: 2px 9px; border-radius: 99px; font-size: 11px; font-weight: 500; }
+.b-teal { background: #E1F5EE; color: #0F6E56; }
+.b-purple { background: #EEEDFE; color: #3C3489; }
+.b-blue { background: #E6F1FB; color: #0C447C; }
+.b-amber { background: #FAEEDA; color: #854F0B; }
+.b-green { background: #EAF3DE; color: #3B6D11; }
+.b-gray { background: #f0efe8; color: #5F5E5A; }
+.content { flex: 1; overflow: hidden; }
+.panel { display: none; flex-direction: column; height: 100%; overflow: hidden; }
+.panel.visible { display: flex; }
+.scroll { flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+.card { background: #fff; border: 1px solid #e5e5e3; border-radius: 10px; padding: 14px 16px; }
+.card-title { font-size: 13px; font-weight: 600; margin-bottom: 12px; color: #1a1a1a; }
+.metrics { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+.metric { background: #fafaf8; border-radius: 8px; padding: 12px; }
+.metric-label { font-size: 11px; color: #999; margin-bottom: 3px; }
+.metric-val { font-size: 22px; font-weight: 600; }
+.metric-sub { font-size: 11px; color: #1D9E75; margin-top: 2px; }
+.insight { display: flex; gap: 10px; font-size: 13px; line-height: 1.6; padding: 8px 0; border-bottom: 1px solid #f0efe8; }
+.insight:last-of-type { border-bottom: none; }
+.idot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 7px; }
+.btn { padding: 7px 14px; border: 1px solid #e0e0de; border-radius: 7px; background: #fff; color: #1a1a1a; font-size: 12px; cursor: pointer; font-family: inherit; transition: background 0.12s; }
+.btn:hover { background: #fafaf8; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-primary { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+.btn-primary:hover { background: #333; }
+.btn-notion { background: #E6F1FB; color: #185FA5; border-color: #B5D4F4; }
+.btn-notion:hover { background: #d0e8f7; }
+.btn-sm { padding: 5px 11px; font-size: 11px; }
+/* CHAT */
+.chat-wrap { display: flex; flex-direction: column; height: 100%; }
+.chat-meta { padding: 8px 18px; background: #fafaf8; border-bottom: 1px solid #e5e5e3; font-size: 11px; color: #aaa; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.messages { flex: 1; overflow-y: auto; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
+.msg { display: flex; gap: 9px; align-items: flex-start; }
+.msg.user { flex-direction: row-reverse; }
+.av { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; flex-shrink: 0; }
+.av-ai { background: #EEEDFE; color: #3C3489; }
+.av-user { background: #f0efe8; color: #666; }
+.bubble { border-radius: 10px; padding: 9px 13px; font-size: 13px; line-height: 1.65; max-width: 80%; }
+.bubble-ai { background: #fafaf8; border: 1px solid #e5e5e3; }
+.bubble-user { background: #F0EFFD; border: 1px solid #D0CDEE; }
+.typing { display: flex; gap: 4px; align-items: center; }
+.typing span { width: 6px; height: 6px; border-radius: 50%; background: #bbb; animation: bounce 1.2s infinite; }
+.typing span:nth-child(2) { animation-delay: 0.2s; }
+.typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bounce { 0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)} }
+.chat-foot { padding: 12px 16px; border-top: 1px solid #e5e5e3; flex-shrink: 0; }
+.input-row { display: flex; gap: 8px; }
+.chat-in { flex: 1; font-size: 13px; padding: 9px 13px; border: 1px solid #e0e0de; border-radius: 8px; background: #fff; color: #1a1a1a; outline: none; resize: none; font-family: inherit; line-height: 1.5; }
+.chat-in:focus { border-color: #aaa; }
+.qps { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.qp { padding: 4px 10px; border: 1px solid #e5e5e3; border-radius: 99px; font-size: 11px; color: #666; cursor: pointer; background: #fff; font-family: inherit; }
+.qp:hover { background: #fafaf8; color: #1a1a1a; border-color: #ccc; }
+.err { font-size: 12px; color: #a32d2d; margin-top: 6px; display: none; }
+.ok { font-size: 12px; color: #1D9E75; margin-top: 6px; display: none; }
+/* RETRO */
+.retro-cols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.zone { background: #fafaf8; border-radius: 8px; padding: 10px; min-height: 130px; }
+.zone-label { font-size: 11px; font-weight: 600; margin-bottom: 8px; }
+.sticky { background: #fff; border: 1px solid #e5e5e3; border-radius: 7px; padding: 7px 9px; font-size: 12px; line-height: 1.5; margin-bottom: 5px; }
+.add-note { font-size: 12px; color: #bbb; cursor: pointer; padding: 3px 0; }
+.add-note:hover { color: #666; }
+.save-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-top: 1px solid #e5e5e3; background: #fafaf8; flex-shrink: 0; }
+.save-status { font-size: 12px; color: #999; display: flex; align-items: center; gap: 7px; }
+.sdot { width: 7px; height: 7px; border-radius: 50%; background: #ddd; }
+.sdot.saving { background: #EF9F27; animation: pulse 1s infinite; }
+.sdot.saved { background: #1D9E75; }
+.sdot.error { background: #E24B4A; }
+/* ACTIONS */
+.action-item { display: flex; gap: 10px; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid #f5f5f3; }
+.action-item:last-child { border-bottom: none; }
+.chk { width: 17px; height: 17px; border: 1.5px solid #ddd; border-radius: 4px; flex-shrink: 0; cursor: pointer; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.chk.done { background: #1D9E75; border-color: #1D9E75; }
+.at { font-size: 13px; line-height: 1.5; }
+.at.struck { text-decoration: line-through; color: #bbb; }
+.am { font-size: 11px; color: #aaa; margin-top: 2px; }
+.pbar { height: 3px; background: #f0efe8; border-radius: 99px; overflow: hidden; margin: 6px 0; }
+.pfill { height: 100%; background: #1D9E75; border-radius: 99px; }
+.add-row { display: flex; gap: 8px; margin-top: 12px; }
+.add-row input { flex: 1; font-size: 13px; padding: 7px 11px; border: 1px solid #e0e0de; border-radius: 7px; background: #fff; color: #1a1a1a; outline: none; font-family: inherit; }
+/* NOTION */
+.kv-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; padding: 8px 0; border-bottom: 1px solid #f5f5f3; }
+.kv-row:last-child { border-bottom: none; }
+.kv-label { color: #999; }
+.log-entry { font-size: 12px; color: #555; padding: 6px 0; border-bottom: 1px solid #f5f5f3; display: flex; align-items: center; gap: 8px; }
+.log-entry:last-child { border-bottom: none; }
+.ldot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.slack-row { display: flex; gap: 8px; margin-top: 10px; }
+.slack-row input { flex: 1; font-size: 12px; padding: 7px 11px; border: 1px solid #e0e0de; border-radius: 7px; background: #fff; color: #1a1a1a; outline: none; font-family: inherit; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">Team Facilitator</div>
+      <div class="brand-sub">Kanban · fully connected</div>
+    </div>
+    <div class="nav">
+      <div class="nav-section">Overview</div>
+      <div class="nav-item active" onclick="go('home',this)">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="5" height="5" rx="1"/><rect x="8" y="1" width="5" height="5" rx="1"/><rect x="1" y="8" width="5" height="5" rx="1"/><rect x="8" y="8" width="5" height="5" rx="1"/></svg>
+        Dashboard <div class="pulse"></div>
+      </div>
+      <div class="nav-item" onclick="go('chat',this)">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 9a1.5 1.5 0 01-1.5 1.5H4L2 13V3.5A1.5 1.5 0 013.5 2h7A1.5 1.5 0 0112 3.5V9z"/></svg>
+        Ask facilitator
+      </div>
+      <div class="nav-section">Retrospectives</div>
+      <div class="nav-item" onclick="go('retro',this)">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5.5"/><path d="M7 4v3.5l2 2"/></svg>
+        Run a retro
+      </div>
+      <div class="nav-item" onclick="go('actions',this)">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2.5 7l3 3 6-6"/></svg>
+        Actions
+      </div>
+      <div class="nav-section">Integrations</div>
+      <div class="nav-item" onclick="go('notion',this)">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="1.5" width="10" height="11" rx="1.5"/><path d="M4.5 5h5M4.5 7.5h5M4.5 10h3"/></svg>
+        Notion log <div class="bluedot"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="ttitle">Team dashboard</div>
+        <div class="topbar-meta" id="tmeta">AI + Notion connected</div>
+      </div>
+      <div class="badges">
+        <span class="badge b-teal">Kanban</span>
+        <span class="badge b-purple">AI live</span>
+        <span class="badge b-blue">Notion</span>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div id="p-home" class="panel visible">
+        <div class="scroll">
+          <div class="metrics">
+            <div class="metric"><div class="metric-label">Retros run</div><div class="metric-val">12</div><div class="metric-sub">+2 this quarter</div></div>
+            <div class="metric"><div class="metric-label">Actions resolved</div><div class="metric-val">74%</div><div class="metric-sub">up from 58%</div></div>
+            <div class="metric"><div class="metric-label">Team health</div><div class="metric-val">8.1</div><div class="metric-sub">stable</div></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Facilitator insights</div>
+            <div class="insight"><div class="idot" style="background:#1D9E75"></div><div>You haven't held a retrospective in <strong>18 days</strong>. For a Kanban team, bi-weekly retros keep flow healthy.</div></div>
+            <div class="insight"><div class="idot" style="background:#EF9F27"></div><div>3 improvement actions from last retro are overdue. Review them before your next session.</div></div>
+            <div class="insight"><div class="idot" style="background:#378ADD"></div><div>Proxy connected — AI chat and Notion saving are both live and ready.</div></div>
+            <div style="display:flex;gap:8px;margin-top:14px;">
+              <button class="btn btn-primary btn-sm" onclick="go('retro',null)">Start a retro</button>
+              <button class="btn btn-sm" onclick="go('chat',null)">Ask facilitator ↗</button>
+              <button class="btn btn-notion btn-sm" onclick="go('notion',null)">Notion log</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Recent improvement themes</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;">
+              <span class="badge b-teal">Flow efficiency</span>
+              <span class="badge b-amber">Meeting overhead</span>
+              <span class="badge b-blue">Documentation</span>
+              <span class="badge b-purple">On-call load</span>
+              <span class="badge b-teal">Code review speed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHAT -->
+      <div id="p-chat" class="panel">
+        <div class="chat-wrap">
+          <div class="chat-meta">
+            <span>Kanban · Slack, Notion, Jira · proxy connected</span>
+            <div style="display:flex;gap:4px;"><span class="badge b-purple" style="font-size:10px;">AI live</span><span class="badge b-blue" style="font-size:10px;">Notion</span></div>
+          </div>
+          <div class="messages" id="msgs">
+            <div class="msg">
+              <div class="av av-ai">AI</div>
+              <div class="bubble bubble-ai">Hi! I'm your AI team facilitator. The AI chat and Notion saving are both live.<br><br>What would you like to work on today?</div>
+            </div>
+          </div>
+          <div class="chat-foot">
+            <div class="input-row">
+              <textarea class="chat-in" id="cin" rows="2" placeholder="Ask the facilitator anything…" onkeydown="onKey(event)"></textarea>
+              <button class="btn btn-primary" id="sbtn" onclick="send()" style="align-self:flex-end;">Send</button>
+            </div>
+            <div class="qps">
+              <button class="qp" onclick="qs('I want to run a retrospective for our Kanban team. Can you facilitate it step by step?')">Start a retro ↗</button>
+              <button class="qp" onclick="qs('What retrospective format works best for a Kanban team?')">Best retro format?</button>
+              <button class="qp" onclick="qs('Our team feels stuck and demotivated. What should we do?')">Team is stuck</button>
+              <button class="qp" onclick="qs('How do we become a high-performing team?')">High performance tips</button>
+              <button class="qp" onclick="qs('Review our open action items and help us prioritise them.')">Review actions ↗</button>
+            </div>
+            <div class="err" id="cerr"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RETRO -->
+      <div id="p-retro" class="panel">
+        <div class="scroll">
+          <div class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+              <div class="card-title" style="margin:0;">Retrospective · <span id="rdate" style="font-weight:400;color:#999;"></span></div>
+              <span class="badge b-teal">What went well / Improve / Actions</span>
+            </div>
+            <div class="retro-cols">
+              <div class="zone">
+                <div class="zone-label" style="color:#1D9E75;">What went well</div>
+                <div id="z-well"><div class="sticky">Shipped the new onboarding flow</div><div class="sticky">Great async communication</div></div>
+                <div class="add-note" onclick="addNote('well')">+ Add note</div>
+              </div>
+              <div class="zone">
+                <div class="zone-label" style="color:#BA7517;">What to improve</div>
+                <div id="z-improve"><div class="sticky">PR reviews taking 3+ days</div><div class="sticky">Unclear priorities mid-week</div></div>
+                <div class="add-note" onclick="addNote('improve')">+ Add note</div>
+              </div>
+              <div class="zone">
+                <div class="zone-label" style="color:#185FA5;">Action items</div>
+                <div id="z-actions"></div>
+                <div class="add-note" onclick="addNote('actions')">+ Add note</div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">AI-facilitated prompts</div>
+            <div style="display:flex;flex-direction:column;gap:7px;">
+              <div style="font-size:13px;padding:8px 10px;background:#fafaf8;border-radius:7px;cursor:pointer;border:1px solid #f0efe8;" onclick="gchat('Our Kanban flow felt blocked last cycle. Help me facilitate a team discussion to find root causes and experiments we can try.')">Facilitate: flow was blocked last cycle ↗</div>
+              <div style="font-size:13px;padding:8px 10px;background:#fafaf8;border-radius:7px;cursor:pointer;border:1px solid #f0efe8;" onclick="gchat('Generate 5 powerful retrospective questions for a Kanban team focused on improving flow and reducing bottlenecks.')">Generate retro questions for our team ↗</div>
+              <div style="font-size:13px;padding:8px 10px;background:#fafaf8;border-radius:7px;cursor:pointer;border:1px solid #f0efe8;" onclick="gchat('Summarise our retrospective notes and suggest the top 3 action items we should commit to.')">AI summarise & suggest actions ↗</div>
+            </div>
+          </div>
+        </div>
+        <div class="save-bar">
+          <div class="save-status"><div class="sdot" id="sdot"></div><span id="slabel">Not yet saved</span></div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-sm" onclick="gchat('Summarise our retrospective notes and suggest the top 3 action items.')">AI summarise ↗</button>
+            <button class="btn btn-notion btn-sm" id="savebtn" onclick="saveNotion()">Save to Notion</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTIONS -->
+      <div id="p-actions" class="panel">
+        <div class="scroll">
+          <div class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+              <div class="card-title" style="margin:0;">Improvement actions</div>
+              <span class="badge b-amber">3 overdue</span>
+            </div>
+            <div style="font-size:11px;color:#aaa;">14 of 19 resolved</div>
+            <div class="pbar"><div class="pfill" style="width:74%;"></div></div>
+            <div id="alist">
+              <div class="action-item"><div class="chk done" onclick="td(this)"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2.5 2.5 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><div class="at struck">Set up WIP limit of 3 per person in Jira</div><div class="am">Retro #11 · whole team</div></div></div>
+              <div class="action-item"><div class="chk" onclick="td(this)"></div><div><div class="at">Write definition of done for design review step</div><div class="am">Retro #12 · Anna · 2 days overdue</div></div></div>
+              <div class="action-item"><div class="chk" onclick="td(this)"></div><div><div class="at">Schedule bi-weekly learning session (Fridays 30 min)</div><div class="am">Retro #12 · Tom · 5 days overdue</div></div></div>
+              <div class="action-item"><div class="chk" onclick="td(this)"></div><div><div class="at">Reduce Slack notifications during focus blocks</div><div class="am">Retro #12 · whole team · due this week</div></div></div>
+              <div class="action-item"><div class="chk done" onclick="td(this)"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2.5 2.5 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><div class="at struck">Create shared Notion page for team norms</div><div class="am">Retro #11 · Lisa</div></div></div>
+            </div>
+            <div class="add-row">
+              <input type="text" id="newin" placeholder="Add action item…" onkeydown="if(event.key==='Enter')addA()">
+              <button class="btn btn-sm" onclick="addA()">Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOTION LOG -->
+      <div id="p-notion" class="panel">
+        <div class="scroll">
+          <div class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+              <div class="card-title" style="margin:0;">Notion connection</div>
+              <span class="badge b-green" id="nbadge">Connected</span>
+            </div>
+            <div class="kv-row"><span class="kv-label">Proxy</span><span style="font-family:monospace;font-size:11px;">team-facilitator-proxy-production.up.railway.app</span></div>
+            <div class="kv-row"><span class="kv-label">Database</span><span style="font-weight:500;">Retrospectives</span></div>
+            <div class="kv-row"><span class="kv-label">Last saved</span><span id="nlast">Never</span></div>
+            <div style="margin-top:12px;display:flex;gap:8px;">
+              <button class="btn btn-notion btn-sm" onclick="testNotion()">Test connection</button>
+            </div>
+            <div class="err" id="nterr"></div>
+            <div class="ok" id="ntok"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Save log</div>
+            <div id="nlog"><div style="font-size:13px;color:#aaa;text-align:center;padding:16px 0;">No retros saved yet.</div></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Add Slack reminders</div>
+            <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:10px;">Paste your Slack webhook URL to activate retro reminders in your team channel.</div>
+            <div class="slack-row">
+              <input type="text" id="slackin" placeholder="https://hooks.slack.com/services/...">
+              <button class="btn btn-sm" onclick="saveSlack()">Save</button>
+            </div>
+            <div class="ok" id="slackok">Slack webhook saved — reminders active.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const PROXY = '';
+const NOTION_DB = '327617cd5ec180e6a2a2d8103cc44a88';
+const SYSTEM = `You are an expert AI team facilitator. Team context:
+- Workflow: Kanban
+- Tools: Slack, Notion, Jira
+- Focus: retrospectives and continuous improvement
+- Goal: help the team become high-performing
+- 3 overdue actions: definition of done for design review, bi-weekly learning session, Slack focus blocks
+- Recent retro themes: flow efficiency, meeting overhead, code review speed, on-call load
+- Last retro: 18 days ago
+- Team health: 8.1, pulse dipped to 6.8 last week
+
+Be warm, direct and practical. Keep responses concise (2-4 paragraphs). When running a retro, guide step by step. Suggest small concrete experiments over big changes.`;
+
+const PANELS = ['home','chat','retro','actions','notion'];
+const TITLES = {home:'Team dashboard',chat:'Ask the facilitator',retro:'Run a retrospective',actions:'Improvement actions',notion:'Notion integration'};
+const METAS = {home:'AI + Notion connected',chat:'Powered by Claude · Notion connected',retro:'Auto-saves to Notion',actions:'19 items across 3 retros',notion:'Retrospectives database'};
+
+let history = [], loading = false;
+const notes = {well:['Shipped the new onboarding flow','Great async communication'],improve:['PR reviews taking 3+ days','Unclear priorities mid-week'],actions:[]};
+
+function go(id, el) {
+  PANELS.forEach(p => document.getElementById('p-'+p).classList.remove('visible'));
+  document.getElementById('p-'+id).classList.add('visible');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (el) el.classList.add('active');
+  else { const m={home:0,chat:1,retro:2,actions:3,notion:4}; document.querySelectorAll('.nav-item')[m[id]]?.classList.add('active'); }
+  document.getElementById('ttitle').textContent = TITLES[id]||id;
+  document.getElementById('tmeta').textContent = METAS[id]||'';
+}
+
+document.getElementById('rdate').textContent = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+
+function renderNotes(z) {
+  document.getElementById('z-'+z).innerHTML = notes[z].map(t=>`<div class="sticky">${t}</div>`).join('');
+}
+function addNote(z) {
+  const t = prompt('Add a note:'); if (!t?.trim()) return;
+  notes[z].push(t.trim()); renderNotes(z);
+}
+function td(el) {
+  el.classList.toggle('done');
+  el.innerHTML = el.classList.contains('done') ? '<svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2.5 2.5 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>' : '';
+  el.nextElementSibling.querySelector('.at').classList.toggle('struck');
+}
+function addA() {
+  const inp = document.getElementById('newin'), val = inp.value.trim(); if (!val) return;
+  const d = document.createElement('div'); d.className = 'action-item';
+  d.innerHTML = `<div class="chk" onclick="td(this)"></div><div><div class="at">${val}</div><div class="am">Added now · unassigned</div></div>`;
+  document.getElementById('alist').appendChild(d); inp.value='';
+}
+
+function setSave(state, label) {
+  document.getElementById('sdot').className = 'sdot'+(state?' '+state:'');
+  document.getElementById('slabel').textContent = label;
+}
+async function saveNotion() {
+  document.getElementById('savebtn').disabled = true;
+  setSave('saving','Saving to Notion…');
+  const title = 'Retro #13 · '+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+  try {
+    const res = await fetch(PROXY+'/notion/pages', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        parent:{database_id:NOTION_DB},
+        properties:{
+          Name:{title:[{text:{content:title}}]},
+          Date:{date:{start:new Date().toISOString().split('T')[0]}},
+          'What went well':{rich_text:[{text:{content:notes.well.join(' · ')||'—'}}]},
+          Improve:{rich_text:[{text:{content:notes.improve.join(' · ')||'—'}}]},
+          Actions:{rich_text:[{text:{content:notes.actions.join(' · ')||'—'}}]}
+        }
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message||'Notion error');
+    const now = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    setSave('saved','Saved · '+now);
+    document.getElementById('nlast').textContent = now;
+    const log = document.getElementById('nlog');
+    log.innerHTML = '';
+    const d = document.createElement('div'); d.className='log-entry';
+    d.innerHTML=`<div class="ldot" style="background:#1D9E75"></div><span style="flex:1">${title}</span><span style="color:#aaa">${now}</span>`;
+    log.appendChild(d);
+  } catch(e) {
+    setSave('error','Save failed: '+e.message);
+  }
+  document.getElementById('savebtn').disabled=false;
+}
+async function testNotion() {
+  const err=document.getElementById('nterr'), ok=document.getElementById('ntok');
+  err.style.display='none'; ok.style.display='none';
+  try {
+    const res = await fetch(PROXY+'/notion/test/'+NOTION_DB);
+    const data = await res.json();
+    if (data.ok) { ok.textContent='Connected! Database: "'+data.title+'"'; ok.style.display='block'; }
+    else throw new Error(data.message||'Failed');
+  } catch(e) { err.textContent='Failed: '+e.message; err.style.display='block'; }
+}
+function saveSlack() {
+  const v=document.getElementById('slackin').value.trim(), m=document.getElementById('slackok');
+  if (v.startsWith('https://hooks.slack.com')) { m.style.display='block'; }
+  else alert('Please enter a valid Slack webhook URL.');
+}
+
+function gchat(txt) { go('chat',null); document.getElementById('cin').value=txt; send(); }
+function qs(txt) { document.getElementById('cin').value=txt; send(); }
+function onKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();} }
+
+function addMsg(role, text) {
+  const el=document.getElementById('msgs');
+  const d=document.createElement('div'); d.className='msg'+(role==='user'?' user':'');
+  d.innerHTML=`<div class="av av-${role==='user'?'user':'ai'}">${role==='user'?'You':'AI'}</div><div class="bubble bubble-${role==='user'?'user':'ai'}">${text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div>`;
+  el.appendChild(d); el.scrollTop=el.scrollHeight;
+}
+function showTyping() {
+  const el=document.getElementById('msgs');
+  const d=document.createElement('div'); d.className='msg'; d.id='typ';
+  d.innerHTML='<div class="av av-ai">AI</div><div class="bubble bubble-ai typing"><span></span><span></span><span></span></div>';
+  el.appendChild(d); el.scrollTop=el.scrollHeight;
+}
+function hideTyping() { document.getElementById('typ')?.remove(); }
+
+async function send() {
+  if (loading) return;
+  const inp=document.getElementById('cin'), txt=inp.value.trim(); if(!txt) return;
+  inp.value='';
+  const cerr=document.getElementById('cerr'); cerr.style.display='none';
+  addMsg('user',txt);
+  history.push({role:'user',content:txt});
+  loading=true; document.getElementById('sbtn').disabled=true;
+  showTyping();
+  try {
+    const res = await fetch(PROXY+'/anthropic/messages',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYSTEM,messages:history})
+    });
+    const data=await res.json(); hideTyping();
+    if(data.error) throw new Error(data.error.message);
+    const reply=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+    history.push({role:'assistant',content:reply});
+    addMsg('assistant',reply);
+  } catch(e) {
+    hideTyping(); history.pop();
+    cerr.textContent='Error: '+e.message; cerr.style.display='block';
+  }
+  loading=false; document.getElementById('sbtn').disabled=false;
+}
+</script>
+</body>
+</html>
