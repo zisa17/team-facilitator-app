@@ -4,118 +4,293 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Team Facilitator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f3; color: #1a1a1a; height: 100vh; display: flex; align-items: center; justify-content: center; }
-.shell { display: flex; width: 960px; height: 680px; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 4px 32px rgba(0,0,0,0.10); border: 1px solid #e5e5e3; }
-.sidebar { width: 220px; min-width: 220px; border-right: 1px solid #e5e5e3; display: flex; flex-direction: column; background: #fafaf8; }
-.sidebar-header { padding: 16px; border-bottom: 1px solid #e5e5e3; }
-.brand { font-size: 13px; font-weight: 600; color: #1a1a1a; }
-.brand-sub { font-size: 11px; color: #999; margin-top: 2px; }
-.nav { flex: 1; padding: 8px; overflow-y: auto; }
-.nav-section { font-size: 10px; font-weight: 600; color: #bbb; padding: 12px 10px 4px; text-transform: uppercase; letter-spacing: 0.07em; }
-.nav-item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 7px; cursor: pointer; font-size: 13px; color: #666; margin-bottom: 1px; user-select: none; }
-.nav-item:hover { background: #fff; color: #1a1a1a; }
-.nav-item.active { background: #fff; color: #1a1a1a; font-weight: 500; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
-.nav-item svg { flex-shrink: 0; opacity: 0.6; }
-.nav-item.active svg { opacity: 1; }
-.pulse { width: 7px; height: 7px; border-radius: 50%; background: #1D9E75; margin-left: auto; animation: pulse 2s infinite; }
-.bluedot { width: 7px; height: 7px; border-radius: 50%; background: #378ADD; margin-left: auto; }
-@keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.35} }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --sidebar-bg: #0f1117;
+  --sidebar-text: #8b8fa8;
+  --sidebar-active: #ffffff;
+  --sidebar-hover: #1e2130;
+  --sidebar-border: #1e2130;
+  --accent: #6C63FF;
+  --accent-light: #ede9ff;
+  --accent-text: #3730a3;
+  --green: #10b981;
+  --green-light: #d1fae5;
+  --green-text: #065f46;
+  --amber: #f59e0b;
+  --amber-light: #fef3c7;
+  --amber-text: #92400e;
+  --blue: #3b82f6;
+  --blue-light: #dbeafe;
+  --blue-text: #1e40af;
+  --red: #ef4444;
+  --bg: #f8f9fc;
+  --surface: #ffffff;
+  --border: #e8eaf0;
+  --text: #111827;
+  --text-2: #6b7280;
+  --text-3: #9ca3af;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+
+body {
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shell {
+  display: flex;
+  width: 1040px;
+  height: 700px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: 0 8px 48px rgba(0,0,0,0.14);
+}
+
+/* ── SIDEBAR ─────────────────────────────────── */
+.sidebar {
+  width: 230px;
+  min-width: 230px;
+  background: var(--sidebar-bg);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  padding: 22px 18px 16px;
+  border-bottom: 1px solid var(--sidebar-border);
+}
+
+.brand-row { display: flex; align-items: center; gap: 10px; }
+.brand-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.brand-icon svg { width: 16px; height: 16px; }
+.brand-name { font-size: 14px; font-weight: 600; color: #fff; }
+.brand-sub { font-size: 11px; color: var(--sidebar-text); margin-top: 1px; }
+
+.nav { flex: 1; padding: 10px 10px; overflow-y: auto; }
+.nav-section {
+  font-size: 10px; font-weight: 600; color: #3d4266;
+  padding: 14px 8px 5px; text-transform: uppercase; letter-spacing: 0.08em;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 10px; border-radius: 8px; cursor: pointer;
+  font-size: 13px; color: var(--sidebar-text);
+  margin-bottom: 1px; user-select: none; transition: all 0.12s;
+}
+.nav-item:hover { background: var(--sidebar-hover); color: #c5c8d8; }
+.nav-item.active { background: #1e2130; color: var(--sidebar-active); font-weight: 500; }
+.nav-item svg { flex-shrink: 0; }
+.dot-live { width: 6px; height: 6px; border-radius: 50%; background: var(--green); margin-left: auto; animation: glow 2s infinite; }
+.dot-notion { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); margin-left: auto; }
+@keyframes glow { 0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(16,185,129,0.4)}50%{opacity:0.6;box-shadow:0 0 0 4px rgba(16,185,129,0)} }
+
+.sidebar-footer {
+  padding: 14px 18px;
+  border-top: 1px solid var(--sidebar-border);
+  font-size: 11px; color: #3d4266;
+}
+.status-row { display: flex; align-items: center; gap: 6px; }
+.status-pip { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+
+/* ── MAIN ─────────────────────────────────────── */
 .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
-.topbar { padding: 12px 20px; border-bottom: 1px solid #e5e5e3; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-.topbar-title { font-size: 14px; font-weight: 600; }
-.topbar-meta { font-size: 11px; color: #999; margin-top: 1px; }
+
+.topbar {
+  padding: 14px 22px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+  background: var(--surface);
+}
+.topbar-left {}
+.topbar-title { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
+.topbar-meta { font-size: 11px; color: var(--text-3); margin-top: 1px; }
 .badges { display: flex; gap: 5px; }
-.badge { padding: 2px 9px; border-radius: 99px; font-size: 11px; font-weight: 500; }
-.b-teal { background: #E1F5EE; color: #0F6E56; }
-.b-purple { background: #EEEDFE; color: #3C3489; }
-.b-blue { background: #E6F1FB; color: #0C447C; }
-.b-amber { background: #FAEEDA; color: #854F0B; }
-.b-green { background: #EAF3DE; color: #3B6D11; }
-.b-gray { background: #f0efe8; color: #5F5E5A; }
-.content { flex: 1; overflow: hidden; }
+.badge { padding: 3px 9px; border-radius: 99px; font-size: 11px; font-weight: 500; }
+.b-accent { background: var(--accent-light); color: var(--accent-text); }
+.b-green { background: var(--green-light); color: var(--green-text); }
+.b-blue { background: var(--blue-light); color: var(--blue-text); }
+.b-amber { background: var(--amber-light); color: var(--amber-text); }
+.b-gray { background: #f3f4f6; color: #374151; }
+
+.content { flex: 1; overflow: hidden; background: var(--bg); }
 .panel { display: none; flex-direction: column; height: 100%; overflow: hidden; }
 .panel.visible { display: flex; }
-.scroll { flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
-.card { background: #fff; border: 1px solid #e5e5e3; border-radius: 10px; padding: 14px 16px; }
-.card-title { font-size: 13px; font-weight: 600; margin-bottom: 12px; color: #1a1a1a; }
+.scroll { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+
+/* ── CARDS ────────────────────────────────────── */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 18px;
+}
+.card-title { font-size: 13px; font-weight: 600; margin-bottom: 14px; color: var(--text); }
+
+/* ── METRICS ──────────────────────────────────── */
 .metrics { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
-.metric { background: #fafaf8; border-radius: 8px; padding: 12px; }
-.metric-label { font-size: 11px; color: #999; margin-bottom: 3px; }
-.metric-val { font-size: 22px; font-weight: 600; }
-.metric-sub { font-size: 11px; color: #1D9E75; margin-top: 2px; }
-.insight { display: flex; gap: 10px; font-size: 13px; line-height: 1.6; padding: 8px 0; border-bottom: 1px solid #f0efe8; }
-.insight:last-of-type { border-bottom: none; }
-.idot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 7px; }
-.btn { padding: 7px 14px; border: 1px solid #e0e0de; border-radius: 7px; background: #fff; color: #1a1a1a; font-size: 12px; cursor: pointer; font-family: inherit; transition: background 0.12s; }
-.btn:hover { background: #fafaf8; }
-.btn:disabled { opacity: 0.45; cursor: not-allowed; }
-.btn-primary { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
-.btn-primary:hover { background: #333; }
-.btn-notion { background: #E6F1FB; color: #185FA5; border-color: #B5D4F4; }
-.btn-notion:hover { background: #d0e8f7; }
+.metric {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 16px;
+  position: relative; overflow: hidden;
+}
+.metric::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--accent); border-radius: 99px 99px 0 0;
+}
+.metric-label { font-size: 11px; color: var(--text-3); margin-bottom: 4px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+.metric-val { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; color: var(--text); }
+.metric-sub { font-size: 11px; color: var(--green); margin-top: 3px; font-weight: 500; }
+
+/* ── INSIGHTS ─────────────────────────────────── */
+.insight {
+  display: flex; gap: 12px; font-size: 13px; line-height: 1.6;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.insight:last-of-type { border-bottom: none; padding-bottom: 0; }
+.iicon {
+  width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; margin-top: 1px;
+}
+
+/* ── BUTTONS ──────────────────────────────────── */
+.btn {
+  padding: 7px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--surface); color: var(--text); font-size: 12px; font-weight: 500;
+  cursor: pointer; font-family: inherit; transition: all 0.12s;
+}
+.btn:hover { background: var(--bg); border-color: #d1d5db; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn-primary:hover { background: #5a52d5; border-color: #5a52d5; }
+.btn-green { background: var(--green); color: #fff; border-color: var(--green); }
+.btn-green:hover { background: #059669; }
+.btn-notion { background: var(--blue-light); color: var(--blue-text); border-color: #bfdbfe; }
+.btn-notion:hover { background: #bfdbfe; }
 .btn-sm { padding: 5px 11px; font-size: 11px; }
-/* CHAT */
+
+/* ── CHAT ─────────────────────────────────────── */
 .chat-wrap { display: flex; flex-direction: column; height: 100%; }
-.chat-meta { padding: 8px 18px; background: #fafaf8; border-bottom: 1px solid #e5e5e3; font-size: 11px; color: #aaa; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-.messages { flex: 1; overflow-y: auto; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
-.msg { display: flex; gap: 9px; align-items: flex-start; }
+.chat-meta {
+  padding: 9px 20px; background: var(--surface); border-bottom: 1px solid var(--border);
+  font-size: 11px; color: var(--text-3); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+}
+.messages { flex: 1; overflow-y: auto; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; background: var(--bg); }
+.msg { display: flex; gap: 10px; align-items: flex-start; }
 .msg.user { flex-direction: row-reverse; }
-.av { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; flex-shrink: 0; }
-.av-ai { background: #EEEDFE; color: #3C3489; }
-.av-user { background: #f0efe8; color: #666; }
-.bubble { border-radius: 10px; padding: 9px 13px; font-size: 13px; line-height: 1.65; max-width: 80%; }
-.bubble-ai { background: #fafaf8; border: 1px solid #e5e5e3; }
-.bubble-user { background: #F0EFFD; border: 1px solid #D0CDEE; }
-.typing { display: flex; gap: 4px; align-items: center; }
-.typing span { width: 6px; height: 6px; border-radius: 50%; background: #bbb; animation: bounce 1.2s infinite; }
+.av {
+  width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; flex-shrink: 0;
+}
+.av-ai { background: var(--accent); color: #fff; }
+.av-user { background: #e5e7eb; color: #374151; }
+.bubble { border-radius: 12px; padding: 10px 14px; font-size: 13px; line-height: 1.65; max-width: 78%; }
+.bubble-ai { background: var(--surface); border: 1px solid var(--border); border-top-left-radius: 3px; }
+.bubble-user { background: var(--accent); color: #fff; border-top-right-radius: 3px; }
+.typing { display: flex; gap: 4px; align-items: center; padding: 2px 0; }
+.typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--text-3); animation: bounce 1.2s infinite; }
 .typing span:nth-child(2) { animation-delay: 0.2s; }
 .typing span:nth-child(3) { animation-delay: 0.4s; }
 @keyframes bounce { 0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)} }
-.chat-foot { padding: 12px 16px; border-top: 1px solid #e5e5e3; flex-shrink: 0; }
+.chat-foot { padding: 12px 16px; border-top: 1px solid var(--border); flex-shrink: 0; background: var(--surface); }
 .input-row { display: flex; gap: 8px; }
-.chat-in { flex: 1; font-size: 13px; padding: 9px 13px; border: 1px solid #e0e0de; border-radius: 8px; background: #fff; color: #1a1a1a; outline: none; resize: none; font-family: inherit; line-height: 1.5; }
-.chat-in:focus { border-color: #aaa; }
+.chat-in {
+  flex: 1; font-size: 13px; padding: 9px 13px; border: 1px solid var(--border);
+  border-radius: 8px; background: var(--bg); color: var(--text);
+  outline: none; resize: none; font-family: inherit; line-height: 1.5;
+}
+.chat-in:focus { border-color: var(--accent); background: #fff; }
 .qps { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
-.qp { padding: 4px 10px; border: 1px solid #e5e5e3; border-radius: 99px; font-size: 11px; color: #666; cursor: pointer; background: #fff; font-family: inherit; }
-.qp:hover { background: #fafaf8; color: #1a1a1a; border-color: #ccc; }
-.err { font-size: 12px; color: #a32d2d; margin-top: 6px; display: none; }
-.ok { font-size: 12px; color: #1D9E75; margin-top: 6px; display: none; }
-/* RETRO */
-.retro-cols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-.zone { background: #fafaf8; border-radius: 8px; padding: 10px; min-height: 130px; }
-.zone-label { font-size: 11px; font-weight: 600; margin-bottom: 8px; }
-.sticky { background: #fff; border: 1px solid #e5e5e3; border-radius: 7px; padding: 7px 9px; font-size: 12px; line-height: 1.5; margin-bottom: 5px; }
-.add-note { font-size: 12px; color: #bbb; cursor: pointer; padding: 3px 0; }
-.add-note:hover { color: #666; }
-.save-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-top: 1px solid #e5e5e3; background: #fafaf8; flex-shrink: 0; }
-.save-status { font-size: 12px; color: #999; display: flex; align-items: center; gap: 7px; }
+.qp {
+  padding: 4px 10px; border: 1px solid var(--border); border-radius: 99px;
+  font-size: 11px; font-weight: 500; color: var(--text-2); cursor: pointer;
+  background: var(--surface); font-family: inherit; transition: all 0.12s;
+}
+.qp:hover { background: var(--accent-light); color: var(--accent-text); border-color: #c4b5fd; }
+.err { font-size: 12px; color: var(--red); margin-top: 6px; display: none; }
+.ok-msg { font-size: 12px; color: var(--green); margin-top: 6px; display: none; }
+
+/* ── RETRO ────────────────────────────────────── */
+.retro-cols { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
+.zone {
+  background: var(--bg); border-radius: var(--radius-sm); padding: 12px;
+  min-height: 140px; border: 1px solid var(--border);
+}
+.zone-header { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+.zone-pip { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.zone-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+.sticky {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 7px 9px; font-size: 12px; line-height: 1.5; margin-bottom: 5px;
+  transition: border-color 0.12s;
+}
+.sticky:hover { border-color: #d1d5db; }
+.add-note { font-size: 12px; color: var(--text-3); cursor: pointer; padding: 4px 0; display: flex; align-items: center; gap: 4px; }
+.add-note:hover { color: var(--accent); }
+.save-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 18px; border-top: 1px solid var(--border);
+  background: var(--surface); flex-shrink: 0;
+}
+.save-status { font-size: 12px; color: var(--text-3); display: flex; align-items: center; gap: 7px; }
 .sdot { width: 7px; height: 7px; border-radius: 50%; background: #ddd; }
-.sdot.saving { background: #EF9F27; animation: pulse 1s infinite; }
-.sdot.saved { background: #1D9E75; }
-.sdot.error { background: #E24B4A; }
-/* ACTIONS */
-.action-item { display: flex; gap: 10px; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid #f5f5f3; }
+.sdot.saving { background: var(--amber); animation: glow 1s infinite; }
+.sdot.saved { background: var(--green); }
+.sdot.error { background: var(--red); }
+
+/* ── ACTIONS ──────────────────────────────────── */
+.action-item { display: flex; gap: 11px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--border); }
 .action-item:last-child { border-bottom: none; }
-.chk { width: 17px; height: 17px; border: 1.5px solid #ddd; border-radius: 4px; flex-shrink: 0; cursor: pointer; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
-.chk.done { background: #1D9E75; border-color: #1D9E75; }
+.chk {
+  width: 18px; height: 18px; border: 1.5px solid #d1d5db; border-radius: 5px;
+  flex-shrink: 0; cursor: pointer; margin-top: 1px;
+  display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+}
+.chk:hover { border-color: var(--accent); }
+.chk.done { background: var(--green); border-color: var(--green); }
 .at { font-size: 13px; line-height: 1.5; }
-.at.struck { text-decoration: line-through; color: #bbb; }
-.am { font-size: 11px; color: #aaa; margin-top: 2px; }
-.pbar { height: 3px; background: #f0efe8; border-radius: 99px; overflow: hidden; margin: 6px 0; }
-.pfill { height: 100%; background: #1D9E75; border-radius: 99px; }
+.at.struck { text-decoration: line-through; color: var(--text-3); }
+.am { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+.pbar { height: 4px; background: var(--bg); border-radius: 99px; overflow: hidden; margin: 6px 0; }
+.pfill { height: 100%; background: var(--green); border-radius: 99px; transition: width 0.4s; }
 .add-row { display: flex; gap: 8px; margin-top: 12px; }
-.add-row input { flex: 1; font-size: 13px; padding: 7px 11px; border: 1px solid #e0e0de; border-radius: 7px; background: #fff; color: #1a1a1a; outline: none; font-family: inherit; }
-/* NOTION */
-.kv-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; padding: 8px 0; border-bottom: 1px solid #f5f5f3; }
+.add-row input {
+  flex: 1; font-size: 13px; padding: 7px 11px; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); background: var(--bg); color: var(--text);
+  outline: none; font-family: inherit;
+}
+.add-row input:focus { border-color: var(--accent); background: #fff; }
+
+/* ── NOTION ───────────────────────────────────── */
+.kv-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; padding: 9px 0; border-bottom: 1px solid var(--border); }
 .kv-row:last-child { border-bottom: none; }
-.kv-label { color: #999; }
-.log-entry { font-size: 12px; color: #555; padding: 6px 0; border-bottom: 1px solid #f5f5f3; display: flex; align-items: center; gap: 8px; }
+.kv-label { color: var(--text-2); }
+.log-entry { font-size: 12px; color: var(--text-2); padding: 7px 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
 .log-entry:last-child { border-bottom: none; }
 .ldot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 .slack-row { display: flex; gap: 8px; margin-top: 10px; }
-.slack-row input { flex: 1; font-size: 12px; padding: 7px 11px; border: 1px solid #e0e0de; border-radius: 7px; background: #fff; color: #1a1a1a; outline: none; font-family: inherit; }
+.slack-row input { flex: 1; font-size: 12px; padding: 7px 11px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--text); outline: none; font-family: inherit; }
+
+/* ── PROMPT CARDS ─────────────────────────────── */
+.prompt-card {
+  font-size: 13px; padding: 10px 12px; background: var(--bg);
+  border-radius: var(--radius-sm); cursor: pointer; border: 1px solid var(--border);
+  color: var(--text-2); transition: all 0.12s; display: flex; align-items: center; justify-content: space-between;
+}
+.prompt-card:hover { background: var(--accent-light); border-color: #c4b5fd; color: var(--accent-text); }
+.prompt-arrow { font-size: 12px; opacity: 0.5; }
 </style>
 </head>
 <body>
@@ -124,19 +299,29 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
   <!-- SIDEBAR -->
   <div class="sidebar">
     <div class="sidebar-header">
-      <div class="brand">Team Facilitator</div>
-      <div class="brand-sub">Kanban · fully connected</div>
+      <div class="brand-row">
+        <div class="brand-icon">
+          <svg viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3.5l2 2"/></svg>
+        </div>
+        <div>
+          <div class="brand-name">Facilitator</div>
+          <div class="brand-sub">Kanban · AI powered</div>
+        </div>
+      </div>
     </div>
+
     <div class="nav">
       <div class="nav-section">Overview</div>
       <div class="nav-item active" onclick="go('home',this)">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="5" height="5" rx="1"/><rect x="8" y="1" width="5" height="5" rx="1"/><rect x="1" y="8" width="5" height="5" rx="1"/><rect x="8" y="8" width="5" height="5" rx="1"/></svg>
-        Dashboard <div class="pulse"></div>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="5" height="5" rx="1.5"/><rect x="8" y="1" width="5" height="5" rx="1.5"/><rect x="1" y="8" width="5" height="5" rx="1.5"/><rect x="8" y="8" width="5" height="5" rx="1.5"/></svg>
+        Dashboard
+        <div class="dot-live"></div>
       </div>
       <div class="nav-item" onclick="go('chat',this)">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 9a1.5 1.5 0 01-1.5 1.5H4L2 13V3.5A1.5 1.5 0 013.5 2h7A1.5 1.5 0 0112 3.5V9z"/></svg>
         Ask facilitator
       </div>
+
       <div class="nav-section">Retrospectives</div>
       <div class="nav-item" onclick="go('retro',this)">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5.5"/><path d="M7 4v3.5l2 2"/></svg>
@@ -146,10 +331,19 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2.5 7l3 3 6-6"/></svg>
         Actions
       </div>
+
       <div class="nav-section">Integrations</div>
       <div class="nav-item" onclick="go('notion',this)">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="1.5" width="10" height="11" rx="1.5"/><path d="M4.5 5h5M4.5 7.5h5M4.5 10h3"/></svg>
-        Notion log <div class="bluedot"></div>
+        Notion log
+        <div class="dot-notion"></div>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="status-row">
+        <div class="status-pip"></div>
+        All systems live
       </div>
     </div>
   </div>
@@ -157,13 +351,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
   <!-- MAIN -->
   <div class="main">
     <div class="topbar">
-      <div>
+      <div class="topbar-left">
         <div class="topbar-title" id="ttitle">Team dashboard</div>
         <div class="topbar-meta" id="tmeta">AI + Notion connected</div>
       </div>
       <div class="badges">
-        <span class="badge b-teal">Kanban</span>
-        <span class="badge b-purple">AI live</span>
+        <span class="badge b-gray">Kanban</span>
+        <span class="badge b-accent">AI live</span>
         <span class="badge b-blue">Notion</span>
       </div>
     </div>
@@ -176,14 +370,23 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
           <div class="metrics">
             <div class="metric"><div class="metric-label">Retros run</div><div class="metric-val">12</div><div class="metric-sub">+2 this quarter</div></div>
             <div class="metric"><div class="metric-label">Actions resolved</div><div class="metric-val">74%</div><div class="metric-sub">up from 58%</div></div>
-            <div class="metric"><div class="metric-label">Team health</div><div class="metric-val">8.1</div><div class="metric-sub">stable</div></div>
+            <div class="metric"><div class="metric-label">Team health</div><div class="metric-val">8.1</div><div class="metric-sub">stable this week</div></div>
           </div>
           <div class="card">
             <div class="card-title">Facilitator insights</div>
-            <div class="insight"><div class="idot" style="background:#1D9E75"></div><div>You haven't held a retrospective in <strong>18 days</strong>. For a Kanban team, bi-weekly retros keep flow healthy.</div></div>
-            <div class="insight"><div class="idot" style="background:#EF9F27"></div><div>3 improvement actions from last retro are overdue. Review them before your next session.</div></div>
-            <div class="insight"><div class="idot" style="background:#378ADD"></div><div>Proxy connected — AI chat and Notion saving are both live and ready.</div></div>
-            <div style="display:flex;gap:8px;margin-top:14px;">
+            <div class="insight">
+              <div class="iicon" style="background:#d1fae5"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#065f46" stroke-width="1.5"><circle cx="7" cy="7" r="5.5"/><path d="M7 4v3.5l2 2"/></svg></div>
+              <div>No retro in <strong>18 days</strong> — bi-weekly retros are the heartbeat of a healthy Kanban team. Ready to run one now?</div>
+            </div>
+            <div class="insight">
+              <div class="iicon" style="background:#fef3c7"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#92400e" stroke-width="1.5"><path d="M7 2L1.5 11.5h11L7 2z"/><path d="M7 6v3M7 10.5v.5"/></svg></div>
+              <div>3 improvement actions are overdue. Review them before your next session so they don't get lost.</div>
+            </div>
+            <div class="insight">
+              <div class="iicon" style="background:#dbeafe"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#1e40af" stroke-width="1.5"><path d="M7 1.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11z"/><path d="M7 6.5v4M7 4.5v.5"/></svg></div>
+              <div>Proxy connected — AI chat and Notion saving are both live and ready to use.</div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:16px;">
               <button class="btn btn-primary btn-sm" onclick="go('retro',null)">Start a retro</button>
               <button class="btn btn-sm" onclick="go('chat',null)">Ask facilitator ↗</button>
               <button class="btn btn-notion btn-sm" onclick="go('notion',null)">Notion log</button>
@@ -192,11 +395,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
           <div class="card">
             <div class="card-title">Recent improvement themes</div>
             <div style="display:flex;flex-wrap:wrap;gap:6px;">
-              <span class="badge b-teal">Flow efficiency</span>
+              <span class="badge b-green">Flow efficiency</span>
               <span class="badge b-amber">Meeting overhead</span>
               <span class="badge b-blue">Documentation</span>
-              <span class="badge b-purple">On-call load</span>
-              <span class="badge b-teal">Code review speed</span>
+              <span class="badge b-accent">On-call load</span>
+              <span class="badge b-green">Code review speed</span>
+              <span class="badge b-amber">Scope clarity</span>
             </div>
           </div>
         </div>
@@ -207,12 +411,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
         <div class="chat-wrap">
           <div class="chat-meta">
             <span>Kanban · Slack, Notion, Jira · proxy connected</span>
-            <div style="display:flex;gap:4px;"><span class="badge b-purple" style="font-size:10px;">AI live</span><span class="badge b-blue" style="font-size:10px;">Notion</span></div>
+            <div style="display:flex;gap:4px;"><span class="badge b-accent" style="font-size:10px;">AI live</span><span class="badge b-blue" style="font-size:10px;">Notion</span></div>
           </div>
           <div class="messages" id="msgs">
             <div class="msg">
               <div class="av av-ai">AI</div>
-              <div class="bubble bubble-ai">Hi! I'm your AI team facilitator. The AI chat and Notion saving are both live.<br><br>What would you like to work on today?</div>
+              <div class="bubble bubble-ai">Hi! I'm your AI team facilitator — connected to Notion and ready to help.<br><br>I can run retrospectives, track improvement actions, coach on team dynamics, or just think through a challenge with you. What's on your mind?</div>
             </div>
           </div>
           <div class="chat-foot">
@@ -236,34 +440,39 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
       <div id="p-retro" class="panel">
         <div class="scroll">
           <div class="card">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-              <div class="card-title" style="margin:0;">Retrospective · <span id="rdate" style="font-weight:400;color:#999;"></span></div>
-              <span class="badge b-teal">What went well / Improve / Actions</span>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+              <div class="card-title" style="margin:0;">Retrospective · <span id="rdate" style="font-weight:400;color:var(--text-3);"></span></div>
+              <span class="badge b-gray">4 columns · Kanban</span>
             </div>
             <div class="retro-cols">
               <div class="zone">
-                <div class="zone-label" style="color:#1D9E75;">What went well</div>
+                <div class="zone-header"><div class="zone-pip" style="background:#10b981;"></div><div class="zone-label" style="color:#065f46;">What went well</div></div>
                 <div id="z-well"><div class="sticky">Shipped the new onboarding flow</div><div class="sticky">Great async communication</div></div>
                 <div class="add-note" onclick="addNote('well')">+ Add note</div>
               </div>
               <div class="zone">
-                <div class="zone-label" style="color:#BA7517;">What to improve</div>
+                <div class="zone-header"><div class="zone-pip" style="background:#f59e0b;"></div><div class="zone-label" style="color:#92400e;">What to improve</div></div>
                 <div id="z-improve"><div class="sticky">PR reviews taking 3+ days</div><div class="sticky">Unclear priorities mid-week</div></div>
                 <div class="add-note" onclick="addNote('improve')">+ Add note</div>
               </div>
               <div class="zone">
-                <div class="zone-label" style="color:#185FA5;">Action items</div>
+                <div class="zone-header"><div class="zone-pip" style="background:#3b82f6;"></div><div class="zone-label" style="color:#1e40af;">Action items</div></div>
                 <div id="z-actions"></div>
                 <div class="add-note" onclick="addNote('actions')">+ Add note</div>
+              </div>
+              <div class="zone">
+                <div class="zone-header"><div class="zone-pip" style="background:#6C63FF;"></div><div class="zone-label" style="color:#3730a3;">Experiments</div></div>
+                <div id="z-experiments"></div>
+                <div class="add-note" onclick="addNote('experiments')">+ Add note</div>
               </div>
             </div>
           </div>
           <div class="card">
             <div class="card-title">AI-facilitated prompts</div>
             <div style="display:flex;flex-direction:column;gap:7px;">
-              <div style="font-size:13px;padding:8px 10px;background:#fafaf8;border-radius:7px;cursor:pointer;border:1px solid #f0efe8;" onclick="gchat('Our Kanban flow felt blocked last cycle. Help me facilitate a team discussion to find root causes and experiments we can try.')">Facilitate: flow was blocked last cycle ↗</div>
-              <div style="font-size:13px;padding:8px 10px;background:#fafaf8;border-radius:7px;cursor:pointer;border:1px solid #f0efe8;" onclick="gchat('Generate 5 powerful retrospective questions for a Kanban team focused on improving flow and reducing bottlenecks.')">Generate retro questions for our team ↗</div>
-              <div style="font-size:13px;padding:8px 10px;background:#fafaf8;border-radius:7px;cursor:pointer;border:1px solid #f0efe8;" onclick="gchat('Summarise our retrospective notes and suggest the top 3 action items we should commit to.')">AI summarise & suggest actions ↗</div>
+              <div class="prompt-card" onclick="gchat('Our Kanban flow felt blocked last cycle. Help me facilitate a team discussion to find root causes and experiments we can try.')">Facilitate: flow was blocked last cycle <span class="prompt-arrow">↗</span></div>
+              <div class="prompt-card" onclick="gchat('Generate 5 powerful retrospective questions for a Kanban team focused on improving flow and reducing bottlenecks.')">Generate retro questions for our team <span class="prompt-arrow">↗</span></div>
+              <div class="prompt-card" onclick="gchat('Summarise our retrospective notes and suggest the top 3 action items we should commit to.')">AI summarise & suggest actions <span class="prompt-arrow">↗</span></div>
             </div>
           </div>
         </div>
@@ -280,13 +489,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
       <div id="p-actions" class="panel">
         <div class="scroll">
           <div class="card">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
               <div class="card-title" style="margin:0;">Improvement actions</div>
               <span class="badge b-amber">3 overdue</span>
             </div>
-            <div style="font-size:11px;color:#aaa;">14 of 19 resolved</div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3);margin-bottom:4px;"><span>Progress</span><span>14 of 19</span></div>
             <div class="pbar"><div class="pfill" style="width:74%;"></div></div>
-            <div id="alist">
+            <div id="alist" style="margin-top:8px;">
               <div class="action-item"><div class="chk done" onclick="td(this)"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2.5 2.5 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><div class="at struck">Set up WIP limit of 3 per person in Jira</div><div class="am">Retro #11 · whole team</div></div></div>
               <div class="action-item"><div class="chk" onclick="td(this)"></div><div><div class="at">Write definition of done for design review step</div><div class="am">Retro #12 · Anna · 2 days overdue</div></div></div>
               <div class="action-item"><div class="chk" onclick="td(this)"></div><div><div class="at">Schedule bi-weekly learning session (Fridays 30 min)</div><div class="am">Retro #12 · Tom · 5 days overdue</div></div></div>
@@ -295,7 +504,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
             </div>
             <div class="add-row">
               <input type="text" id="newin" placeholder="Add action item…" onkeydown="if(event.key==='Enter')addA()">
-              <button class="btn btn-sm" onclick="addA()">Add</button>
+              <button class="btn btn-sm btn-primary" onclick="addA()">Add</button>
             </div>
           </div>
         </div>
@@ -305,31 +514,31 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
       <div id="p-notion" class="panel">
         <div class="scroll">
           <div class="card">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
               <div class="card-title" style="margin:0;">Notion connection</div>
               <span class="badge b-green" id="nbadge">Connected</span>
             </div>
-            <div class="kv-row"><span class="kv-label">Proxy</span><span style="font-family:monospace;font-size:11px;">team-facilitator-proxy-production.up.railway.app</span></div>
+            <div class="kv-row"><span class="kv-label">Proxy</span><span style="font-family:'DM Mono',monospace;font-size:11px;">team-facilitator-proxy-production.up.railway.app</span></div>
             <div class="kv-row"><span class="kv-label">Database</span><span style="font-weight:500;">Retrospectives</span></div>
             <div class="kv-row"><span class="kv-label">Last saved</span><span id="nlast">Never</span></div>
-            <div style="margin-top:12px;display:flex;gap:8px;">
+            <div style="margin-top:14px;display:flex;gap:8px;">
               <button class="btn btn-notion btn-sm" onclick="testNotion()">Test connection</button>
             </div>
             <div class="err" id="nterr"></div>
-            <div class="ok" id="ntok"></div>
+            <div class="ok-msg" id="ntok"></div>
           </div>
           <div class="card">
             <div class="card-title">Save log</div>
-            <div id="nlog"><div style="font-size:13px;color:#aaa;text-align:center;padding:16px 0;">No retros saved yet.</div></div>
+            <div id="nlog"><div style="font-size:13px;color:var(--text-3);text-align:center;padding:18px 0;">No retros saved yet. Run a retro and click "Save to Notion".</div></div>
           </div>
           <div class="card">
             <div class="card-title">Add Slack reminders</div>
-            <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:10px;">Paste your Slack webhook URL to activate retro reminders in your team channel.</div>
+            <div style="font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:12px;">Paste your Slack webhook URL to activate retro reminders and action item nudges in your team channel.</div>
             <div class="slack-row">
               <input type="text" id="slackin" placeholder="https://hooks.slack.com/services/...">
-              <button class="btn btn-sm" onclick="saveSlack()">Save</button>
+              <button class="btn btn-sm btn-primary" onclick="saveSlack()">Save</button>
             </div>
-            <div class="ok" id="slackok">Slack webhook saved — reminders active.</div>
+            <div class="ok-msg" id="slackok">Slack webhook saved — reminders active.</div>
           </div>
         </div>
       </div>
@@ -339,7 +548,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 </div>
 
 <script>
-const PROXY = '';
+const PROXY = 'https://team-facilitator-proxy-production.up.railway.app';
 const NOTION_DB = '327617cd5ec180e6a2a2d8103cc44a88';
 const SYSTEM = `You are an expert AI team facilitator. Team context:
 - Workflow: Kanban
@@ -355,10 +564,10 @@ Be warm, direct and practical. Keep responses concise (2-4 paragraphs). When run
 
 const PANELS = ['home','chat','retro','actions','notion'];
 const TITLES = {home:'Team dashboard',chat:'Ask the facilitator',retro:'Run a retrospective',actions:'Improvement actions',notion:'Notion integration'};
-const METAS = {home:'AI + Notion connected',chat:'Powered by Claude · Notion connected',retro:'Auto-saves to Notion',actions:'19 items across 3 retros',notion:'Retrospectives database'};
+const METAS = {home:'AI + Notion connected',chat:'Powered by Claude · Notion connected',retro:'Auto-saves to Notion on completion',actions:'19 items across 3 retros',notion:'Retrospectives database'};
 
 let history = [], loading = false;
-const notes = {well:['Shipped the new onboarding flow','Great async communication'],improve:['PR reviews taking 3+ days','Unclear priorities mid-week'],actions:[]};
+const notes = {well:['Shipped the new onboarding flow','Great async communication'],improve:['PR reviews taking 3+ days','Unclear priorities mid-week'],actions:[],experiments:[]};
 
 function go(id, el) {
   PANELS.forEach(p => document.getElementById('p-'+p).classList.remove('visible'));
@@ -373,7 +582,8 @@ function go(id, el) {
 document.getElementById('rdate').textContent = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
 
 function renderNotes(z) {
-  document.getElementById('z-'+z).innerHTML = notes[z].map(t=>`<div class="sticky">${t}</div>`).join('');
+  const el = document.getElementById('z-'+z);
+  if (el) el.innerHTML = notes[z].map(t=>`<div class="sticky">${t}</div>`).join('');
 }
 function addNote(z) {
   const t = prompt('Add a note:'); if (!t?.trim()) return;
@@ -418,14 +628,11 @@ async function saveNotion() {
     const now = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
     setSave('saved','Saved · '+now);
     document.getElementById('nlast').textContent = now;
-    const log = document.getElementById('nlog');
-    log.innerHTML = '';
+    const log = document.getElementById('nlog'); log.innerHTML = '';
     const d = document.createElement('div'); d.className='log-entry';
-    d.innerHTML=`<div class="ldot" style="background:#1D9E75"></div><span style="flex:1">${title}</span><span style="color:#aaa">${now}</span>`;
+    d.innerHTML=`<div class="ldot" style="background:var(--green)"></div><span style="flex:1">${title}</span><span style="color:var(--text-3)">${now}</span>`;
     log.appendChild(d);
-  } catch(e) {
-    setSave('error','Save failed: '+e.message);
-  }
+  } catch(e) { setSave('error','Save failed: '+e.message); }
   document.getElementById('savebtn').disabled=false;
 }
 async function testNotion() {
@@ -466,7 +673,7 @@ async function send() {
   if (loading) return;
   const inp=document.getElementById('cin'), txt=inp.value.trim(); if(!txt) return;
   inp.value='';
-  const cerr=document.getElementById('cerr'); cerr.style.display='none';
+  document.getElementById('cerr').style.display='none';
   addMsg('user',txt);
   history.push({role:'user',content:txt});
   loading=true; document.getElementById('sbtn').disabled=true;
@@ -483,6 +690,7 @@ async function send() {
     addMsg('assistant',reply);
   } catch(e) {
     hideTyping(); history.pop();
+    const cerr=document.getElementById('cerr');
     cerr.textContent='Error: '+e.message; cerr.style.display='block';
   }
   loading=false; document.getElementById('sbtn').disabled=false;
