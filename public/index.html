@@ -529,8 +529,17 @@ function defaultState() {
 }
 
 function loadState() {
-  try { return JSON.parse(localStorage.getItem('tf-state-v3')) || defaultState(); }
-  catch(e) { return defaultState(); }
+  try {
+    const saved = JSON.parse(localStorage.getItem('tf-state-v3'));
+    if (!saved) return defaultState();
+    // Migrate: ensure all retro note columns exist
+    if (!saved.currentRetroNotes) saved.currentRetroNotes = { well:[], improve:[], actions:[], experiments:[] };
+    if (!saved.currentRetroNotes.experiments) saved.currentRetroNotes.experiments = [];
+    if (!saved.currentRetroNotes.well) saved.currentRetroNotes.well = [];
+    if (!saved.currentRetroNotes.improve) saved.currentRetroNotes.improve = [];
+    if (!saved.currentRetroNotes.actions) saved.currentRetroNotes.actions = [];
+    return saved;
+  } catch(e) { return defaultState(); }
 }
 
 function saveState() {
