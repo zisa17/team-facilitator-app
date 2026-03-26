@@ -3,1047 +3,468 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Team Facilitator</title>
+<title>Team Facilitator v4</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --sidebar-bg: #0f1117; --sidebar-text: #8b8fa8; --sidebar-active: #ffffff;
-  --sidebar-hover: #1e2130; --sidebar-border: #1e2130;
-  --accent: #6C63FF; --accent-light: #ede9ff; --accent-text: #3730a3;
-  --green: #10b981; --green-light: #d1fae5; --green-text: #065f46;
-  --amber: #f59e0b; --amber-light: #fef3c7; --amber-text: #92400e;
-  --blue: #3b82f6; --blue-light: #dbeafe; --blue-text: #1e40af;
-  --red: #ef4444; --red-light: #fee2e2; --red-text: #991b1b;
-  --bg: #f8f9fc; --surface: #ffffff; --border: #e8eaf0;
-  --text: #111827; --text-2: #6b7280; --text-3: #9ca3af;
-  --radius: 10px; --radius-sm: 6px;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --sb:#0f1117;--sb-t:#8b8fa8;--sb-h:#1e2130;--sb-b:#1e2130;
+  --acc:#6C63FF;--acc-l:#ede9ff;--acc-t:#3730a3;
+  --grn:#10b981;--grn-l:#d1fae5;--grn-t:#065f46;
+  --amb:#f59e0b;--amb-l:#fef3c7;--amb-t:#92400e;
+  --blu:#3b82f6;--blu-l:#dbeafe;--blu-t:#1e40af;
+  --red:#ef4444;--red-l:#fee2e2;--red-t:#991b1b;
+  --bg:#f8f9fc;--sur:#fff;--bor:#e8eaf0;
+  --tx:#111827;--tx2:#6b7280;--tx3:#9ca3af;
+  --r:10px;--rs:6px;
 }
-body { font-family: 'DM Sans', -apple-system, sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; align-items: center; justify-content: center; }
-.shell { display: flex; width: 1080px; height: 720px; border-radius: 16px; overflow: hidden; background: var(--surface); box-shadow: 0 8px 48px rgba(0,0,0,0.14); }
-
-/* SIDEBAR */
-.sidebar { width: 230px; min-width: 230px; background: var(--sidebar-bg); display: flex; flex-direction: column; }
-.sidebar-header { padding: 20px 18px 16px; border-bottom: 1px solid var(--sidebar-border); }
-.brand-row { display: flex; align-items: center; gap: 10px; }
-.brand-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.brand-name { font-size: 14px; font-weight: 600; color: #fff; }
-.brand-sub { font-size: 11px; color: var(--sidebar-text); margin-top: 1px; }
-.nav { flex: 1; padding: 10px; overflow-y: auto; }
-.nav-section { font-size: 10px; font-weight: 600; color: #3d4266; padding: 14px 8px 5px; text-transform: uppercase; letter-spacing: 0.08em; }
-.nav-item { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: 13px; color: var(--sidebar-text); margin-bottom: 1px; user-select: none; transition: all 0.12s; }
-.nav-item:hover { background: var(--sidebar-hover); color: #c5c8d8; }
-.nav-item.active { background: #1e2130; color: var(--sidebar-active); font-weight: 500; }
-.dot-live { width: 6px; height: 6px; border-radius: 50%; background: var(--green); margin-left: auto; animation: glow 2s infinite; }
-.dot-blue { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); margin-left: auto; }
-.dot-amber { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); margin-left: auto; }
-@keyframes glow { 0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(16,185,129,0.4)}50%{opacity:0.6;box-shadow:0 0 0 4px rgba(16,185,129,0)} }
-.sidebar-footer { padding: 14px 18px; border-top: 1px solid var(--sidebar-border); font-size: 11px; color: #3d4266; }
-.status-row { display: flex; align-items: center; gap: 6px; }
-.status-pip { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
-
-/* MAIN */
-.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
-.topbar { padding: 14px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; background: var(--surface); }
-.topbar-title { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
-.topbar-meta { font-size: 11px; color: var(--text-3); margin-top: 1px; }
-.badges { display: flex; gap: 5px; }
-.badge { padding: 3px 9px; border-radius: 99px; font-size: 11px; font-weight: 500; }
-.b-accent { background: var(--accent-light); color: var(--accent-text); }
-.b-green { background: var(--green-light); color: var(--green-text); }
-.b-blue { background: var(--blue-light); color: var(--blue-text); }
-.b-amber { background: var(--amber-light); color: var(--amber-text); }
-.b-red { background: var(--red-light); color: var(--red-text); }
-.b-gray { background: #f3f4f6; color: #374151; }
-.content { flex: 1; overflow: hidden; background: var(--bg); }
-.panel { display: none; flex-direction: column; height: 100%; overflow: hidden; }
-.panel.visible { display: flex; }
-.scroll { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
-.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
-.card-title { font-size: 13px; font-weight: 600; margin-bottom: 14px; color: var(--text); }
-
-/* METRICS */
-.metrics { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
-.metric { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; position: relative; overflow: hidden; }
-.metric::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 99px 99px 0 0; }
-.metric.m-accent::before { background: var(--accent); }
-.metric.m-green::before { background: var(--green); }
-.metric.m-amber::before { background: var(--amber); }
-.metric.m-blue::before { background: var(--blue); }
-.metric-label { font-size: 10px; color: var(--text-3); margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
-.metric-val { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; }
-.metric-sub { font-size: 11px; color: var(--text-3); margin-top: 3px; }
-.metric-sub.up { color: var(--green); }
-.metric-sub.warn { color: var(--amber); }
-
-/* BUTTONS */
-.btn { padding: 7px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); font-size: 12px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.12s; }
-.btn:hover { background: var(--bg); border-color: #d1d5db; }
-.btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
-.btn-primary:hover { background: #5a52d5; }
-.btn-green { background: var(--green); color: #fff; border-color: var(--green); }
-.btn-green:hover { background: #059669; }
-.btn-red { background: var(--red); color: #fff; border-color: var(--red); }
-.btn-notion { background: var(--blue-light); color: var(--blue-text); border-color: #bfdbfe; }
-.btn-notion:hover { background: #bfdbfe; }
-.btn-slack { background: #4A154B; color: #fff; border-color: #4A154B; }
-.btn-slack:hover { background: #611f64; }
-.btn-sm { padding: 5px 11px; font-size: 11px; }
-
-/* CHAT */
-.chat-wrap { display: flex; flex-direction: column; height: 100%; }
-.chat-meta { padding: 9px 20px; background: var(--surface); border-bottom: 1px solid var(--border); font-size: 11px; color: var(--text-3); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-.messages { flex: 1; overflow-y: auto; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; background: var(--bg); }
-.msg { display: flex; gap: 10px; align-items: flex-start; }
-.msg.user { flex-direction: row-reverse; }
-.av { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; flex-shrink: 0; }
-.av-ai { background: var(--accent); color: #fff; }
-.av-user { background: #e5e7eb; color: #374151; }
-.bubble { border-radius: 12px; padding: 10px 14px; font-size: 13px; line-height: 1.65; max-width: 78%; }
-.bubble-ai { background: var(--surface); border: 1px solid var(--border); border-top-left-radius: 3px; }
-.bubble-user { background: var(--accent); color: #fff; border-top-right-radius: 3px; }
-.typing { display: flex; gap: 4px; align-items: center; padding: 2px 0; }
-.typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--text-3); animation: bounce 1.2s infinite; }
-.typing span:nth-child(2) { animation-delay: 0.2s; }
-.typing span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes bounce { 0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)} }
-.chat-foot { padding: 12px 16px; border-top: 1px solid var(--border); flex-shrink: 0; background: var(--surface); }
-.input-row { display: flex; gap: 8px; }
-.chat-in { flex: 1; font-size: 13px; padding: 9px 13px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text); outline: none; resize: none; font-family: inherit; line-height: 1.5; }
-.chat-in:focus { border-color: var(--accent); background: #fff; }
-.qps { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
-.qp { padding: 4px 10px; border: 1px solid var(--border); border-radius: 99px; font-size: 11px; font-weight: 500; color: var(--text-2); cursor: pointer; background: var(--surface); font-family: inherit; transition: all 0.12s; }
-.qp:hover { background: var(--accent-light); color: var(--accent-text); border-color: #c4b5fd; }
-.err { font-size: 12px; color: var(--red); margin-top: 6px; display: none; }
-.ok-msg { font-size: 12px; color: var(--green); margin-top: 6px; display: none; }
-
+body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:var(--tx);height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.shell{display:flex;width:1100px;height:740px;border-radius:16px;overflow:hidden;background:var(--sur);box-shadow:0 8px 48px rgba(0,0,0,.14);position:relative;}
+.sb{width:230px;min-width:230px;background:var(--sb);display:flex;flex-direction:column;}
+.sb-head{padding:18px 16px 14px;border-bottom:1px solid var(--sb-b);}
+.br-row{display:flex;align-items:center;gap:10px;}
+.br-icon{width:32px;height:32px;border-radius:8px;background:var(--acc);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.br-name{font-size:14px;font-weight:600;color:#fff;}
+.br-sub{font-size:11px;color:var(--sb-t);margin-top:1px;}
+.streak-pill{display:flex;align-items:center;gap:6px;margin-top:10px;background:#1e2130;border-radius:8px;padding:7px 10px;}
+.streak-val{font-size:13px;font-weight:600;color:#fff;}
+.streak-lbl{font-size:11px;color:var(--sb-t);}
+.nav{flex:1;padding:8px;overflow-y:auto;}
+.ns{font-size:10px;font-weight:600;color:#3d4266;padding:12px 8px 4px;text-transform:uppercase;letter-spacing:.08em;}
+.ni{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--sb-t);margin-bottom:1px;user-select:none;transition:all .12s;}
+.ni:hover{background:var(--sb-h);color:#c5c8d8;}
+.ni.active{background:#1e2130;color:#fff;font-weight:500;}
+.dot-g{width:6px;height:6px;border-radius:50%;background:var(--grn);margin-left:auto;animation:glow 2s infinite;}
+.dot-b{width:6px;height:6px;border-radius:50%;background:var(--blu);margin-left:auto;}
+.dot-a{width:6px;height:6px;border-radius:50%;background:var(--amb);margin-left:auto;}
+@keyframes glow{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(16,185,129,.4)}50%{opacity:.6;box-shadow:0 0 0 4px rgba(16,185,129,0)}}
+.sb-foot{padding:12px 16px;border-top:1px solid var(--sb-b);font-size:11px;color:#3d4266;display:flex;align-items:center;gap:6px;}
+.st-pip{width:5px;height:5px;border-radius:50%;background:var(--grn);}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.topbar{padding:13px 20px;border-bottom:1px solid var(--bor);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--sur);}
+.tb-t{font-size:15px;font-weight:600;letter-spacing:-.01em;}
+.tb-m{font-size:11px;color:var(--tx3);margin-top:1px;}
+.badges{display:flex;gap:5px;align-items:center;}
+.badge{padding:2px 8px;border-radius:99px;font-size:11px;font-weight:500;}
+.b-acc{background:var(--acc-l);color:var(--acc-t);}
+.b-grn{background:var(--grn-l);color:var(--grn-t);}
+.b-blu{background:var(--blu-l);color:var(--blu-t);}
+.b-amb{background:var(--amb-l);color:var(--amb-t);}
+.b-red{background:var(--red-l);color:var(--red-t);}
+.b-gray{background:#f3f4f6;color:#374151;}
+.content{flex:1;overflow:hidden;background:var(--bg);}
+.panel{display:none;flex-direction:column;height:100%;overflow:hidden;}
+.panel.visible{display:flex;}
+.scroll{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;}
+.card{background:var(--sur);border:1px solid var(--bor);border-radius:var(--r);padding:14px 16px;}
+.ct{font-size:13px;font-weight:600;margin-bottom:12px;}
+.btn{padding:6px 13px;border:1px solid var(--bor);border-radius:var(--rs);background:var(--sur);color:var(--tx);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .12s;}
+.btn:hover{background:var(--bg);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.bp{background:var(--acc);color:#fff;border-color:var(--acc);}
+.bp:hover{background:#5a52d5;}
+.bg2{background:var(--grn);color:#fff;border-color:var(--grn);}
+.br2{background:var(--red);color:#fff;border-color:var(--red);}
+.bn{background:var(--blu-l);color:var(--blu-t);border-color:#bfdbfe;}
+.bn:hover{background:#bfdbfe;}
+.bsl{background:#4A154B;color:#fff;border-color:#4A154B;}
+.bs{padding:4px 10px;font-size:11px;}
+.bxs{padding:3px 8px;font-size:10px;}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.metric{background:var(--sur);border:1px solid var(--bor);border-radius:var(--r);padding:12px 14px;position:relative;overflow:hidden;}
+.metric::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:99px 99px 0 0;}
+.m-a::before{background:var(--acc);}
+.m-g::before{background:var(--grn);}
+.m-b::before{background:var(--blu);}
+.m-am::before{background:var(--amb);}
+.ml{font-size:10px;color:var(--tx3);margin-bottom:3px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;}
+.mv{font-size:24px;font-weight:600;letter-spacing:-.02em;}
+.ms{font-size:11px;color:var(--tx3);margin-top:2px;}
+.ms.up{color:var(--grn);}
+.ms.dn{color:var(--red);}
+.ms.wn{color:var(--amb);}
+.insight{display:flex;gap:10px;font-size:13px;line-height:1.6;padding:8px 0;border-bottom:1px solid var(--bor);}
+.insight:last-of-type{border-bottom:none;padding-bottom:0;}
+.iic{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+.chat-wrap{display:flex;flex-direction:column;height:100%;}
+.chat-top{padding:8px 18px;background:var(--sur);border-bottom:1px solid var(--bor);font-size:11px;color:var(--tx3);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.msgs{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:11px;background:var(--bg);}
+.msg{display:flex;gap:9px;align-items:flex-start;}
+.msg.user{flex-direction:row-reverse;}
+.av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0;}
+.av-ai{background:var(--acc);color:#fff;}
+.av-u{background:#e5e7eb;color:#374151;}
+.bbl{border-radius:12px;padding:9px 12px;font-size:13px;line-height:1.65;max-width:80%;}
+.bbl-ai{background:var(--sur);border:1px solid var(--bor);border-top-left-radius:3px;}
+.bbl-u{background:var(--acc);color:#fff;border-top-right-radius:3px;}
+.typing{display:flex;gap:4px;align-items:center;padding:2px 0;}
+.typing span{width:6px;height:6px;border-radius:50%;background:var(--tx3);animation:bns 1.2s infinite;}
+.typing span:nth-child(2){animation-delay:.2s;}
+.typing span:nth-child(3){animation-delay:.4s;}
+@keyframes bns{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+.chat-bot{padding:10px 14px;border-top:1px solid var(--bor);flex-shrink:0;background:var(--sur);}
+.cin{width:100%;font-size:13px;padding:8px 12px;border:1px solid var(--bor);border-radius:8px;background:var(--bg);color:var(--tx);outline:none;resize:none;font-family:inherit;line-height:1.5;margin-bottom:7px;}
+.cin:focus{border-color:var(--acc);background:#fff;}
+.qps{display:flex;flex-wrap:wrap;gap:5px;}
+.qp{padding:4px 9px;border:1px solid var(--bor);border-radius:99px;font-size:11px;font-weight:500;color:var(--tx2);cursor:pointer;background:var(--sur);font-family:inherit;transition:all .12s;}
+.qp:hover{background:var(--acc-l);color:var(--acc-t);border-color:#c4b5fd;}
+.crow{display:flex;gap:8px;}
+.errmsg{font-size:12px;color:var(--red);margin-top:5px;display:none;}
+.okmsg{font-size:12px;color:var(--grn);margin-top:5px;display:none;}
 /* RETRO */
-.retro-cols { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
-.zone { background: var(--bg); border-radius: var(--radius-sm); padding: 12px; min-height: 140px; border: 1px solid var(--border); }
-.zone-header { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
-.zone-pip { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.zone-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
-.sticky { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 7px 9px; font-size: 12px; line-height: 1.5; margin-bottom: 5px; }
-.add-note { font-size: 12px; color: var(--text-3); cursor: pointer; padding: 4px 0; }
-.add-note:hover { color: var(--accent); }
-.save-bar { display: flex; align-items: center; justify-content: space-between; padding: 11px 18px; border-top: 1px solid var(--border); background: var(--surface); flex-shrink: 0; }
-.save-status { font-size: 12px; color: var(--text-3); display: flex; align-items: center; gap: 7px; }
-.sdot { width: 7px; height: 7px; border-radius: 50%; background: #ddd; }
-.sdot.saving { background: var(--amber); animation: glow 1s infinite; }
-.sdot.saved { background: var(--green); }
-.sdot.error { background: var(--red); }
-
+.timer-strip{display:flex;align-items:center;gap:10px;background:#1e2130;border-radius:8px;padding:8px 14px;margin-bottom:12px;}
+.t-phase{font-size:12px;font-weight:600;color:#fff;min-width:120px;}
+.t-sub{font-size:11px;color:var(--sb-t);flex:1;}
+.t-time{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:#fff;min-width:52px;text-align:right;}
+.t-prog{flex:2;height:4px;background:#3d4266;border-radius:99px;overflow:hidden;}
+.t-fill{height:100%;background:var(--acc);border-radius:99px;transition:width 1s linear;}
+.tbtn{padding:4px 10px;border:1px solid #3d4266;border-radius:6px;background:transparent;color:#c5c8d8;font-size:11px;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.tbtn:hover{background:#1e2130;border-color:var(--acc);}
+.rcols{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;}
+.zone{background:var(--bg);border-radius:var(--rs);padding:10px;min-height:130px;border:1px solid var(--bor);}
+.zh{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
+.zp{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.zl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
+.sticky{background:var(--sur);border:1px solid var(--bor);border-radius:var(--rs);padding:6px 8px;font-size:12px;line-height:1.5;margin-bottom:4px;display:flex;align-items:flex-start;gap:5px;}
+.st-t{flex:1;}
+.vbtn{font-size:10px;color:var(--tx3);cursor:pointer;padding:1px 5px;border-radius:4px;border:1px solid transparent;white-space:nowrap;}
+.vbtn:hover{background:var(--acc-l);color:var(--acc-t);}
+.vcnt{font-size:10px;font-weight:600;color:var(--acc-t);background:var(--acc-l);padding:1px 5px;border-radius:99px;}
+.an{font-size:12px;color:var(--tx3);cursor:pointer;padding:3px 0;}
+.an:hover{color:var(--acc);}
+.save-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 15px;border-top:1px solid var(--bor);background:var(--sur);flex-shrink:0;}
+.ss{font-size:12px;color:var(--tx3);display:flex;align-items:center;gap:6px;}
+.sd{width:7px;height:7px;border-radius:50%;background:#ddd;}
+.sd.saving{background:var(--amb);animation:glow 1s infinite;}
+.sd.saved{background:var(--grn);}
+.sd.error{background:var(--red);}
 /* ACTIONS */
-.action-item { display: flex; gap: 11px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--border); }
-.action-item:last-child { border-bottom: none; }
-.chk { width: 18px; height: 18px; border: 1.5px solid #d1d5db; border-radius: 5px; flex-shrink: 0; cursor: pointer; margin-top: 2px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
-.chk:hover { border-color: var(--accent); }
-.chk.done { background: var(--green); border-color: var(--green); }
-.action-body { flex: 1; min-width: 0; }
-.at { font-size: 13px; line-height: 1.5; }
-.at.struck { text-decoration: line-through; color: var(--text-3); }
-.am { font-size: 11px; color: var(--text-3); margin-top: 2px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.overdue-tag { background: var(--red-light); color: var(--red-text); padding: 1px 6px; border-radius: 99px; font-size: 10px; font-weight: 600; }
-.pbar { height: 4px; background: var(--bg); border-radius: 99px; overflow: hidden; margin: 6px 0; }
-.pfill { height: 100%; background: var(--green); border-radius: 99px; transition: width 0.4s; }
-.add-action-form { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; padding-top: 14px; border-top: 1px solid var(--border); }
-.add-action-row { display: flex; gap: 8px; }
-.add-action-row input, .add-action-row select { flex: 1; font-size: 12px; padding: 7px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--text); outline: none; font-family: inherit; }
-.add-action-row input:focus, .add-action-row select:focus { border-color: var(--accent); background: #fff; }
-
+.ai{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--bor);}
+.ai:last-child{border-bottom:none;}
+.chk{width:18px;height:18px;border:1.5px solid #d1d5db;border-radius:5px;flex-shrink:0;cursor:pointer;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.chk:hover{border-color:var(--acc);}
+.chk.done{background:var(--grn);border-color:var(--grn);}
+.ab{flex:1;min-width:0;}
+.at2{font-size:13px;line-height:1.5;}
+.at2.stk{text-decoration:line-through;color:var(--tx3);}
+.am2{font-size:11px;color:var(--tx3);margin-top:2px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.otag{background:var(--red-l);color:var(--red-t);padding:1px 6px;border-radius:99px;font-size:10px;font-weight:600;}
+.pbar{height:4px;background:var(--bg);border-radius:99px;overflow:hidden;margin:5px 0;}
+.pfill{height:100%;background:var(--grn);border-radius:99px;transition:width .4s;}
+.mom-bar{display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--bor);border-radius:var(--rs);padding:10px 14px;margin-bottom:12px;}
+.mom-v{font-size:22px;font-weight:600;}
+.add-af{margin-top:12px;display:flex;flex-direction:column;gap:7px;padding-top:12px;border-top:1px solid var(--bor);}
+.ar{display:flex;gap:7px;}
+.fi{flex:1;font-size:12px;padding:7px 10px;border:1px solid var(--bor);border-radius:var(--rs);background:var(--bg);color:var(--tx);outline:none;font-family:inherit;}
+.fi:focus{border-color:var(--acc);background:#fff;}
 /* PULSE */
-.pulse-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 16px; }
-.pulse-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
-.pulse-q { font-size: 12px; font-weight: 500; margin-bottom: 10px; color: var(--text-2); }
-.pulse-scale { display: flex; gap: 6px; }
-.pnum { width: 34px; height: 34px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.12s; color: var(--text-2); background: var(--surface); }
-.pnum:hover { border-color: var(--accent); color: var(--accent); }
-.pnum.sel { background: var(--accent); color: #fff; border-color: var(--accent); }
-.trend-chart { display: flex; align-items: flex-end; gap: 6px; height: 60px; padding: 0 4px; }
-.trend-bar { flex: 1; border-radius: 3px 3px 0 0; background: var(--accent-light); position: relative; min-height: 4px; transition: height 0.3s; }
-.trend-bar.current { background: var(--accent); }
-.trend-label { font-size: 10px; color: var(--text-3); text-align: center; margin-top: 4px; }
-.trend-week { display: flex; flex-direction: column; align-items: center; flex: 1; }
-.member-select { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
-.member-btn { padding: 5px 12px; border: 1.5px solid var(--border); border-radius: 99px; font-size: 12px; font-weight: 500; cursor: pointer; background: var(--surface); color: var(--text-2); font-family: inherit; transition: all 0.12s; }
-.member-btn:hover { border-color: var(--accent); color: var(--accent); }
-.member-btn.sel { background: var(--accent); color: #fff; border-color: var(--accent); }
-
+.pg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.pc2{background:var(--bg);border:1px solid var(--bor);border-radius:var(--r);padding:12px;}
+.pq{font-size:12px;font-weight:500;margin-bottom:8px;color:var(--tx2);}
+.psc{display:flex;gap:5px;}
+.pn{width:34px;height:34px;border:1.5px solid var(--bor);border-radius:var(--rs);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;cursor:pointer;transition:all .12s;color:var(--tx2);background:var(--sur);}
+.pn:hover{border-color:var(--acc);color:var(--acc);}
+.pn.sel{background:var(--acc);color:#fff;border-color:var(--acc);}
+.msel{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+.mb2{padding:5px 11px;border:1.5px solid var(--bor);border-radius:99px;font-size:12px;font-weight:500;cursor:pointer;background:var(--sur);color:var(--tx2);font-family:inherit;transition:all .12s;}
+.mb2:hover{border-color:var(--acc);color:var(--acc);}
+.mb2.sel{background:var(--acc);color:#fff;border-color:var(--acc);}
+/* LEARNING */
+.le{padding:9px 0;border-bottom:1px solid var(--bor);}
+.le:last-child{border-bottom:none;}
+.lh{display:flex;align-items:center;gap:7px;margin-bottom:3px;}
+.lt{padding:2px 7px;border-radius:99px;font-size:10px;font-weight:600;}
+.lt-i{background:#ede9ff;color:#3730a3;}
+.lt-e{background:#d1fae5;color:#065f46;}
+.lt-a{background:#dbeafe;color:#1e40af;}
+.lt-t{background:#fef3c7;color:#92400e;}
+.ln{font-size:11px;color:var(--tx3);}
+.lnote{font-size:12px;color:var(--tx2);margin-top:3px;line-height:1.5;}
+/* NORMS */
+.norm{display:flex;gap:9px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--bor);}
+.norm:last-child{border-bottom:none;}
+.nnum{width:22px;height:22px;border-radius:50%;background:var(--acc-l);color:var(--acc-t);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.ntxt{flex:1;font-size:13px;line-height:1.5;}
+.ndel{font-size:14px;color:var(--tx3);cursor:pointer;opacity:.5;}
+.ndel:hover{opacity:1;color:var(--red);}
 /* SETUP */
-.setup-overlay { position: absolute; inset: 0; background: rgba(15,17,23,0.7); display: flex; align-items: center; justify-content: center; z-index: 100; border-radius: 16px; }
-.setup-modal { background: var(--surface); border-radius: 16px; padding: 28px 32px; width: 520px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-.setup-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
-.setup-sub { font-size: 13px; color: var(--text-2); margin-bottom: 24px; }
-.setup-field { margin-bottom: 16px; }
-.setup-label { font-size: 12px; font-weight: 600; color: var(--text-2); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
-.setup-input { width: 100%; font-size: 13px; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg); color: var(--text); outline: none; font-family: inherit; }
-.setup-input:focus { border-color: var(--accent); background: #fff; }
-.setup-hint { font-size: 11px; color: var(--text-3); margin-top: 4px; }
-.member-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-.member-tag { display: flex; align-items: center; gap: 5px; padding: 4px 10px; background: var(--accent-light); color: var(--accent-text); border-radius: 99px; font-size: 12px; font-weight: 500; }
-.member-tag-x { cursor: pointer; font-size: 14px; line-height: 1; opacity: 0.6; }
-.member-tag-x:hover { opacity: 1; }
-
-/* SETTINGS */
-.kv-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; padding: 9px 0; border-bottom: 1px solid var(--border); }
-.kv-row:last-child { border-bottom: none; }
-.kv-label { color: var(--text-2); }
-.log-entry { font-size: 12px; color: var(--text-2); padding: 7px 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
-.log-entry:last-child { border-bottom: none; }
-.ldot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-.prompt-card { font-size: 13px; padding: 10px 12px; background: var(--bg); border-radius: var(--radius-sm); cursor: pointer; border: 1px solid var(--border); color: var(--text-2); transition: all 0.12s; display: flex; align-items: center; justify-content: space-between; }
-.prompt-card:hover { background: var(--accent-light); border-color: #c4b5fd; color: var(--accent-text); }
+.overlay{position:absolute;inset:0;background:rgba(15,17,23,.75);display:flex;align-items:center;justify-content:center;z-index:100;border-radius:16px;}
+.modal{background:var(--sur);border-radius:16px;padding:28px 30px;width:520px;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+.mo-t{font-size:20px;font-weight:600;margin-bottom:3px;}
+.mo-s{font-size:13px;color:var(--tx2);margin-bottom:20px;}
+.sf{margin-bottom:14px;}
+.sl{font-size:11px;font-weight:600;color:var(--tx2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;}
+.si{width:100%;font-size:13px;padding:9px 12px;border:1px solid var(--bor);border-radius:var(--rs);background:var(--bg);color:var(--tx);outline:none;font-family:inherit;}
+.si:focus{border-color:var(--acc);background:#fff;}
+.sh{font-size:11px;color:var(--tx3);margin-top:3px;}
+.mtags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+.mtag{display:flex;align-items:center;gap:5px;padding:4px 10px;background:var(--acc-l);color:var(--acc-t);border-radius:99px;font-size:12px;font-weight:500;}
+.mx{cursor:pointer;font-size:14px;line-height:1;opacity:.6;}
+.mx:hover{opacity:1;}
+/* CELEBRATE */
+.cel-ov{position:absolute;inset:0;background:rgba(15,17,23,.65);display:none;align-items:center;justify-content:center;z-index:200;border-radius:16px;}
+.cel-ov.show{display:flex;}
+.cel-box{background:var(--sur);border-radius:20px;padding:36px 40px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3);max-width:360px;position:relative;z-index:201;}
+.cel-em{font-size:52px;margin-bottom:12px;}
+.cel-t{font-size:20px;font-weight:600;margin-bottom:6px;}
+.cel-s{font-size:14px;color:var(--tx2);line-height:1.6;margin-bottom:20px;}
+.conf{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:16px;}
+.cf{position:absolute;width:8px;height:8px;border-radius:2px;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0);opacity:1;}100%{transform:translateY(780px) rotate(720deg);opacity:0;}}
+/* KV */
+.kv{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:9px 0;border-bottom:1px solid var(--bor);}
+.kv:last-child{border-bottom:none;}
+.kvl{color:var(--tx2);}
+.log-e{font-size:12px;color:var(--tx2);padding:6px 0;border-bottom:1px solid var(--bor);display:flex;align-items:center;gap:8px;}
+.log-e:last-child{border-bottom:none;}
+.ldot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.pc3{font-size:13px;padding:9px 12px;background:var(--bg);border-radius:var(--rs);cursor:pointer;border:1px solid var(--bor);color:var(--tx2);transition:all .12s;display:flex;align-items:center;justify-content:space-between;}
+.pc3:hover{background:var(--acc-l);border-color:#c4b5fd;color:var(--acc-t);}
 </style>
 </head>
 <body>
+<div class="shell" id="shell">
 
-<div class="shell" style="position:relative;" id="shell">
-
-  <!-- SETUP MODAL -->
-  <div class="setup-overlay" id="setup-overlay">
-    <div class="setup-modal">
-      <div class="setup-title">Welcome to Team Facilitator</div>
-      <div class="setup-sub">Tell me about your team — I'll use this to personalise every session.</div>
-      <div class="setup-field">
-        <div class="setup-label">Team name</div>
-        <input class="setup-input" id="s-teamname" placeholder="e.g. Platform Team, Squad Alpha…">
-      </div>
-      <div class="setup-field">
-        <div class="setup-label">Team members</div>
-        <div style="display:flex;gap:8px;">
-          <input class="setup-input" id="s-member-in" placeholder="Type a name and press Enter…" onkeydown="addMember(event)" style="flex:1;">
-        </div>
-        <div class="member-tags" id="member-tags"></div>
-        <div class="setup-hint">Add each team member's name. This helps with action ownership and pulse tracking.</div>
-      </div>
-      <div class="setup-field">
-        <div class="setup-label">Current team focus</div>
-        <input class="setup-input" id="s-focus" placeholder="e.g. Launch v2.0, improve code review speed…">
-      </div>
-      <div class="setup-field">
-        <div class="setup-label">Slack webhook URL (optional)</div>
-        <input class="setup-input" id="s-slack" placeholder="https://hooks.slack.com/services/…">
-        <div class="setup-hint">For weekly action digests and retro reminders sent to your channel.</div>
-      </div>
-      <div style="display:flex;gap:10px;margin-top:8px;">
-        <button class="btn btn-primary" onclick="saveSetup()" style="flex:1;padding:10px;">Save & get started</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <div class="sidebar-header">
-      <div class="brand-row">
-        <div class="brand-icon">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3.5l2 2"/></svg>
-        </div>
-        <div>
-          <div class="brand-name" id="nav-teamname">Facilitator</div>
-          <div class="brand-sub">Kanban · AI powered</div>
-        </div>
-      </div>
-    </div>
-    <div class="nav">
-      <div class="nav-section">Overview</div>
-      <div class="nav-item active" onclick="go('home',this)">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="5" height="5" rx="1.5"/><rect x="8" y="1" width="5" height="5" rx="1.5"/><rect x="1" y="8" width="5" height="5" rx="1.5"/><rect x="8" y="8" width="5" height="5" rx="1.5"/></svg>
-        Dashboard <div class="dot-live"></div>
-      </div>
-      <div class="nav-item" onclick="go('chat',this)">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 9a1.5 1.5 0 01-1.5 1.5H4L2 13V3.5A1.5 1.5 0 013.5 2h7A1.5 1.5 0 0112 3.5V9z"/></svg>
-        Ask facilitator
-      </div>
-      <div class="nav-section">Retrospectives</div>
-      <div class="nav-item" onclick="go('retro',this)">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5.5"/><path d="M7 4v3.5l2 2"/></svg>
-        Run a retro
-      </div>
-      <div class="nav-item" onclick="go('actions',this)">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2.5 7l3 3 6-6"/></svg>
-        Actions <div class="dot-amber" id="overdue-dot" style="display:none;"></div>
-      </div>
-      <div class="nav-section">Team health</div>
-      <div class="nav-item" onclick="go('pulse',this)">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 7h2.5l2-4 2.5 7 2-6L12 7h1"/></svg>
-        Pulse check <div class="dot-blue"></div>
-      </div>
-      <div class="nav-section">Integrations</div>
-      <div class="nav-item" onclick="go('settings',this)">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="2.5"/><path d="M7 1v1.5M7 11.5V13M1 7h1.5M11.5 7H13M2.6 2.6l1 1M10.4 10.4l1 1M11.4 2.6l-1 1M3.6 10.4l-1 1"/></svg>
-        Settings & Notion
-      </div>
-    </div>
-    <div class="sidebar-footer">
-      <div class="status-row"><div class="status-pip"></div>All systems live</div>
-    </div>
-  </div>
-
-  <!-- MAIN -->
-  <div class="main">
-    <div class="topbar">
-      <div>
-        <div class="topbar-title" id="ttitle">Team dashboard</div>
-        <div class="topbar-meta" id="tmeta">AI + Notion connected</div>
-      </div>
-      <div class="badges">
-        <span class="badge b-gray">Kanban</span>
-        <span class="badge b-accent">AI live</span>
-        <span class="badge b-blue">Notion</span>
-        <button class="btn btn-sm" onclick="go('setup-screen',null)" style="font-size:10px;padding:3px 8px;margin-left:4px;">⚙ Team setup</button>
-      </div>
-    </div>
-
-    <div class="content">
-
-      <!-- DASHBOARD -->
-      <div id="p-home" class="panel visible">
-        <div class="scroll">
-          <div class="metrics">
-            <div class="metric m-accent"><div class="metric-label">Retros run</div><div class="metric-val" id="m-retros">0</div><div class="metric-sub" id="m-retros-sub">this quarter</div></div>
-            <div class="metric m-green"><div class="metric-label">Actions resolved</div><div class="metric-val" id="m-resolved">—</div><div class="metric-sub up" id="m-resolved-sub">no actions yet</div></div>
-            <div class="metric m-amber"><div class="metric-label">Team pulse</div><div class="metric-val" id="m-pulse">—</div><div class="metric-sub" id="m-pulse-sub">no data yet</div></div>
-            <div class="metric m-blue"><div class="metric-label">Open actions</div><div class="metric-val" id="m-open">0</div><div class="metric-sub warn" id="m-overdue-sub">0 overdue</div></div>
-          </div>
-          <div class="card">
-            <div class="card-title">Facilitator insights</div>
-            <div id="insights-list"></div>
-            <div style="display:flex;gap:8px;margin-top:16px;">
-              <button class="btn btn-primary btn-sm" onclick="go('retro',null)">Start a retro</button>
-              <button class="btn btn-sm" onclick="go('chat',null)">Ask facilitator ↗</button>
-              <button class="btn btn-sm" onclick="go('pulse',null)">Team pulse ↗</button>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-title">Recent improvement themes</div>
-            <div id="theme-tags" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- CHAT -->
-      <div id="p-chat" class="panel">
-        <div class="chat-wrap">
-          <div class="chat-meta">
-            <span id="chat-context-line">Kanban · AI live</span>
-            <div style="display:flex;gap:4px;"><span class="badge b-accent" style="font-size:10px;">AI live</span><span class="badge b-blue" style="font-size:10px;">Notion</span></div>
-          </div>
-          <div class="messages" id="msgs">
-            <div class="msg">
-              <div class="av av-ai">AI</div>
-              <div class="bubble bubble-ai" id="welcome-bubble">Hi! I'm your AI team facilitator. Complete the team setup to get started with a personalised experience.</div>
-            </div>
-          </div>
-          <div class="chat-foot">
-            <div class="input-row">
-              <textarea class="chat-in" id="cin" rows="2" placeholder="Ask the facilitator anything…" onkeydown="onKey(event)"></textarea>
-              <button class="btn btn-primary" id="sbtn" onclick="send()" style="align-self:flex-end;">Send</button>
-            </div>
-            <div class="qps">
-              <button class="qp" onclick="qs('I want to run a retrospective for our Kanban team. Can you facilitate it step by step?')">Start a retro ↗</button>
-              <button class="qp" onclick="qs('What retrospective format works best for a Kanban team?')">Best retro format?</button>
-              <button class="qp" onclick="qs('Our team feels stuck. What should we do?')">Team is stuck</button>
-              <button class="qp" onclick="qs('How do we become a high-performing team?')">High performance tips</button>
-              <button class="qp" onclick="qs('Summarise our open action items and tell me which to prioritise.')">Review actions ↗</button>
-            </div>
-            <div class="err" id="cerr"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- RETRO -->
-      <div id="p-retro" class="panel">
-        <div class="scroll">
-          <div class="card">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-              <div class="card-title" style="margin:0;">Retrospective · <span id="rdate" style="font-weight:400;color:var(--text-3);"></span></div>
-              <span class="badge b-gray">What went well / Improve / Actions / Experiments</span>
-            </div>
-            <div class="retro-cols">
-              <div class="zone">
-                <div class="zone-header"><div class="zone-pip" style="background:#10b981;"></div><div class="zone-label" style="color:#065f46;">What went well</div></div>
-                <div id="z-well"></div>
-                <div class="add-note" onclick="addNote('well')">+ Add note</div>
-              </div>
-              <div class="zone">
-                <div class="zone-header"><div class="zone-pip" style="background:#f59e0b;"></div><div class="zone-label" style="color:#92400e;">What to improve</div></div>
-                <div id="z-improve"></div>
-                <div class="add-note" onclick="addNote('improve')">+ Add note</div>
-              </div>
-              <div class="zone">
-                <div class="zone-header"><div class="zone-pip" style="background:#3b82f6;"></div><div class="zone-label" style="color:#1e40af;">Action items</div></div>
-                <div id="z-actions"></div>
-                <div class="add-note" onclick="addNote('actions')">+ Add note</div>
-              </div>
-              <div class="zone">
-                <div class="zone-header"><div class="zone-pip" style="background:#6C63FF;"></div><div class="zone-label" style="color:#3730a3;">Experiments</div></div>
-                <div id="z-experiments"></div>
-                <div class="add-note" onclick="addNote('experiments')">+ Add note</div>
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-title">AI-facilitated prompts</div>
-            <div style="display:flex;flex-direction:column;gap:7px;">
-              <div class="prompt-card" onclick="gchat('Our Kanban flow felt blocked last cycle. Help me facilitate a team discussion to find root causes and experiments we can try.')">Facilitate: flow was blocked last cycle <span>↗</span></div>
-              <div class="prompt-card" onclick="gchat('Generate 5 powerful retrospective questions for a Kanban team focused on improving flow and reducing bottlenecks.')">Generate retro questions for our team <span>↗</span></div>
-              <div class="prompt-card" onclick="gchat('Summarise our retrospective notes and suggest the top 3 action items we should commit to.')">AI summarise & suggest actions <span>↗</span></div>
-            </div>
-          </div>
-        </div>
-        <div class="save-bar">
-          <div class="save-status"><div class="sdot" id="sdot"></div><span id="slabel">Not yet saved</span></div>
-          <div style="display:flex;gap:8px;">
-            <button class="btn btn-sm" onclick="gchat('Summarise our retrospective notes and suggest the top 3 action items.')">AI summarise ↗</button>
-            <button class="btn btn-notion btn-sm" id="savebtn" onclick="saveNotion()">Save to Notion</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ACTIONS -->
-      <div id="p-actions" class="panel">
-        <div class="scroll">
-          <div class="card">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-              <div class="card-title" style="margin:0;">Improvement actions</div>
-              <div style="display:flex;gap:6px;align-items:center;">
-                <span class="badge b-red" id="overdue-badge" style="display:none;">0 overdue</span>
-                <button class="btn btn-slack btn-sm" onclick="sendSlackDigest()">Send Slack digest</button>
-              </div>
-            </div>
-            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-3);margin-bottom:4px;"><span>Progress</span><span id="progress-label">0 of 0</span></div>
-            <div class="pbar"><div class="pfill" id="pfill" style="width:0%;"></div></div>
-            <div id="alist" style="margin-top:8px;"></div>
-            <div class="add-action-form">
-              <div class="add-action-row">
-                <input type="text" id="newin" placeholder="Action item description…" style="flex:2;">
-                <select id="new-owner">
-                  <option value="">Assign to…</option>
-                </select>
-                <input type="date" id="new-due" style="flex:1;">
-              </div>
-              <button class="btn btn-primary btn-sm" onclick="addA()" style="align-self:flex-start;">Add action</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- PULSE -->
-      <div id="p-pulse" class="panel">
-        <div class="scroll">
-          <div class="card">
-            <div class="card-title">Weekly pulse check</div>
-            <div style="font-size:13px;color:var(--text-2);margin-bottom:14px;">Who is submitting this week's pulse?</div>
-            <div class="member-select" id="pulse-member-sel"></div>
-            <div class="pulse-grid">
-              <div class="pulse-card">
-                <div class="pulse-q">Energy & motivation this week</div>
-                <div class="pulse-scale" id="ps-energy"></div>
-              </div>
-              <div class="pulse-card">
-                <div class="pulse-q">Clarity on what to work on</div>
-                <div class="pulse-scale" id="ps-clarity"></div>
-              </div>
-              <div class="pulse-card">
-                <div class="pulse-q">Team collaboration quality</div>
-                <div class="pulse-scale" id="ps-collab"></div>
-              </div>
-            </div>
-            <button class="btn btn-primary btn-sm" onclick="submitPulse()">Submit pulse</button>
-            <div class="ok-msg" id="pulse-ok">Thanks! Pulse recorded.</div>
-          </div>
-          <div class="card">
-            <div class="card-title">Team pulse trend</div>
-            <div id="pulse-trend-wrap">
-              <div style="font-size:13px;color:var(--text-3);text-align:center;padding:20px 0;">No pulse data yet. Submit your first pulse above.</div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-title">Latest scores by member</div>
-            <div id="pulse-member-scores">
-              <div style="font-size:13px;color:var(--text-3);text-align:center;padding:16px 0;">No scores recorded yet.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SETTINGS -->
-      <div id="p-settings" class="panel">
-        <div class="scroll">
-          <div class="card">
-            <div class="card-title">Notion connection</div>
-            <div class="kv-row"><span class="kv-label">Proxy</span><span style="font-family:'DM Mono',monospace;font-size:11px;" id="proxy-display">—</span></div>
-            <div class="kv-row"><span class="kv-label">Database</span><span style="font-weight:500;">Retrospectives</span></div>
-            <div class="kv-row"><span class="kv-label">Last saved</span><span id="nlast">Never</span></div>
-            <div style="margin-top:14px;display:flex;gap:8px;">
-              <button class="btn btn-notion btn-sm" onclick="testNotion()">Test connection</button>
-            </div>
-            <div class="err" id="nterr"></div>
-            <div class="ok-msg" id="ntok"></div>
-          </div>
-          <div class="card">
-            <div class="card-title">Retro save log</div>
-            <div id="nlog"><div style="font-size:13px;color:var(--text-3);text-align:center;padding:16px 0;">No retros saved yet.</div></div>
-          </div>
-          <div class="card">
-            <div class="card-title">Slack integration</div>
-            <div style="font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:12px;">Send weekly digests with open actions and overdue items to your team channel.</div>
-            <div style="display:flex;gap:8px;">
-              <input type="text" id="slackin" placeholder="https://hooks.slack.com/services/…" style="flex:1;font-size:12px;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);outline:none;font-family:inherit;">
-              <button class="btn btn-sm btn-primary" onclick="saveSlack()">Save</button>
-            </div>
-            <div class="ok-msg" id="slackok">Slack webhook saved.</div>
-            <div style="margin-top:10px;">
-              <button class="btn btn-slack btn-sm" onclick="sendSlackDigest()">Send digest now</button>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-title">Reset team data</div>
-            <div style="font-size:13px;color:var(--text-2);margin-bottom:12px;">Clear all stored data and restart team setup.</div>
-            <button class="btn btn-red btn-sm" onclick="resetAll()">Reset everything</button>
-          </div>
-        </div>
-      </div>
-
-    </div>
+<!-- CELEBRATE -->
+<div class="cel-ov" id="celOv">
+  <div class="conf" id="conf"></div>
+  <div class="cel-box">
+    <div class="cel-em" id="celEm">🎉</div>
+    <div class="cel-t" id="celTi">Nice work!</div>
+    <div class="cel-s" id="celSu">Keep it up.</div>
+    <button class="btn bp" onclick="closeCel()">Thanks! ✓</button>
   </div>
 </div>
 
-<script>
-const PROXY = 'https://team-facilitator-proxy-production.up.railway.app';
-const NOTION_DB = '327617cd5ec180e6a2a2d8103cc44a88';
+<!-- SETUP -->
+<div class="overlay" id="setupOv">
+  <div class="modal">
+    <div class="mo-t">Welcome to Team Facilitator</div>
+    <div class="mo-s">Tell me about your team — I'll personalise every session.</div>
+    <div class="sf"><div class="sl">Team name</div><input class="si" id="sName" placeholder="e.g. Platform Team…"></div>
+    <div class="sf"><div class="sl">Team members</div><input class="si" id="sMIn" placeholder="Type a name and press Enter…" onkeydown="addM(event)"><div class="mtags" id="mTags"></div><div class="sh">Used for action ownership and pulse tracking.</div></div>
+    <div class="sf"><div class="sl">Current focus</div><input class="si" id="sFocus" placeholder="e.g. Launch v2.0, improve code review…"></div>
+    <div class="sf"><div class="sl">Slack webhook (optional)</div><input class="si" id="sSlack" placeholder="https://hooks.slack.com/services/…"><div class="sh">For weekly digests and retro reminders.</div></div>
+    <button class="btn bp" onclick="doSetup()" style="width:100%;padding:10px;margin-top:4px;">Save & get started</button>
+  </div>
+</div>
 
-// ── STATE ─────────────────────────────────────────────────────
-let S = loadState();
+<!-- SIDEBAR -->
+<div class="sb">
+  <div class="sb-head">
+    <div class="br-row"><div class="br-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3.5l2 2"/></svg></div><div><div class="br-name" id="navName">Facilitator</div><div class="br-sub">Kanban · AI powered</div></div></div>
+    <div class="streak-pill"><span style="font-size:14px;">🔥</span><span class="streak-val" id="strkV">0</span><span class="streak-lbl">week streak</span></div>
+  </div>
+  <div class="nav">
+    <div class="ns">Overview</div>
+    <div class="ni active" onclick="go('home',this)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="5" height="5" rx="1.5"/><rect x="8" y="1" width="5" height="5" rx="1.5"/><rect x="1" y="8" width="5" height="5" rx="1.5"/><rect x="8" y="8" width="5" height="5" rx="1.5"/></svg>Dashboard<div class="dot-g"></div></div>
+    <div class="ni" onclick="go('chat',this)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 9a1.5 1.5 0 01-1.5 1.5H4L2 13V3.5A1.5 1.5 0 013.5 2h7A1.5 1.5 0 0112 3.5V9z"/></svg>Ask facilitator</div>
+    <div class="ns">Retrospectives</div>
+    <div class="ni" onclick="go('retro',this)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5.5"/><path d="M7 4v3.5l2 2"/></svg>Run a retro</div>
+    <div class="ni" onclick="go('actions',this)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2.5 7l3 3 6-6"/></svg>Actions<div class="dot-a" id="odDot" style="display:none;"></div></div>
+    <div class="ns">Team health</div>
+    <div class="ni" onclick="go('pulse',this)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 7h2.5l2-4 2.5 7 2-6L12 7h1"/></svg>Pulse check<div class="dot-b"></div></div>
+    <div class="ns">Team space</div>
+    <div class="ni" onclick="go('learning',this)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 1.5L1.5 4.5v5L7 12.5l5.5-3v-5L7 1.5z"/><path d="M7 1.5v11M1.5 4.5l5.5 3 5.5-3"/></svg>Learning log</div>
+    <div class="ni" onclick="go('norms',this)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="1.5" width="10" height="11" rx="1.5"/><path d="M4.5 5h5M4.5 7.5h5M4.5 10h3"/></svg>Team norms</div>
+    <div class="ns">Integrations</div>
+    <div class="ni" onclick="go('settings',this)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="2.5"/><path d="M7 1v1.5M7 11.5V13M1 7h1.5M11.5 7H13M2.6 2.6l1 1M10.4 10.4l1 1M11.4 2.6l-1 1M3.6 10.4l-1 1"/></svg>Settings</div>
+  </div>
+  <div class="sb-foot"><div class="st-pip"></div>All systems live · <button class="btn bxs" onclick="showSetup()" style="margin-left:4px;background:transparent;border-color:#3d4266;color:var(--sb-t);padding:2px 7px;">⚙</button></div>
+</div>
 
-function defaultState() {
-  return {
-    team: { name: '', members: [], focus: '', slack: '' },
-    retros: [],
-    actions: [],
-    pulse: [],
-    setupDone: false,
-    currentRetroNotes: { well: [], improve: [], actions: [], experiments: [] }
-  };
-}
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div><div class="tb-t" id="ttl">Team dashboard</div><div class="tb-m" id="tmt">AI + Notion connected</div></div>
+    <div class="badges"><span class="badge b-gray">Kanban</span><span class="badge b-acc">AI live</span><span class="badge b-blu">Notion</span></div>
+  </div>
+  <div class="content">
 
-function loadState() {
-  try {
-    const saved = JSON.parse(localStorage.getItem('tf-state-v3'));
-    if (!saved) return defaultState();
-    // Migrate: ensure all retro note columns exist
-    if (!saved.currentRetroNotes) saved.currentRetroNotes = { well:[], improve:[], actions:[], experiments:[] };
-    if (!saved.currentRetroNotes.experiments) saved.currentRetroNotes.experiments = [];
-    if (!saved.currentRetroNotes.well) saved.currentRetroNotes.well = [];
-    if (!saved.currentRetroNotes.improve) saved.currentRetroNotes.improve = [];
-    if (!saved.currentRetroNotes.actions) saved.currentRetroNotes.actions = [];
-    return saved;
-  } catch(e) { return defaultState(); }
-}
-
-function saveState() {
-  localStorage.setItem('tf-state-v3', JSON.stringify(S));
-}
-
-// ── SETUP ─────────────────────────────────────────────────────
-let setupMembers = [];
-
-function addMember(e) {
-  if (e.key !== 'Enter') return;
-  const inp = document.getElementById('s-member-in');
-  const name = inp.value.trim(); if (!name) return;
-  if (!setupMembers.includes(name)) {
-    setupMembers.push(name);
-    renderSetupMembers();
-  }
-  inp.value = '';
-}
-
-function renderSetupMembers() {
-  document.getElementById('member-tags').innerHTML = setupMembers.map((m,i) =>
-    `<div class="member-tag">${m}<span class="member-tag-x" onclick="setupMembers.splice(${i},1);renderSetupMembers()">×</span></div>`
-  ).join('');
-}
-
-function saveSetup() {
-  const name = document.getElementById('s-teamname').value.trim();
-  const focus = document.getElementById('s-focus').value.trim();
-  const slack = document.getElementById('s-slack').value.trim();
-  if (!name) { alert('Please enter a team name.'); return; }
-  S.team = { name, members: [...setupMembers], focus, slack };
-  S.setupDone = true;
-  saveState();
-  document.getElementById('setup-overlay').style.display = 'none';
-  initApp();
-}
-
-// ── INIT ──────────────────────────────────────────────────────
-function initApp() {
-  const t = S.team;
-  document.getElementById('nav-teamname').textContent = t.name || 'Facilitator';
-  document.getElementById('proxy-display').textContent = PROXY.replace('https://','');
-  if (t.slack) document.getElementById('slackin').value = t.slack;
-
-  // Pre-fill setup fields if returning
-  if (S.setupDone) {
-    document.getElementById('s-teamname').value = t.name;
-    document.getElementById('s-focus').value = t.focus;
-    document.getElementById('s-slack').value = t.slack;
-    setupMembers = [...t.members];
-    renderSetupMembers();
-    document.getElementById('setup-overlay').style.display = 'none';
-  }
-
-  // Populate owner dropdowns
-  const sel = document.getElementById('new-owner');
-  sel.innerHTML = '<option value="">Assign to…</option>';
-  t.members.forEach(m => { const o = document.createElement('option'); o.value = m; o.textContent = m; sel.appendChild(o); });
-
-  // Pulse member buttons
-  renderPulseMemberSel();
-
-  // Retro date
-  document.getElementById('rdate').textContent = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
-
-  // Render current retro notes
-  ['well','improve','actions','experiments'].forEach(z => renderNotes(z));
-
-  // Refresh all panels
-  refreshDashboard();
-  refreshActions();
-  refreshPulse();
-
-  // Welcome message
-  if (t.name) {
-    document.getElementById('welcome-bubble').innerHTML =
-      `Hi! I'm your AI team facilitator for <strong>${t.name}</strong>. ${t.focus ? 'I know your current focus is: <em>'+t.focus+'</em>.' : ''}<br><br>I can run retrospectives, track your improvement actions, and help the team grow. What would you like to work on?`;
-    document.getElementById('chat-context-line').textContent = `${t.name} · Kanban · ${t.members.length} members`;
-  }
-}
-
-// ── NAVIGATION ────────────────────────────────────────────────
-const TITLES = {home:'Team dashboard',chat:'Ask the facilitator',retro:'Run a retrospective',actions:'Improvement actions',pulse:'Team pulse',settings:'Settings & integrations'};
-const METAS = {home:'AI + Notion connected',chat:'Powered by Claude',retro:'Auto-saves to Notion',actions:'Track ownership & due dates',pulse:'Weekly team health check',settings:'Notion, Slack, team data'};
-
-function go(id, el) {
-  ['home','chat','retro','actions','pulse','settings'].forEach(p => {
-    const el = document.getElementById('p-'+p); if (el) el.classList.remove('visible');
-  });
-  const panel = document.getElementById('p-'+id);
-  if (panel) panel.classList.add('visible');
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  if (el) el.classList.add('active');
-  else {
-    const map = {home:0,chat:1,retro:2,actions:3,pulse:4,settings:5};
-    document.querySelectorAll('.nav-item')[map[id]]?.classList.add('active');
-  }
-  document.getElementById('ttitle').textContent = TITLES[id]||id;
-  document.getElementById('tmeta').textContent = METAS[id]||'';
-}
-
-// ── DASHBOARD ─────────────────────────────────────────────────
-function refreshDashboard() {
-  // Metrics
-  const retros = S.retros.length;
-  const actions = S.actions;
-  const done = actions.filter(a => a.done).length;
-  const open = actions.filter(a => !a.done).length;
-  const overdue = actions.filter(a => !a.done && a.due && new Date(a.due) < new Date()).length;
-  const pct = actions.length ? Math.round(done/actions.length*100) : null;
-
-  document.getElementById('m-retros').textContent = retros;
-  document.getElementById('m-resolved').textContent = pct !== null ? pct+'%' : '—';
-  document.getElementById('m-resolved-sub').textContent = pct !== null ? (pct > 70 ? 'on track' : 'needs attention') : 'no actions yet';
-  document.getElementById('m-open').textContent = open;
-  document.getElementById('m-overdue-sub').textContent = overdue + ' overdue';
-
-  // Pulse avg
-  if (S.pulse.length) {
-    const recent = S.pulse.slice(-10);
-    const avg = (recent.reduce((s,p) => s + (p.energy+p.clarity+p.collab)/3, 0) / recent.length).toFixed(1);
-    document.getElementById('m-pulse').textContent = avg;
-    document.getElementById('m-pulse-sub').textContent = 'avg last ' + recent.length + ' entries';
-  }
-
-  // Overdue dot
-  document.getElementById('overdue-dot').style.display = overdue > 0 ? 'block' : 'none';
-
-  // Insights
-  const insights = [];
-  const daysSince = S.retros.length ? Math.floor((Date.now() - new Date(S.retros[S.retros.length-1].date)) / 86400000) : 999;
-  if (daysSince > 13) insights.push({color:'#f59e0b',bg:'#fef3c7',text:`No retro in <strong>${daysSince === 999 ? 'a while' : daysSince+' days'}</strong> — bi-weekly retros are the heartbeat of a Kanban team.`});
-  if (overdue > 0) insights.push({color:'#ef4444',bg:'#fee2e2',text:`<strong>${overdue} action${overdue>1?'s':''}</strong> ${overdue>1?'are':'is'} overdue. Review before your next retro.`});
-  if (S.pulse.length) {
-    const last = S.pulse[S.pulse.length-1];
-    const avg = (last.energy+last.clarity+last.collab)/3;
-    if (avg < 3) insights.push({color:'#ef4444',bg:'#fee2e2',text:`Latest pulse score is <strong>${avg.toFixed(1)}/5</strong> — the team may need support. Consider a check-in.`});
-    else if (avg >= 4) insights.push({color:'#10b981',bg:'#d1fae5',text:`Latest pulse score is <strong>${avg.toFixed(1)}/5</strong> — great energy this week!`});
-  }
-  if (!insights.length) insights.push({color:'#10b981',bg:'#d1fae5',text:'Everything looks good! Keep the momentum going.'});
-
-  document.getElementById('insights-list').innerHTML = insights.map(i =>
-    `<div style="display:flex;gap:12px;font-size:13px;line-height:1.6;padding:8px 0;border-bottom:1px solid var(--border);">
-      <div style="width:28px;height:28px;border-radius:7px;background:${i.bg};flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;">
-        <div style="width:8px;height:8px;border-radius:50%;background:${i.color};"></div>
+    <!-- HOME -->
+    <div id="p-home" class="panel visible"><div class="scroll">
+      <div class="metrics">
+        <div class="metric m-a"><div class="ml">Retros run</div><div class="mv" id="mRet">0</div><div class="ms" id="mRetS">this quarter</div></div>
+        <div class="metric m-g"><div class="ml">Actions resolved</div><div class="mv" id="mRes">—</div><div class="ms up" id="mResS">no actions yet</div></div>
+        <div class="metric m-am"><div class="ml">Team pulse</div><div class="mv" id="mPul">—</div><div class="ms" id="mPulS">no data yet</div></div>
+        <div class="metric m-b"><div class="ml">Momentum</div><div class="mv" id="mMom">—</div><div class="ms" id="mMomS">actions this week</div></div>
       </div>
-      <div>${i.text}</div>
-    </div>`
-  ).join('') + '<div style="padding-bottom:2px"></div>';
-
-  // Themes from retros
-  const themes = S.retros.flatMap(r => r.improve || []).slice(-8);
-  const themeColors = ['b-green','b-amber','b-blue','b-accent'];
-  document.getElementById('theme-tags').innerHTML = themes.length
-    ? themes.slice(0,6).map((t,i) => `<span class="badge ${themeColors[i%4]}">${t.substring(0,40)}</span>`).join('')
-    : '<span style="font-size:13px;color:var(--text-3);">Run your first retro to see themes here.</span>';
-}
-
-// ── RETRO NOTES ───────────────────────────────────────────────
-function renderNotes(z) {
-  const el = document.getElementById('z-'+z);
-  if (!el) return;
-  el.innerHTML = (S.currentRetroNotes[z]||[]).map(t=>`<div class="sticky">${t}</div>`).join('');
-}
-
-function addNote(z) {
-  const t = prompt('Add a note:'); if (!t?.trim()) return;
-  if (!S.currentRetroNotes[z]) S.currentRetroNotes[z] = [];
-  S.currentRetroNotes[z].push(t.trim());
-  saveState(); renderNotes(z);
-}
-
-// ── SAVE TO NOTION ────────────────────────────────────────────
-function setSave(state, label) {
-  document.getElementById('sdot').className = 'sdot'+(state?' '+state:'');
-  document.getElementById('slabel').textContent = label;
-}
-
-async function saveNotion() {
-  document.getElementById('savebtn').disabled = true;
-  setSave('saving','Saving to Notion…');
-  const n = S.currentRetroNotes;
-  const retroNum = S.retros.length + 1;
-  const dateStr = new Date().toISOString().split('T')[0];
-  const title = `Retro #${retroNum} · ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`;
-  try {
-    const res = await fetch(PROXY+'/notion/pages', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        parent:{database_id:NOTION_DB},
-        properties:{
-          Name:{title:[{text:{content:title}}]},
-          Date:{date:{start:dateStr}},
-          'What went well':{rich_text:[{text:{content:(n.well||[]).join(' · ')||'—'}}]},
-          Improve:{rich_text:[{text:{content:(n.improve||[]).join(' · ')||'—'}}]},
-          Actions:{rich_text:[{text:{content:(n.actions||[]).join(' · ')||'—'}}]}
-        }
-      })
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message||'Notion error');
-
-    // Save retro to local state
-    S.retros.push({ date: new Date().toISOString(), title, well: n.well, improve: n.improve, actions: n.actions, experiments: n.experiments });
-    S.currentRetroNotes = { well:[], improve:[], actions:[], experiments:[] };
-    saveState();
-
-    const now = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-    setSave('saved','Saved · '+now);
-    document.getElementById('nlast').textContent = now;
-
-    // Add to log
-    const log = document.getElementById('nlog'); log.innerHTML = '';
-    S.retros.slice().reverse().forEach(r => {
-      const d = document.createElement('div'); d.className='log-entry';
-      d.innerHTML=`<div class="ldot" style="background:var(--green)"></div><span style="flex:1">${r.title}</span><span style="color:var(--text-3)">${new Date(r.date).toLocaleDateString('en-GB')}</span>`;
-      log.appendChild(d);
-    });
-
-    refreshDashboard();
-    ['well','improve','actions','experiments'].forEach(z => renderNotes(z));
-  } catch(e) { setSave('error','Save failed: '+e.message); }
-  document.getElementById('savebtn').disabled=false;
-}
-
-async function testNotion() {
-  const err=document.getElementById('nterr'), ok=document.getElementById('ntok');
-  err.style.display='none'; ok.style.display='none';
-  try {
-    const res = await fetch(PROXY+'/notion/test/'+NOTION_DB);
-    const data = await res.json();
-    if (data.ok) { ok.textContent='Connected! Database: "'+data.title+'"'; ok.style.display='block'; }
-    else throw new Error(data.message||'Failed');
-  } catch(e) { err.textContent='Failed: '+e.message; err.style.display='block'; }
-}
-
-// ── ACTIONS ───────────────────────────────────────────────────
-function refreshActions() {
-  const list = document.getElementById('alist');
-  const actions = S.actions;
-  const done = actions.filter(a=>a.done).length;
-  const overdue = actions.filter(a=>!a.done&&a.due&&new Date(a.due)<new Date()).length;
-
-  document.getElementById('progress-label').textContent = `${done} of ${actions.length}`;
-  document.getElementById('pfill').style.width = actions.length ? Math.round(done/actions.length*100)+'%' : '0%';
-
-  const badge = document.getElementById('overdue-badge');
-  if (overdue > 0) { badge.style.display='inline-flex'; badge.textContent=overdue+' overdue'; }
-  else badge.style.display='none';
-
-  if (!actions.length) {
-    list.innerHTML = '<div style="font-size:13px;color:var(--text-3);text-align:center;padding:20px 0;">No actions yet. Add one below or save a retro to import actions.</div>';
-    return;
-  }
-
-  list.innerHTML = '';
-  actions.forEach((a, i) => {
-    const isOverdue = !a.done && a.due && new Date(a.due) < new Date();
-    const d = document.createElement('div'); d.className='action-item';
-    d.innerHTML = `
-      <div class="chk ${a.done?'done':''}" onclick="toggleAction(${i})">
-        ${a.done?'<svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2.5 2.5 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>':''}
+      <div class="card"><div class="ct">Facilitator insights</div><div id="insights"></div><div style="display:flex;gap:8px;margin-top:14px;"><button class="btn bp bs" onclick="go('retro',null)">Start a retro</button><button class="btn bs" onclick="go('chat',null)">Ask facilitator ↗</button><button class="btn bs" onclick="go('pulse',null)">Pulse ↗</button></div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="card"><div class="ct">Improvement themes</div><div id="themes" style="display:flex;flex-wrap:wrap;gap:6px;"></div></div>
+        <div class="card"><div class="ct">Weekly streak</div><div style="display:flex;align-items:center;gap:12px;"><div style="font-size:40px;">🔥</div><div><div style="font-size:28px;font-weight:600;" id="strkBig">0</div><div style="font-size:12px;color:var(--tx2);">consecutive weeks with a retro</div><div style="font-size:11px;color:var(--tx3);margin-top:3px;" id="strkMsg">Run your first retro to start your streak!</div></div></div></div>
       </div>
-      <div class="action-body">
-        <div class="at ${a.done?'struck':''}">${a.text}</div>
-        <div class="am">
-          ${a.retro?`Retro #${a.retro} · `:''}
-          ${a.owner?`<strong>${a.owner}</strong> · `:'Unassigned · '}
-          ${a.due?`Due ${new Date(a.due).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}`:'No due date'}
-          ${isOverdue?'<span class="overdue-tag">Overdue</span>':''}
+    </div></div>
+
+    <!-- CHAT -->
+    <div id="p-chat" class="panel"><div class="chat-wrap">
+      <div class="chat-top"><span id="chatCtx">Kanban · AI live</span><div style="display:flex;gap:4px;"><span class="badge b-acc" style="font-size:10px;">AI live</span><span class="badge b-blu" style="font-size:10px;">Notion</span></div></div>
+      <div class="msgs" id="msgs"><div class="msg"><div class="av av-ai">AI</div><div class="bbl bbl-ai" id="wMsg">Hi! Complete team setup to get your personalised facilitator.</div></div></div>
+      <div class="chat-bot">
+        <div class="crow" style="margin-bottom:7px;"><textarea class="cin" id="cin" rows="2" placeholder="Ask the facilitator anything…" onkeydown="onKey(event)" style="margin:0;flex:1;"></textarea><button class="btn bp bs" id="sbtn" onclick="sendChat()" style="align-self:flex-end;margin-left:8px;">Send</button></div>
+        <div class="qps">
+          <button class="qp" onclick="qs('Give me a pre-retro brief based on our current state, open actions and last retro.')">Pre-retro brief ↗</button>
+          <button class="qp" onclick="qs('Facilitate a retrospective for our Kanban team step by step.')">Start a retro ↗</button>
+          <button class="qp" onclick="qs('Our team feels stuck. What should we do?')">Team is stuck</button>
+          <button class="qp" onclick="qs('How do we become a high-performing team?')">High performance</button>
+          <button class="qp" onclick="qs('Summarise our open actions and tell me which to prioritise.')">Review actions ↗</button>
         </div>
-      </div>`;
-    list.appendChild(d);
-  });
-}
-
-function toggleAction(i) {
-  S.actions[i].done = !S.actions[i].done;
-  saveState(); refreshActions(); refreshDashboard();
-}
-
-function addA() {
-  const text = document.getElementById('newin').value.trim();
-  if (!text) return;
-  const owner = document.getElementById('new-owner').value;
-  const due = document.getElementById('new-due').value;
-  S.actions.push({ text, owner, due, done: false, retro: S.retros.length || null, date: new Date().toISOString() });
-  saveState(); refreshActions(); refreshDashboard();
-  document.getElementById('newin').value = '';
-  document.getElementById('new-owner').value = '';
-  document.getElementById('new-due').value = '';
-}
-
-// ── PULSE ─────────────────────────────────────────────────────
-let pulseSelMember = '';
-let pulseScores = { energy: 0, clarity: 0, collab: 0 };
-
-function renderPulseMemberSel() {
-  const el = document.getElementById('pulse-member-sel');
-  if (!el) return;
-  const members = S.team.members.length ? S.team.members : ['Me'];
-  el.innerHTML = members.map(m =>
-    `<button class="member-btn ${pulseSelMember===m?'sel':''}" onclick="selectPulseMember('${m}')">${m}</button>`
-  ).join('');
-}
-
-function selectPulseMember(m) {
-  pulseSelMember = m;
-  renderPulseMemberSel();
-}
-
-function buildScale(id, key) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.innerHTML = [1,2,3,4,5].map(n =>
-    `<div class="pnum ${pulseScores[key]===n?'sel':''}" onclick="setScore('${key}',${n})">${n}</div>`
-  ).join('');
-}
-
-function setScore(key, val) {
-  pulseScores[key] = val;
-  buildScale('ps-'+key.replace('collab','collab'), key);
-  if (key === 'energy') buildScale('ps-energy','energy');
-  if (key === 'clarity') buildScale('ps-clarity','clarity');
-  if (key === 'collab') buildScale('ps-collab','collab');
-}
-
-function submitPulse() {
-  if (!pulseSelMember) { alert('Please select who is submitting.'); return; }
-  if (!pulseScores.energy || !pulseScores.clarity || !pulseScores.collab) { alert('Please rate all three areas.'); return; }
-  S.pulse.push({ member: pulseSelMember, energy: pulseScores.energy, clarity: pulseScores.clarity, collab: pulseScores.collab, date: new Date().toISOString() });
-  saveState();
-  pulseScores = { energy:0, clarity:0, collab:0 };
-  pulseSelMember = '';
-  renderPulseMemberSel();
-  ['energy','clarity','collab'].forEach(k => buildScale('ps-'+k, k));
-  document.getElementById('pulse-ok').style.display = 'block';
-  setTimeout(() => document.getElementById('pulse-ok').style.display='none', 3000);
-  refreshPulse(); refreshDashboard();
-}
-
-function refreshPulse() {
-  ['energy','clarity','collab'].forEach(k => buildScale('ps-'+k, k));
-  renderPulseMemberSel();
-
-  const wrap = document.getElementById('pulse-trend-wrap');
-  if (!S.pulse.length) {
-    wrap.innerHTML = '<div style="font-size:13px;color:var(--text-3);text-align:center;padding:20px 0;">No pulse data yet.</div>';
-  } else {
-    const weeks = S.pulse.slice(-8);
-    const maxH = 60;
-    wrap.innerHTML = `
-      <div style="display:flex;align-items:flex-end;gap:6px;height:${maxH}px;padding:0 4px;">
-        ${weeks.map((p,i) => {
-          const avg = (p.energy+p.clarity+p.collab)/3;
-          const h = Math.max(4, Math.round(avg/5*maxH));
-          const isCurrent = i === weeks.length-1;
-          return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;">
-            <div style="font-size:10px;color:var(--text-3);">${avg.toFixed(1)}</div>
-            <div style="height:${h}px;width:100%;border-radius:3px 3px 0 0;background:${isCurrent?'var(--accent)':'var(--accent-light)'};" title="${p.member}: ${avg.toFixed(1)}"></div>
-          </div>`;
-        }).join('')}
+        <div class="errmsg" id="cerr"></div>
       </div>
-      <div style="display:flex;gap:6px;padding:4px 4px 0;">
-        ${weeks.map((p,i) => `<div style="flex:1;font-size:10px;color:var(--text-3);text-align:center;overflow:hidden;white-space:nowrap;">${p.member.split(' ')[0]}</div>`).join('')}
-      </div>`;
-  }
+    </div></div>
 
-  // Latest scores by member
-  const scoreWrap = document.getElementById('pulse-member-scores');
-  const members = S.team.members.length ? S.team.members : [];
-  if (!members.length || !S.pulse.length) {
-    scoreWrap.innerHTML = '<div style="font-size:13px;color:var(--text-3);text-align:center;padding:16px 0;">No scores yet.</div>';
-    return;
-  }
-  scoreWrap.innerHTML = members.map(m => {
-    const entries = S.pulse.filter(p => p.member === m);
-    if (!entries.length) return `<div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--border);"><span>${m}</span><span style="color:var(--text-3);">No data</span></div>`;
-    const last = entries[entries.length-1];
-    const avg = ((last.energy+last.clarity+last.collab)/3).toFixed(1);
-    const color = avg >= 4 ? 'var(--green)' : avg >= 3 ? 'var(--amber)' : 'var(--red)';
-    return `<div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:8px 0;border-bottom:1px solid var(--border);">
-      <span style="font-weight:500;">${m}</span>
-      <div style="display:flex;gap:12px;align-items:center;">
-        <span style="font-size:11px;color:var(--text-3);">Energy ${last.energy} · Clarity ${last.clarity} · Collab ${last.collab}</span>
-        <span style="font-weight:600;color:${color};">${avg}</span>
+    <!-- RETRO -->
+    <div id="p-retro" class="panel"><div class="scroll">
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><div class="ct" style="margin:0;">Retro · <span id="rdate" style="font-weight:400;color:var(--tx3);"></span></div><div style="display:flex;gap:6px;"><span class="badge b-gray" style="font-size:10px;">Click ▲ to vote</span><button class="btn bs bxs" onclick="qs('Give me a pre-retro brief.')">AI brief ↗</button></div></div>
+        <div class="timer-strip" id="timerBar">
+          <div style="min-width:110px;"><div class="t-phase" id="tPhase">Gather data</div><div class="t-sub" id="tSub">Add notes to the board</div></div>
+          <div class="t-prog"><div class="t-fill" id="tFill" style="width:100%;"></div></div>
+          <div class="t-time" id="tDisp">10:00</div>
+          <button class="tbtn" id="tBtn" onclick="toggleTimer()">Start</button>
+          <button class="tbtn" onclick="nextPhase()">Next →</button>
+        </div>
+        <div class="rcols">
+          <div class="zone"><div class="zh"><div class="zp" style="background:#10b981;"></div><div class="zl" style="color:#065f46;">What went well</div></div><div id="z-well"></div><div class="an" onclick="addNote('well')">+ Add note</div></div>
+          <div class="zone"><div class="zh"><div class="zp" style="background:#f59e0b;"></div><div class="zl" style="color:#92400e;">What to improve</div></div><div id="z-improve"></div><div class="an" onclick="addNote('improve')">+ Add note</div></div>
+          <div class="zone"><div class="zh"><div class="zp" style="background:#3b82f6;"></div><div class="zl" style="color:#1e40af;">Action items</div></div><div id="z-actions"></div><div class="an" onclick="addNote('actions')">+ Add note</div></div>
+          <div class="zone"><div class="zh"><div class="zp" style="background:#6C63FF;"></div><div class="zl" style="color:#3730a3;">Experiments</div></div><div id="z-experiments"></div><div class="an" onclick="addNote('experiments')">+ Add note</div></div>
+        </div>
       </div>
-    </div>`;
-  }).join('');
-}
+      <div class="card"><div class="ct">AI prompts</div><div style="display:flex;flex-direction:column;gap:7px;">
+        <div class="pc3" onclick="qs('Our Kanban flow felt blocked. Facilitate a team discussion to find root causes and experiments.')">Flow was blocked last cycle <span>↗</span></div>
+        <div class="pc3" onclick="qs('Generate 5 powerful retro questions for a Kanban team focused on improving flow.')">Generate retro questions <span>↗</span></div>
+        <div class="pc3" onclick="qs('Summarise our retro notes and suggest the top 3 action items.')">Summarise & suggest actions <span>↗</span></div>
+      </div></div>
+    </div>
+    <div class="save-bar"><div class="ss"><div class="sd" id="sdot"></div><span id="slbl">Not yet saved</span></div><div style="display:flex;gap:8px;"><button class="btn bs" onclick="qs('Summarise retro notes and suggest top 3 actions.')">AI summarise ↗</button><button class="btn bn bs" id="savebtn" onclick="saveNotion()">Save to Notion</button></div></div>
+    </div>
 
-// ── SLACK ─────────────────────────────────────────────────────
-function saveSlack() {
-  const v = document.getElementById('slackin').value.trim();
-  if (v.startsWith('https://hooks.slack.com')) {
-    S.team.slack = v; saveState();
-    document.getElementById('slackok').style.display = 'block';
-  } else { alert('Please enter a valid Slack webhook URL.'); }
-}
+    <!-- ACTIONS -->
+    <div id="p-actions" class="panel"><div class="scroll"><div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><div class="ct" style="margin:0;">Improvement actions</div><div style="display:flex;gap:6px;"><span class="badge b-red" id="odBadge" style="display:none;">0 overdue</span><button class="btn bsl bs" onclick="sendDigest()">Slack digest</button></div></div>
+      <div class="mom-bar"><div><div class="ml">Action momentum</div><div style="display:flex;align-items:baseline;gap:6px;"><div class="mom-v" id="momV">—</div><div style="font-size:12px;color:var(--tx3);">closed this week</div></div></div><div style="margin-left:auto;font-size:12px;" id="momT"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx3);margin-bottom:4px;"><span>Progress</span><span id="progLbl">0 of 0</span></div>
+      <div class="pbar"><div class="pfill" id="pfill" style="width:0%;"></div></div>
+      <div id="alist" style="margin-top:8px;"></div>
+      <div class="add-af"><div class="ar"><input class="fi" type="text" id="newin" placeholder="Action description…" style="flex:2;"><select class="fi" id="newOwner"><option value="">Assign to…</option></select><input class="fi" type="date" id="newDue" style="flex:1;"></div><button class="btn bp bs" onclick="addA()" style="align-self:flex-start;">Add action</button></div>
+    </div></div></div>
 
-async function sendSlackDigest() {
-  const webhook = S.team.slack;
-  if (!webhook) { alert('No Slack webhook saved. Add it in Settings.'); go('settings',null); return; }
-  const open = S.actions.filter(a => !a.done);
-  const overdue = open.filter(a => a.due && new Date(a.due) < new Date());
-  const teamName = S.team.name || 'Your team';
-  const text = [
-    `*${teamName} · Weekly facilitator digest*`,
-    `📋 *Open actions:* ${open.length} (${overdue.length} overdue)`,
-    ...overdue.map(a => `  ⚠️ ${a.text}${a.owner?' — '+a.owner:''}`),
-    `📅 *Retros run:* ${S.retros.length}`,
-    S.pulse.length ? `💚 *Latest team pulse:* ${((S.pulse[S.pulse.length-1].energy+S.pulse[S.pulse.length-1].clarity+S.pulse[S.pulse.length-1].collab)/3).toFixed(1)}/5` : '',
-    `\n_Sent by Team Facilitator_`
-  ].filter(Boolean).join('\n');
+    <!-- PULSE -->
+    <div id="p-pulse" class="panel"><div class="scroll">
+      <div class="card"><div class="ct">Weekly pulse check</div><div style="font-size:13px;color:var(--tx2);margin-bottom:12px;">Who is submitting?</div><div class="msel" id="pulseSel"></div><div class="pg"><div class="pc2"><div class="pq">Energy & motivation</div><div class="psc" id="psE"></div></div><div class="pc2"><div class="pq">Clarity on priorities</div><div class="psc" id="psCl"></div></div><div class="pc2"><div class="pq">Team collaboration</div><div class="psc" id="psCo"></div></div></div><button class="btn bp bs" onclick="submitPulse()">Submit pulse</button><div class="okmsg" id="pulseOk">Thanks! Pulse recorded. 💚</div></div>
+      <div class="card"><div class="ct">Team pulse trend</div><div id="pulseTrend"><div style="font-size:13px;color:var(--tx3);text-align:center;padding:16px 0;">No pulse data yet.</div></div></div>
+      <div class="card"><div class="ct">Latest by member</div><div id="pulseScores"><div style="font-size:13px;color:var(--tx3);text-align:center;padding:12px 0;">No scores yet.</div></div></div>
+    </div></div>
 
-  try {
-    await fetch(PROXY+'/slack', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ webhook, text })
-    });
-    alert('Slack digest sent!');
-  } catch(e) { alert('Failed to send: '+e.message); }
-}
+    <!-- LEARNING -->
+    <div id="p-learning" class="panel"><div class="scroll">
+      <div class="card"><div class="ct">Add to learning log</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div class="ar"><input class="fi" type="text" id="lTitle" placeholder="What did the team learn?" style="flex:2;"><select class="fi" id="lType"><option value="insight">Insight</option><option value="experiment">Experiment</option><option value="article">Article / resource</option><option value="tool">Tool / technique</option></select></div>
+          <div class="ar"><input class="fi" type="text" id="lNote" placeholder="Key takeaway or notes…" style="flex:1;"><select class="fi" id="lWho" style="flex:0 0 140px;"><option value="">Who shared this?</option></select></div>
+          <button class="btn bp bs" onclick="addLearn()" style="align-self:flex-start;">Add to log</button>
+        </div>
+      </div>
+      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><div class="ct" style="margin:0;">Learning log</div><button class="btn bs bxs" onclick="qs('Based on our learning log entries, what patterns do you see and what should we focus on next?')">AI insights ↗</button></div><div id="learnList"><div style="font-size:13px;color:var(--tx3);text-align:center;padding:16px 0;">No learnings yet. Start capturing what the team discovers!</div></div></div>
+    </div></div>
 
-function resetAll() {
-  if (!confirm('This will delete all retros, actions and pulse data. Are you sure?')) return;
-  localStorage.removeItem('tf-state-v3');
-  location.reload();
-}
+    <!-- NORMS -->
+    <div id="p-norms" class="panel"><div class="scroll">
+      <div class="card"><div class="ct">Add a team norm</div><div style="display:flex;gap:8px;"><input class="fi" type="text" id="normIn" placeholder="e.g. We review PRs within 24 hours…" onkeydown="if(event.key==='Enter')addNorm()" style="flex:1;"><button class="btn bp bs" onclick="addNorm()">Add</button></div><div style="font-size:11px;color:var(--tx3);margin-top:5px;">Working agreements — how you collaborate, decide, and treat each other.</div></div>
+      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><div class="ct" style="margin:0;">Our working agreements</div><button class="btn bs bxs" onclick="qs('Review our team norms and suggest improvements based on high-performing team patterns.')">AI review ↗</button></div><div id="normsList"><div style="font-size:13px;color:var(--tx3);text-align:center;padding:16px 0;">No norms yet.</div></div></div>
+      <div class="card"><div class="ct">Suggested norms</div><div id="normSugg" style="display:flex;flex-direction:column;gap:0;"></div></div>
+    </div></div>
 
-// ── CHAT ──────────────────────────────────────────────────────
-let history = [], chatLoading = false;
+    <!-- SETTINGS -->
+    <div id="p-settings" class="panel"><div class="scroll">
+      <div class="card"><div class="ct">Notion connection</div><div class="kv"><span class="kvl">Proxy</span><span style="font-family:'DM Mono',monospace;font-size:11px;">team-facilitator-proxy-production.up.railway.app</span></div><div class="kv"><span class="kvl">Database</span><span style="font-weight:500;">Retrospectives</span></div><div class="kv"><span class="kvl">Last saved</span><span id="nlast">Never</span></div><div style="margin-top:12px;display:flex;gap:8px;"><button class="btn bn bs" onclick="testNotion()">Test connection</button></div><div class="errmsg" id="nterr"></div><div class="okmsg" id="ntok"></div></div>
+      <div class="card"><div class="ct">Retro save log</div><div id="nlog"><div style="font-size:13px;color:var(--tx3);text-align:center;padding:12px 0;">No retros saved yet.</div></div></div>
+      <div class="card"><div class="ct">Slack</div><div style="font-size:13px;color:var(--tx2);margin-bottom:10px;">Weekly digests with open actions, overdue items and pulse.</div><div style="display:flex;gap:8px;"><input class="fi" type="text" id="slackin" placeholder="https://hooks.slack.com/services/…" style="flex:1;"><button class="btn bp bs" onclick="saveSlack()">Save</button></div><div class="okmsg" id="slackok">Webhook saved.</div><div style="margin-top:10px;"><button class="btn bsl bs" onclick="sendDigest()">Send digest now</button></div></div>
+      <div class="card"><div class="ct">Reset</div><div style="font-size:13px;color:var(--tx2);margin-bottom:10px;">Clear all data and restart setup.</div><button class="btn br2 bs" onclick="resetAll()">Reset everything</button></div>
+    </div></div>
 
-function buildSystem() {
-  const t = S.team;
-  const open = S.actions.filter(a=>!a.done);
-  const overdue = open.filter(a=>a.due&&new Date(a.due)<new Date());
-  return `You are an expert AI team facilitator for ${t.name||'this team'}.
+  </div>
+</div>
+</div>
+<script>
+const PROXY='https://team-facilitator-proxy-production.up.railway.app';
+const NOTION_DB='327617cd5ec180e6a2a2d8103cc44a88';
+function defS(){return{team:{name:'',members:[],focus:'',slack:''},retros:[],actions:[],pulse:[],learnings:[],norms:[],setupDone:false,retro:{well:[],improve:[],actions:[],experiments:[]},votes:{},streak:0,lastRetroWeek:null};}
+function loadS(){try{const s=JSON.parse(localStorage.getItem('tf-v4'));if(!s)return defS();if(!s.retro)s.retro={well:[],improve:[],actions:[],experiments:[]};['well','improve','actions','experiments'].forEach(k=>{if(!s.retro[k])s.retro[k]=[];});if(!s.learnings)s.learnings=[];if(!s.norms)s.norms=[];if(!s.votes)s.votes={};if(s.streak===undefined)s.streak=0;return s;}catch(e){return defS();}}
+function sv(){localStorage.setItem('tf-v4',JSON.stringify(S));}
+let S=loadS();
+let setupMs=[];
+function addM(e){if(e.key!=='Enter')return;const i=document.getElementById('sMIn'),n=i.value.trim();if(!n)return;if(!setupMs.includes(n))setupMs.push(n);renderMT();i.value='';}
+function renderMT(){document.getElementById('mTags').innerHTML=setupMs.map((m,i)=>`<div class="mtag">${m}<span class="mx" onclick="setupMs.splice(${i},1);renderMT()">×</span></div>`).join('');}
+function doSetup(){const n=document.getElementById('sName').value.trim();if(!n){alert('Please enter a team name.');return;}S.team={name:n,members:[...setupMs],focus:document.getElementById('sFocus').value.trim(),slack:document.getElementById('sSlack').value.trim()};S.setupDone=true;sv();document.getElementById('setupOv').style.display='none';initApp();}
+function showSetup(){document.getElementById('sName').value=S.team.name;document.getElementById('sFocus').value=S.team.focus;document.getElementById('sSlack').value=S.team.slack;setupMs=[...S.team.members];renderMT();document.getElementById('setupOv').style.display='flex';}
+const TITLES={home:'Team dashboard',chat:'Ask the facilitator',retro:'Run a retrospective',actions:'Improvement actions',pulse:'Pulse check',learning:'Learning log',norms:'Team norms',settings:'Settings'};
+const METAS={home:'AI insights active',chat:'Powered by Claude',retro:'Timer · voting · Notion',actions:'Ownership · momentum',pulse:'Weekly health check',learning:'Capture discoveries',norms:'Working agreements',settings:'Notion · Slack · data'};
+function go(id,el){['home','chat','retro','actions','pulse','learning','norms','settings'].forEach(p=>{const e=document.getElementById('p-'+p);if(e)e.classList.remove('visible');});const p=document.getElementById('p-'+id);if(p)p.classList.add('visible');document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));if(el)el.classList.add('active');else{const m={home:0,chat:1,retro:2,actions:3,pulse:4,learning:5,norms:6,settings:7};document.querySelectorAll('.ni')[m[id]]?.classList.add('active');}document.getElementById('ttl').textContent=TITLES[id]||id;document.getElementById('tmt').textContent=METAS[id]||'';}
+function initApp(){const t=S.team;document.getElementById('navName').textContent=t.name||'Facilitator';if(t.slack)document.getElementById('slackin').value=t.slack;['newOwner','lWho'].forEach(id=>{const s=document.getElementById(id);if(!s)return;const f=s.options[0].text;s.innerHTML=`<option value="">${f}</option>`;t.members.forEach(m=>{const o=document.createElement('option');o.value=m;o.textContent=m;s.appendChild(o);});});document.getElementById('rdate').textContent=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});['well','improve','actions','experiments'].forEach(z=>renderNotes(z));refreshDash();refreshActions();refreshPulse();renderLearnings();renderNorms();renderNormSugg();updateStreak(false);if(t.name){document.getElementById('wMsg').innerHTML=`Hi! I'm your AI facilitator for <strong>${t.name}</strong>.${t.focus?` Focus: <em>${t.focus}</em>.`:''}<br><br>I know your team, your open actions, and your pulse. Hit "Pre-retro brief" for a quick summary before your next retro.`;document.getElementById('chatCtx').textContent=`${t.name} · ${t.members.length} members · Kanban`;}}
+function getWk(d){const s=new Date(d);s.setHours(0,0,0,0);s.setDate(s.getDate()+4-(s.getDay()||7));const y=new Date(s.getFullYear(),0,1);return Math.ceil(((s-y)/864e5+1)/7);}
+function updateStreak(ran){const tw=getWk(new Date());if(ran){if(S.lastRetroWeek===tw-1)S.streak=(S.streak||0)+1;else if(S.lastRetroWeek===tw){}else S.streak=1;S.lastRetroWeek=tw;sv();}const s=S.streak||0;document.getElementById('strkV').textContent=s;document.getElementById('strkBig').textContent=s;document.getElementById('strkMsg').textContent=s===0?'Run your first retro to start!':s<3?`${s} week${s>1?'s':''} — keep going!`:s<6?`${s} weeks strong! 💪`:`${s} weeks — outstanding habit! 🏆`;}
+function refreshDash(){const acts=S.actions;const done=acts.filter(a=>a.done).length;const open=acts.filter(a=>!a.done).length;const over=acts.filter(a=>!a.done&&a.due&&new Date(a.due)<new Date()).length;const pct=acts.length?Math.round(done/acts.length*100):null;const wkAgo=new Date(Date.now()-7*864e5).toISOString();const pw=new Date(Date.now()-14*864e5).toISOString();const tw=acts.filter(a=>a.done&&a.closedAt&&a.closedAt>wkAgo).length;const lw=acts.filter(a=>a.done&&a.closedAt&&a.closedAt>pw&&a.closedAt<=wkAgo).length;document.getElementById('mRet').textContent=S.retros.length;document.getElementById('mRes').textContent=pct!==null?pct+'%':'—';document.getElementById('mResS').textContent=pct!==null?(pct>70?'on track ↑':'needs attention'):'no actions yet';document.getElementById('mMom').textContent=tw===undefined?'—':tw;const ms=document.getElementById('mMomS');if(tw>lw){ms.textContent='↑ up from '+lw+' last week';ms.className='ms up';}else if(tw<lw){ms.textContent='↓ down from '+lw;ms.className='ms dn';}else{ms.textContent='same as last week';ms.className='ms';}document.getElementById('odDot').style.display=over>0?'block':'none';if(S.pulse.length){const r=S.pulse.slice(-5);const avg=(r.reduce((s,p)=>s+(p.energy+p.clarity+p.collab)/3,0)/r.length).toFixed(1);document.getElementById('mPul').textContent=avg;document.getElementById('mPulS').textContent='avg last '+r.length;}
+const ins=[];const days=S.retros.length?Math.floor((Date.now()-new Date(S.retros[S.retros.length-1].date))/864e5):999;if(days>13)ins.push({c:'#f59e0b',bg:'#fef3c7',t:`No retro in <strong>${days===999?'a while':days+' days'}</strong>. Bi-weekly retros are the heartbeat of a Kanban team.`});if(over>0)ins.push({c:'#ef4444',bg:'#fee2e2',t:`<strong>${over} action${over>1?'s':''}</strong> overdue. Review before your next retro.`});if(tw>0)ins.push({c:'#10b981',bg:'#d1fae5',t:`<strong>${tw} action${tw>1?'s':''}</strong> closed this week — great momentum! 🎯`});if(S.pulse.length){const l=S.pulse[S.pulse.length-1];const a=(l.energy+l.clarity+l.collab)/3;if(a<3)ins.push({c:'#ef4444',bg:'#fee2e2',t:`Latest pulse <strong>${a.toFixed(1)}/5</strong> — team may need support.`});else if(a>=4)ins.push({c:'#10b981',bg:'#d1fae5',t:`Latest pulse <strong>${a.toFixed(1)}/5</strong> — great team energy! 💚`});}if(!ins.length)ins.push({c:'#10b981',bg:'#d1fae5',t:'All good! Keep the momentum going.'});
+document.getElementById('insights').innerHTML=ins.map(i=>`<div class="insight"><div class="iic" style="background:${i.bg}"><div style="width:8px;height:8px;border-radius:50%;background:${i.c};"></div></div><div>${i.t}</div></div>`).join('')+'<div style="padding-bottom:2px"></div>';
+const tc=['b-grn','b-amb','b-blu','b-acc'];const themes=S.retros.flatMap(r=>r.improve||[]).slice(-6);document.getElementById('themes').innerHTML=themes.length?themes.map((t,i)=>`<span class="badge ${tc[i%4]}">${t.substring(0,35)}</span>`).join(''):'<span style="font-size:13px;color:var(--tx3);">Run your first retro to see themes.</span>';
+updateStreak(false);}
+function renderNotes(z){const el=document.getElementById('z-'+z);if(!el)return;el.innerHTML=(S.retro[z]||[]).map((t,i)=>{const k=z+':'+i;const v=S.votes[k]||0;return`<div class="sticky"><span class="st-t">${t}</span>${v>0?`<span class="vcnt">+${v}</span>`:''}<span class="vbtn" onclick="vote('${z}',${i})">▲</span></div>`;}).join('');}
+function vote(z,i){const k=z+':'+i;S.votes[k]=(S.votes[k]||0)+1;sv();renderNotes(z);}
+function addNote(z){const t=prompt('Add a note:');if(!t?.trim())return;if(!S.retro[z])S.retro[z]=[];S.retro[z].push(t.trim());sv();renderNotes(z);}
+const PHASES=[{n:'Gather data',s:'Add notes to the board',m:10},{n:'Generate insights',s:'Discuss and vote on notes',m:15},{n:'Decide actions',s:'Commit to improvements',m:10}];
+let tPhase=0,tSecs=0,tRun=false,tInt=null;
+function initTimer(){tSecs=PHASES[tPhase].m*60;renderTimer();}
+function renderTimer(){const p=PHASES[tPhase];document.getElementById('tPhase').textContent=p.n;document.getElementById('tSub').textContent=p.s;const tot=p.m*60;const pct=Math.round(tSecs/tot*100);document.getElementById('tFill').style.width=pct+'%';document.getElementById('tFill').style.background=pct>50?'var(--acc)':pct>20?'var(--amb)':'var(--red)';const m=Math.floor(tSecs/60),s=tSecs%60;document.getElementById('tDisp').textContent=`${m}:${s.toString().padStart(2,'0')}`;document.getElementById('tBtn').textContent=tRun?'Pause':'Start';}
+function toggleTimer(){if(tRun){clearInterval(tInt);tRun=false;}else{if(tSecs===0)tSecs=PHASES[tPhase].m*60;tRun=true;tInt=setInterval(()=>{tSecs--;renderTimer();if(tSecs<=0){clearInterval(tInt);tRun=false;if(tPhase<PHASES.length-1)celebrate('⏰','Time\'s up!','Move to: '+PHASES[tPhase+1].n);}},1000);}renderTimer();}
+function nextPhase(){clearInterval(tInt);tRun=false;tPhase=(tPhase+1)%PHASES.length;tSecs=PHASES[tPhase].m*60;renderTimer();}
+initTimer();
+function setSave(st,lb){document.getElementById('sdot').className='sd'+(st?' '+st:'');document.getElementById('slbl').textContent=lb;}
+async function saveNotion(){document.getElementById('savebtn').disabled=true;setSave('saving','Saving…');const n=S.retro;const num=S.retros.length+1;const title=`Retro #${num} · ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`;try{const res=await fetch(PROXY+'/notion/pages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({parent:{database_id:NOTION_DB},properties:{Name:{title:[{text:{content:title}}]},Date:{date:{start:new Date().toISOString().split('T')[0]}},'What went well':{rich_text:[{text:{content:(n.well||[]).join(' · ')||'—'}}]},Improve:{rich_text:[{text:{content:(n.improve||[]).join(' · ')||'—'}}]},Actions:{rich_text:[{text:{content:(n.actions||[]).join(' · ')||'—'}}]}}})});const data=await res.json();if(!res.ok)throw new Error(data.message||'Notion error');S.retros.push({date:new Date().toISOString(),title,well:n.well,improve:n.improve,actions:n.actions,experiments:n.experiments});S.retro={well:[],improve:[],actions:[],experiments:[]};S.votes={};updateStreak(true);sv();const now=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});setSave('saved','Saved · '+now);document.getElementById('nlast').textContent=now;const log=document.getElementById('nlog');log.innerHTML='';S.retros.slice().reverse().forEach(r=>{const d=document.createElement('div');d.className='log-e';d.innerHTML=`<div class="ldot" style="background:var(--grn)"></div><span style="flex:1">${r.title}</span><span style="color:var(--tx3)">${new Date(r.date).toLocaleDateString('en-GB')}</span>`;log.appendChild(d);});refreshDash();['well','improve','actions','experiments'].forEach(z=>renderNotes(z));if(S.streak===1)celebrate('🎉','First retro saved!','Come back next week to start your streak.');else if(S.streak>0&&S.streak%5===0)celebrate('🔥','Streak milestone!',`${S.streak} weeks in a row. Outstanding commitment!`);}catch(e){setSave('error','Failed: '+e.message);}document.getElementById('savebtn').disabled=false;}
+async function testNotion(){const er=document.getElementById('nterr'),ok=document.getElementById('ntok');er.style.display='none';ok.style.display='none';try{const r=await fetch(PROXY+'/notion/test/'+NOTION_DB);const d=await r.json();if(d.ok){ok.textContent='Connected: "'+d.title+'"';ok.style.display='block';}else throw new Error(d.message);}catch(e){er.textContent='Failed: '+e.message;er.style.display='block';}}
+function refreshActions(){const acts=S.actions;const done=acts.filter(a=>a.done).length;const over=acts.filter(a=>!a.done&&a.due&&new Date(a.due)<new Date()).length;const wkAgo=new Date(Date.now()-7*864e5).toISOString();const pw=new Date(Date.now()-14*864e5).toISOString();const tw=acts.filter(a=>a.done&&a.closedAt&&a.closedAt>wkAgo).length;const lw=acts.filter(a=>a.done&&a.closedAt&&a.closedAt>pw&&a.closedAt<=wkAgo).length;document.getElementById('progLbl').textContent=`${done} of ${acts.length}`;document.getElementById('pfill').style.width=acts.length?Math.round(done/acts.length*100)+'%':'0%';document.getElementById('momV').textContent=tw;const mt=document.getElementById('momT');if(tw>lw){mt.textContent='↑ up from '+lw;mt.style.color='var(--grn)';}else if(tw<lw){mt.textContent='↓ down from '+lw;mt.style.color='var(--red)';}else{mt.textContent='= same';mt.style.color='var(--tx3)';}const b=document.getElementById('odBadge');if(over>0){b.style.display='inline-flex';b.textContent=over+' overdue';}else b.style.display='none';document.getElementById('odDot').style.display=over>0?'block':'none';const list=document.getElementById('alist');if(!acts.length){list.innerHTML='<div style="font-size:13px;color:var(--tx3);text-align:center;padding:16px 0;">No actions yet.</div>';return;}list.innerHTML='';acts.forEach((a,i)=>{const isOv=!a.done&&a.due&&new Date(a.due)<new Date();const d=document.createElement('div');d.className='ai';d.innerHTML=`<div class="chk ${a.done?'done':''}" onclick="toggleA(${i})">${a.done?'<svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2.5 2.5 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>':''}</div><div class="ab"><div class="at2 ${a.done?'stk':''}">${a.text}</div><div class="am2">${a.owner?`<strong>${a.owner}</strong> ·`:'Unassigned ·'} ${a.due?`Due ${new Date(a.due).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}`:'No due date'} ${isOv?'<span class="otag">Overdue</span>':''}</div></div>`;list.appendChild(d);});}
+function toggleA(i){const was=!S.actions[i].done;S.actions[i].done=!S.actions[i].done;if(S.actions[i].done)S.actions[i].closedAt=new Date().toISOString();sv();refreshActions();refreshDash();if(was){const allDone=S.actions.length>0&&S.actions.every(a=>a.done);if(allDone)celebrate('🏆','All actions done!','Every action is closed. Your team follows through — that\'s rare and powerful.');}}
+function addA(){const t=document.getElementById('newin').value.trim();if(!t)return;S.actions.push({text:t,owner:document.getElementById('newOwner').value,due:document.getElementById('newDue').value,done:false,date:new Date().toISOString()});sv();refreshActions();refreshDash();document.getElementById('newin').value='';document.getElementById('newOwner').value='';document.getElementById('newDue').value='';}
+let pSelM='',pSc={energy:0,clarity:0,collab:0};
+function renderPulseSel(){const el=document.getElementById('pulseSel');if(!el)return;const ms=S.team.members.length?S.team.members:['Me'];el.innerHTML=ms.map(m=>`<button class="mb2 ${pSelM===m?'sel':''}" onclick="pSelM='${m}';renderPulseSel()">${m}</button>`).join('');}
+function bldScale(id,key){const el=document.getElementById(id);if(!el)return;el.innerHTML=[1,2,3,4,5].map(n=>`<div class="pn ${pSc[key]===n?'sel':''}" onclick="pSc['${key}']=${n};bldScale('${id}','${key}')">${n}</div>`).join('');}
+function refreshPulse(){renderPulseSel();['energy','clarity','collab'].forEach(k=>bldScale('ps'+k[0].toUpperCase()+k.slice(1)[0],''+k));bldScale('psE','energy');bldScale('psCl','clarity');bldScale('psCo','collab');const tr=document.getElementById('pulseTrend');if(!S.pulse.length){tr.innerHTML='<div style="font-size:13px;color:var(--tx3);text-align:center;padding:16px 0;">No data yet.</div>';return;}const wks=S.pulse.slice(-10);const mH=60;tr.innerHTML=`<div style="display:flex;align-items:flex-end;gap:5px;height:${mH}px;">${wks.map((p,i)=>{const avg=(p.energy+p.clarity+p.collab)/3;const h=Math.max(4,Math.round(avg/5*mH));const cur=i===wks.length-1;return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="font-size:10px;color:var(--tx3);">${avg.toFixed(1)}</div><div style="height:${h}px;width:100%;border-radius:3px 3px 0 0;background:${cur?'var(--acc)':'var(--acc-l)'};" title="${p.member}"></div></div>`;}).join('')}</div><div style="display:flex;gap:5px;padding:4px 0 0;">${wks.map(p=>`<div style="flex:1;font-size:10px;color:var(--tx3);text-align:center;overflow:hidden;white-space:nowrap;">${p.member.split(' ')[0]}</div>`).join('')}</div>`;const sc=document.getElementById('pulseScores');const ms=S.team.members;if(!ms.length){sc.innerHTML='<div style="font-size:13px;color:var(--tx3);text-align:center;padding:10px 0;">Set up team members first.</div>';return;}sc.innerHTML=ms.map(m=>{const es=S.pulse.filter(p=>p.member===m);if(!es.length)return`<div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--bor);"><span>${m}</span><span style="color:var(--tx3);">No data</span></div>`;const l=es[es.length-1];const avg=((l.energy+l.clarity+l.collab)/3).toFixed(1);const col=avg>=4?'var(--grn)':avg>=3?'var(--amb)':'var(--red)';return`<div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:8px 0;border-bottom:1px solid var(--bor);"><span style="font-weight:500;">${m}</span><div style="display:flex;gap:10px;align-items:center;"><span style="font-size:11px;color:var(--tx3);">E${l.energy} C${l.clarity} T${l.collab}</span><span style="font-weight:600;color:${col};">${avg}</span></div></div>`;}).join('');}
+function submitPulse(){if(!pSelM){alert('Select who is submitting.');return;}if(!pSc.energy||!pSc.clarity||!pSc.collab){alert('Please rate all three areas.');return;}S.pulse.push({member:pSelM,energy:pSc.energy,clarity:pSc.clarity,collab:pSc.collab,date:new Date().toISOString()});sv();pSc={energy:0,clarity:0,collab:0};pSelM='';document.getElementById('pulseOk').style.display='block';setTimeout(()=>document.getElementById('pulseOk').style.display='none',3000);refreshPulse();refreshDash();const avg=(S.pulse[S.pulse.length-1].energy+S.pulse[S.pulse.length-1].clarity+S.pulse[S.pulse.length-1].collab)/3;if(avg>=4.5)celebrate('💚','Fantastic pulse!','The team is energised and firing on all cylinders!');}
+function addLearn(){const t=document.getElementById('lTitle').value.trim();if(!t)return;S.learnings.push({title:t,type:document.getElementById('lType').value,note:document.getElementById('lNote').value.trim(),who:document.getElementById('lWho').value,date:new Date().toISOString()});sv();renderLearnings();document.getElementById('lTitle').value='';document.getElementById('lNote').value='';}
+const LT_CLS={insight:'lt-i',experiment:'lt-e',article:'lt-a',tool:'lt-t'};const LT_LBL={insight:'Insight',experiment:'Experiment',article:'Article',tool:'Tool'};
+function renderLearnings(){const el=document.getElementById('learnList');if(!el)return;if(!S.learnings.length){el.innerHTML='<div style="font-size:13px;color:var(--tx3);text-align:center;padding:14px 0;">No learnings yet.</div>';return;}el.innerHTML=S.learnings.slice().reverse().map(l=>`<div class="le"><div class="lh"><span class="lt ${LT_CLS[l.type]||'lt-i'}">${LT_LBL[l.type]||'Insight'}</span><span style="font-size:13px;font-weight:500;">${l.title}</span></div><div class="ln">${l.who?l.who+' · ':''}${new Date(l.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div>${l.note?`<div class="lnote">${l.note}</div>`:''}</div>`).join('');}
+const NORM_SUGG=['We review PRs within 24 hours','We start and end meetings on time','We share blockers daily, not just in retros','We separate problem from solution discussions','We assume good intent in all communications','We protect focus time — no meetings before 10am','We celebrate small wins, not just big launches'];
+function renderNormSugg(){const el=document.getElementById('normSugg');if(!el)return;const ex=S.norms.map(n=>n.text.toLowerCase());const sg=NORM_SUGG.filter(s=>!ex.includes(s.toLowerCase())).slice(0,4);el.innerHTML=sg.map(s=>`<div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px solid var(--bor);color:var(--tx2);">${s}<button class="btn bs bxs" onclick="addSN('${s.replace(/'/g,'&apos;')}')" style="flex-shrink:0;margin-left:8px;">Add</button></div>`).join('');}
+function addSN(t){S.norms.push({text:t,date:new Date().toISOString()});sv();renderNorms();renderNormSugg();}
+function addNorm(){const t=document.getElementById('normIn').value.trim();if(!t)return;S.norms.push({text:t,date:new Date().toISOString()});sv();renderNorms();renderNormSugg();document.getElementById('normIn').value='';}
+function renderNorms(){const el=document.getElementById('normsList');if(!el)return;if(!S.norms.length){el.innerHTML='<div style="font-size:13px;color:var(--tx3);text-align:center;padding:14px 0;">No norms yet.</div>';return;}el.innerHTML=S.norms.map((n,i)=>`<div class="norm"><div class="nnum">${i+1}</div><div class="ntxt">${n.text}</div><span class="ndel" onclick="delNorm(${i})">×</span></div>`).join('');}
+function delNorm(i){S.norms.splice(i,1);sv();renderNorms();renderNormSugg();}
+function saveSlack(){const v=document.getElementById('slackin').value.trim();if(v.startsWith('https://hooks.slack.com')){S.team.slack=v;sv();document.getElementById('slackok').style.display='block';}else alert('Enter a valid Slack webhook URL.');}
+async function sendDigest(){const wh=S.team.slack;if(!wh){alert('No Slack webhook saved. Add it in Settings.');go('settings',null);return;}const open=S.actions.filter(a=>!a.done);const over=open.filter(a=>a.due&&new Date(a.due)<new Date());const wkAgo=new Date(Date.now()-7*864e5).toISOString();const closed=S.actions.filter(a=>a.done&&a.closedAt&&a.closedAt>wkAgo).length;const tn=S.team.name||'Your team';const lines=[`*${tn} · Weekly digest*`,`📋 *Open actions:* ${open.length} (${over.length} overdue)`,...over.map(a=>`  ⚠️ ${a.text}${a.owner?' — '+a.owner:''}`),closed?`✅ *Closed this week:* ${closed}`:'',`📅 *Retros:* ${S.retros.length} | 🔥 *Streak:* ${S.streak||0} weeks`,S.pulse.length?`💚 *Latest pulse:* ${((S.pulse[S.pulse.length-1].energy+S.pulse[S.pulse.length-1].clarity+S.pulse[S.pulse.length-1].collab)/3).toFixed(1)}/5`:'','_Sent by Team Facilitator_'].filter(Boolean).join('\n');try{await fetch(PROXY+'/slack',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({webhook:wh,text:lines})});alert('Slack digest sent! 🚀');}catch(e){alert('Failed: '+e.message);}}
+function celebrate(em,ti,su){document.getElementById('celEm').textContent=em;document.getElementById('celTi').textContent=ti;document.getElementById('celSu').textContent=su;const ov=document.getElementById('celOv');ov.classList.add('show');const c=document.getElementById('conf');c.innerHTML='';const cols=['#6C63FF','#10b981','#f59e0b','#3b82f6','#ef4444','#fff'];for(let i=0;i<40;i++){const d=document.createElement('div');d.className='cf';d.style.cssText=`left:${Math.random()*100}%;background:${cols[Math.floor(Math.random()*cols.length)]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.5}s;width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;`;c.appendChild(d);}}
+function closeCel(){document.getElementById('celOv').classList.remove('show');}
+function resetAll(){if(!confirm('Delete all data?'))return;localStorage.removeItem('tf-v4');location.reload();}
+let hist=[],loading=false;
+function buildSys(){const t=S.team;const open=S.actions.filter(a=>!a.done);const over=open.filter(a=>a.due&&new Date(a.due)<new Date());const wkAgo=new Date(Date.now()-7*864e5).toISOString();const tw=S.actions.filter(a=>a.done&&a.closedAt&&a.closedAt>wkAgo).length;const rLearnings=S.learnings.slice(-3).map(l=>l.title).join(', ');const lastRetro=S.retros[S.retros.length-1];return`You are an expert AI team facilitator for ${t.name||'this team'}.
+Team: ${t.members.join(', ')||'unknown'} | Workflow: Kanban | Focus: ${t.focus||'not set'}
+Retros run: ${S.retros.length} | Streak: ${S.streak||0} weeks | Open actions: ${open.length} (${over.length} overdue) | Closed this week: ${tw}
+${over.length?'Overdue actions: '+over.map(a=>a.text+(a.owner?' ('+a.owner+')':'')).join(', '):''}
+${S.pulse.length?'Latest pulse: '+((S.pulse[S.pulse.length-1].energy+S.pulse[S.pulse.length-1].clarity+S.pulse[S.pulse.length-1].collab)/3).toFixed(1)+'/5':''}
+${rLearnings?'Recent learnings: '+rLearnings:''}
+${S.norms.length?'Team norms: '+S.norms.map(n=>n.text).slice(0,4).join(' | '):''}
+${lastRetro?'Last retro themes: '+(lastRetro.improve||[]).join(', '):''}
 
-Team context:
-- Workflow: Kanban
-- Tools: Slack, Notion, Jira
-- Members: ${t.members.join(', ')||'unknown'}
-- Current focus: ${t.focus||'not set'}
-- Retros run: ${S.retros.length}
-- Open actions: ${open.length} (${overdue.length} overdue)
-${overdue.length ? '- Overdue: '+overdue.map(a=>a.text+(a.owner?' ('+a.owner+')':'')).join(', ') : ''}
-${S.pulse.length ? '- Latest pulse avg: '+((S.pulse[S.pulse.length-1].energy+S.pulse[S.pulse.length-1].clarity+S.pulse[S.pulse.length-1].collab)/3).toFixed(1)+'/5' : ''}
-
-Be warm, direct and practical. Keep responses concise (2-4 paragraphs). When running a retro, guide step by step. Suggest small concrete experiments over big changes. Reference specific team member names when relevant.`;
-}
-
-function gchat(txt) { go('chat',null); document.getElementById('cin').value=txt; send(); }
-function qs(txt) { document.getElementById('cin').value=txt; send(); }
-function onKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();} }
-
-function addMsg(role, text) {
-  const el=document.getElementById('msgs');
-  const d=document.createElement('div'); d.className='msg'+(role==='user'?' user':'');
-  d.innerHTML=`<div class="av av-${role==='user'?'user':'ai'}">${role==='user'?'You':'AI'}</div><div class="bubble bubble-${role==='user'?'user':'ai'}">${text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div>`;
-  el.appendChild(d); el.scrollTop=el.scrollHeight;
-}
-function showTyping() {
-  const el=document.getElementById('msgs');
-  const d=document.createElement('div'); d.className='msg'; d.id='typ';
-  d.innerHTML='<div class="av av-ai">AI</div><div class="bubble bubble-ai typing"><span></span><span></span><span></span></div>';
-  el.appendChild(d); el.scrollTop=el.scrollHeight;
-}
-function hideTyping() { document.getElementById('typ')?.remove(); }
-
-async function send() {
-  if (chatLoading) return;
-  const inp=document.getElementById('cin'), txt=inp.value.trim(); if(!txt) return;
-  inp.value='';
-  document.getElementById('cerr').style.display='none';
-  addMsg('user',txt);
-  history.push({role:'user',content:txt});
-  chatLoading=true; document.getElementById('sbtn').disabled=true;
-  showTyping();
-  try {
-    const res = await fetch(PROXY+'/anthropic/messages',{
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:buildSystem(),messages:history})
-    });
-    const data=await res.json(); hideTyping();
-    if(data.error) throw new Error(data.error.message);
-    const reply=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
-    history.push({role:'assistant',content:reply});
-    addMsg('assistant',reply);
-  } catch(e) {
-    hideTyping(); history.pop();
-    const cerr=document.getElementById('cerr');
-    cerr.textContent='Error: '+e.message; cerr.style.display='block';
-  }
-  chatLoading=false; document.getElementById('sbtn').disabled=false;
-}
-
-// ── BOOT ──────────────────────────────────────────────────────
-if (S.setupDone) {
-  document.getElementById('setup-overlay').style.display = 'none';
-} else {
-  document.getElementById('setup-overlay').style.display = 'flex';
-}
+When asked for a pre-retro brief: give a focused 3-5 sentence brief covering: (1) status of open/overdue actions, (2) key themes from last retro to revisit, (3) one specific suggestion for today's focus. Use actual team data above. Be specific and direct.
+Be warm, practical, concise (2-4 paragraphs max unless running a retro). Reference team members by name. Suggest small concrete experiments.`;}
+function gchat(t){go('chat',null);document.getElementById('cin').value=t;sendChat();}
+function qs(t){document.getElementById('cin').value=t;sendChat();}
+function onKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}}
+function addMsg(role,text){const el=document.getElementById('msgs');const d=document.createElement('div');d.className='msg'+(role==='user'?' user':'');d.innerHTML=`<div class="av ${role==='user'?'av-u':'av-ai'}">${role==='user'?'You':'AI'}</div><div class="bbl ${role==='user'?'bbl-u':'bbl-ai'}">${text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>')}</div>`;el.appendChild(d);el.scrollTop=el.scrollHeight;}
+function showTyp(){const el=document.getElementById('msgs');const d=document.createElement('div');d.className='msg';d.id='typ';d.innerHTML='<div class="av av-ai">AI</div><div class="bbl bbl-ai typing"><span></span><span></span><span></span></div>';el.appendChild(d);el.scrollTop=el.scrollHeight;}
+function hideTyp(){document.getElementById('typ')?.remove();}
+async function sendChat(){if(loading)return;const inp=document.getElementById('cin'),txt=inp.value.trim();if(!txt)return;inp.value='';document.getElementById('cerr').style.display='none';addMsg('user',txt);hist.push({role:'user',content:txt});loading=true;document.getElementById('sbtn').disabled=true;showTyp();try{const res=await fetch(PROXY+'/anthropic/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:buildSys(),messages:hist})});const data=await res.json();hideTyp();if(data.error)throw new Error(data.error.message);const reply=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');hist.push({role:'assistant',content:reply});addMsg('assistant',reply);}catch(e){hideTyp();hist.pop();const ce=document.getElementById('cerr');ce.textContent='Error: '+e.message;ce.style.display='block';}loading=false;document.getElementById('sbtn').disabled=false;}
+if(S.setupDone)document.getElementById('setupOv').style.display='none';
 initApp();
 </script>
 </body>
