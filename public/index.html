@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Team Facilitator v5</title>
+<title>Team Facilitator v6</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -364,7 +364,8 @@ body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:v
     <!-- RETRO -->
     <div id="p-retro" class="panel"><div class="scroll">
       <div class="card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><div class="ct" style="margin:0;">Retro · <span id="rdate" style="font-weight:400;color:var(--tx3);"></span></div><div style="display:flex;gap:6px;"><span class="badge b-gray" id="asyncBadge" style="display:none;font-size:10px;">Async notes loaded</span><button class="btn bs bxs" onclick="loadAsyncNotes()">Load async notes</button><button class="btn bs bxs" onclick="qs('Give me a pre-retro brief.')">AI brief ↗</button></div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><div class="ct" style="margin:0;">Retro · <span id="rdate" style="font-weight:400;color:var(--tx3);"></span></div><button class="btn bs bxs" onclick="qs('Give me a pre-retro brief.')">AI brief ↗</button></div>
+        <div style="margin-bottom:10px;"><div style="font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">Format</div><div class="tmpl-row" id="tmplRow"></div></div>
         <div class="timer-strip">
           <div style="min-width:100px;"><div class="t-phase" id="tPhase">Gather data</div><div class="t-sub" id="tSub">Add notes to the board</div></div>
           <div class="t-prog"><div class="t-fill" id="tFill" style="width:100%;"></div></div>
@@ -372,12 +373,7 @@ body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:v
           <button class="tbtn" id="tBtn" onclick="toggleTimer()">Start</button>
           <button class="tbtn" onclick="nextPhase()">Next →</button>
         </div>
-        <div class="rcols">
-          <div class="zone"><div class="zh"><div class="zp" style="background:#10b981;"></div><div class="zl" style="color:#065f46;">What went well</div><span class="note-cnt" id="nc-well">0</span></div><div id="z-well"></div><div class="an" onclick="addNote('well')">+ Add note</div></div>
-          <div class="zone"><div class="zh"><div class="zp" style="background:#f59e0b;"></div><div class="zl" style="color:#92400e;">What to improve</div><span class="note-cnt" id="nc-improve">0</span></div><div id="z-improve"></div><div class="an" onclick="addNote('improve')">+ Add note</div></div>
-          <div class="zone"><div class="zh"><div class="zp" style="background:#3b82f6;"></div><div class="zl" style="color:#1e40af;">Action items</div><span class="note-cnt" id="nc-actions">0</span></div><div id="z-actions"></div><div class="an" onclick="addNote('actions')">+ Add note</div></div>
-          <div class="zone"><div class="zh"><div class="zp" style="background:#6C63FF;"></div><div class="zl" style="color:#3730a3;">Experiments</div><span class="note-cnt" id="nc-experiments">0</span></div><div id="z-experiments"></div><div class="an" onclick="addNote('experiments')">+ Add note</div></div>
-        </div>
+        <div class="rcols" id="retroCols" style="grid-template-columns:repeat(4,1fr);"></div>
       </div>
       <div class="card"><div class="ct">AI prompts</div><div style="display:flex;flex-direction:column;gap:7px;">
         <div class="pc3" onclick="qs('Our Kanban flow felt blocked. Facilitate a discussion to find root causes and experiments.')">Flow was blocked last cycle <span>↗</span></div>
@@ -385,7 +381,7 @@ body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:v
         <div class="pc3" onclick="qs('Summarise our retro notes and suggest the top 3 action items.')">Summarise & suggest actions <span>↗</span></div>
       </div></div>
     </div>
-    <div class="save-bar"><div class="ss"><div class="sd" id="sdot"></div><span id="slbl">Not yet saved</span></div><div style="display:flex;gap:8px;"><button class="btn bs" onclick="qs('Summarise retro notes and suggest top 3 actions.')">AI summarise ↗</button><button class="btn bn bs" id="savebtn" onclick="saveNotion()">Save to Notion</button></div></div>
+    <div class="save-bar"><div class="ss"><div class="sd" id="sdot"></div><span id="slbl">Not yet saved</span></div><div style="display:flex;gap:8px;"><button class="btn bs" onclick="qs('Summarise retro notes and suggest top 3 actions.')">AI summarise ↗</button><button class="btn bn bs" id="savebtn" onclick="saveRetro()">Save retro</button></div></div>
     </div>
 
     <!-- ASYNC RETRO -->
@@ -503,126 +499,248 @@ body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:v
 <script>
 const PROXY='https://team-facilitator-proxy-production.up.railway.app';
 const NOTION_DB='327617cd5ec180e6a2a2d8103cc44a88';
+let TEAM_ID=localStorage.getItem('tf-v6-team')||'';
+let T={name:'',members:[],focus:'',slack_webhook:''};
+let retros=[],actions=[],pulse=[],learnings=[],norms=[],board=[];
 
-function defS(){return{team:{name:'',members:[],focus:'',slack:'',nudgeDay:4},retros:[],actions:[],pulse:[],learnings:[],norms:[],setupDone:false,retro:{well:[],improve:[],actions:[],experiments:[]},votes:{},asyncNotes:[],streak:0,lastRetroWeek:null,obStep:0};}
-function loadS(){try{const s=JSON.parse(localStorage.getItem('tf-v5'));if(!s)return defS();if(!s.retro)s.retro={well:[],improve:[],actions:[],experiments:[]};['well','improve','actions','experiments'].forEach(k=>{if(!s.retro[k])s.retro[k]=[];});if(!s.learnings)s.learnings=[];if(!s.norms)s.norms=[];if(!s.votes)s.votes={};if(!s.asyncNotes)s.asyncNotes=[];if(s.streak===undefined)s.streak=0;if(s.obStep===undefined)s.obStep=0;return s;}catch(e){return defS();}}
-function sv(){localStorage.setItem('tf-v5',JSON.stringify(S));}
-let S=loadS();
+async function sb(method,table,body,query){
+  const q=query?'?'+new URLSearchParams(query).toString():'';
+  const opts={method,headers:{'Content-Type':'application/json','Prefer':'return=representation'}};
+  if(body&&['POST','PATCH'].includes(method))opts.body=JSON.stringify(body);
+  const r=await fetch(PROXY+'/supabase/'+table+q,opts);
+  const text=await r.text();let data;try{data=JSON.parse(text);}catch{data=text;}
+  if(!r.ok)throw new Error(typeof data==='object'?JSON.stringify(data):data);
+  return data;
+}
+
 let setupMs=[];
 function addM(e){if(e.key!=='Enter')return;const i=document.getElementById('sMIn'),n=i.value.trim();if(!n)return;if(!setupMs.includes(n))setupMs.push(n);renderMT();i.value='';}
 function renderMT(){document.getElementById('mTags').innerHTML=setupMs.map((m,i)=>`<div class="mtag">${m}<span class="mx" onclick="setupMs.splice(${i},1);renderMT()">×</span></div>`).join('');}
-function doSetup(){const n=document.getElementById('sName').value.trim();if(!n){alert('Please enter a team name.');return;}S.team={name:n,members:[...setupMs],focus:document.getElementById('sFocus').value.trim(),slack:document.getElementById('sSlack').value.trim(),nudgeDay:parseInt(document.getElementById('sNudgeDay').value)||4};S.setupDone=true;if(!S.obStep)S.obStep=1;sv();document.getElementById('setupOv').style.display='none';initApp();}
-function showSetup(){document.getElementById('sName').value=S.team.name;document.getElementById('sFocus').value=S.team.focus;document.getElementById('sSlack').value=S.team.slack||'';setupMs=[...S.team.members];renderMT();document.getElementById('setupOv').style.display='flex';}
-const TITLES={home:'Team dashboard',chat:'Ask the facilitator',retro:'Run a retrospective',async:'Async retro',actions:'Improvement actions',pulse:'Pulse check',learning:'Learning log',norms:'Team norms',onboarding:'Onboarding',settings:'Settings'};
-const METAS={home:'AI insights active',chat:'Powered by Claude',retro:'Timer · voting · async notes',async:'Collect notes before the session',actions:'Ownership · momentum',pulse:'Weekly health check',learning:'Capture discoveries',norms:'Working agreements',onboarding:'Get started with the team',settings:'Notion · Slack · proactive nudges'};
-function go(id,el){Object.keys(TITLES).forEach(p=>{const e=document.getElementById('p-'+p);if(e)e.classList.remove('visible');});const p=document.getElementById('p-'+id);if(p)p.classList.add('visible');document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));if(el)el.classList.add('active');else{const m={home:0,chat:1,retro:2,async:3,actions:4,pulse:5,learning:6,norms:7,onboarding:8,settings:9};document.querySelectorAll('.ni')[m[id]]?.classList.add('active');}document.getElementById('ttl').textContent=TITLES[id]||id;document.getElementById('tmt').textContent=METAS[id]||'';}
-function initApp(){const t=S.team;document.getElementById('navName').textContent=t.name||'Facilitator';if(t.slack)document.getElementById('slackin').value=t.slack;['newOwner','lWho'].forEach(id=>{const s=document.getElementById(id);if(!s)return;const f=s.options[0].text;s.innerHTML=`<option value="">${f}</option>`;t.members.forEach(m=>{const o=document.createElement('option');o.value=m;o.textContent=m;s.appendChild(o);});});const aw=document.getElementById('asyncWho');if(aw){aw.innerHTML='<option value="">Select your name…</option>';t.members.forEach(m=>{const o=document.createElement('option');o.value=m;o.textContent=m;aw.appendChild(o);});}document.getElementById('rdate').textContent=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});['well','improve','actions','experiments'].forEach(z=>renderNotes(z));refreshDash();refreshActions();refreshPulse();renderLearnings();renderNorms();renderNormSugg();renderOnboarding();renderAsyncPreview();updateStreak(false);buildCronBlock();if(t.name){document.getElementById('wMsg').innerHTML=`Hi! I'm your AI facilitator for <strong>${t.name}</strong>.${t.focus?` Current focus: <em>${t.focus}</em>.`:''}<br><br>I know your team, your open actions, and your history. Try the "Pre-retro brief" button for a quick summary before your next session.`;document.getElementById('chatCtx').textContent=`${t.name} · ${t.members.length} members · Kanban`;}}
-function getWk(d){const s=new Date(d);s.setHours(0,0,0,0);s.setDate(s.getDate()+4-(s.getDay()||7));const y=new Date(s.getFullYear(),0,1);return Math.ceil(((s-y)/864e5+1)/7);}
-function updateStreak(ran){const tw=getWk(new Date());if(ran){if(S.lastRetroWeek===tw-1)S.streak=(S.streak||0)+1;else if(S.lastRetroWeek===tw){}else S.streak=1;S.lastRetroWeek=tw;sv();}const s=S.streak||0;['strkV','strkBig'].forEach(id=>document.getElementById(id).textContent=s);document.getElementById('strkMsg').textContent=s===0?'Run your first retro to start!':s<3?`${s} week${s>1?'s':''} — keep it going!`:s<6?`${s} weeks strong! 💪`:`${s} weeks in a row — outstanding! 🏆`;}
-function refreshDash(){const acts=S.actions;const done=acts.filter(a=>a.done).length;const over=acts.filter(a=>!a.done&&a.due&&new Date(a.due)<new Date()).length;const pct=acts.length?Math.round(done/acts.length*100):null;const wk=new Date(Date.now()-7*864e5).toISOString();const pw=new Date(Date.now()-14*864e5).toISOString();const tw=acts.filter(a=>a.done&&a.closedAt&&a.closedAt>wk).length;const lw=acts.filter(a=>a.done&&a.closedAt&&a.closedAt>pw&&a.closedAt<=wk).length;document.getElementById('mRet').textContent=S.retros.length;document.getElementById('mRes').textContent=pct!==null?pct+'%':'—';document.getElementById('mResS').textContent=pct!==null?(pct>70?'on track ↑':'needs attention'):'no actions yet';document.getElementById('mMom').textContent=tw;const ms=document.getElementById('mMomS');if(tw>lw){ms.textContent='↑ up from '+lw+' last week';ms.className='ms up';}else if(tw<lw){ms.textContent='↓ down from '+lw;ms.className='ms dn';}else{ms.textContent='same as last week';ms.className='ms';}document.getElementById('odDot').style.display=over>0?'block':'none';if(S.pulse.length){const r=S.pulse.slice(-5);const avg=(r.reduce((s,p)=>s+(p.energy+p.clarity+p.collab)/3,0)/r.length).toFixed(1);document.getElementById('mPul').textContent=avg;document.getElementById('mPulS').textContent='avg last '+r.length;}
-const ins=[];const days=S.retros.length?Math.floor((Date.now()-new Date(S.retros[S.retros.length-1].date))/864e5):999;if(days>13)ins.push({c:'#f59e0b',bg:'#fef3c7',t:`No retro in <strong>${days===999?'a while':days+' days'}</strong>. Bi-weekly retros are the heartbeat of a Kanban team.`});if(over>0)ins.push({c:'#ef4444',bg:'#fee2e2',t:`<strong>${over} action${over>1?'s':''}</strong> overdue. Review before your next retro.`});if(tw>0)ins.push({c:'#10b981',bg:'#d1fae5',t:`<strong>${tw} action${tw>1?'s':''}</strong> closed this week — great momentum! 🎯`});if(S.asyncNotes.length>0)ins.push({c:'#6C63FF',bg:'#ede9ff',t:`<strong>${S.asyncNotes.length} team member${S.asyncNotes.length>1?'s have':'has'}</strong> added async retro notes. Ready to run the retro!`});if(S.pulse.length){const l=S.pulse[S.pulse.length-1];const a=(l.energy+l.clarity+l.collab)/3;if(a<3)ins.push({c:'#ef4444',bg:'#fee2e2',t:`Latest pulse <strong>${a.toFixed(1)}/5</strong> — team may need support.`});else if(a>=4)ins.push({c:'#10b981',bg:'#d1fae5',t:`Latest pulse <strong>${a.toFixed(1)}/5</strong> — great team energy! 💚`});}if(!ins.length)ins.push({c:'#10b981',bg:'#d1fae5',t:'All good! Keep the momentum going.'});
-document.getElementById('insights').innerHTML=ins.map(i=>`<div class="insight"><div class="iic" style="background:${i.bg}"><div style="width:8px;height:8px;border-radius:50%;background:${i.c};"></div></div><div>${i.t}</div></div>`).join('')+'<div style="padding-bottom:2px"></div>';
-const tc=['b-grn','b-amb','b-blu','b-acc'];const themes=S.retros.flatMap(r=>r.improve||[]).slice(-6);document.getElementById('themes').innerHTML=themes.length?themes.map((t,i)=>`<span class="badge ${tc[i%4]}">${t.substring(0,35)}</span>`).join(''):'<span style="font-size:13px;color:var(--tx3);">Run your first retro to see themes.</span>';updateStreak(false);}
-/* RETRO NOTES + VOTING */
-function renderNotes(z){const el=document.getElementById('z-'+z);if(!el)return;const notes=S.retro[z]||[];el.innerHTML=notes.map((n,i)=>{const k=z+':'+i;const v=S.votes[k]||0;const isAsync=typeof n==='object';const txt=isAsync?n.text:n;const who=isAsync?n.who:'';return`<div class="sticky${isAsync?' async-note':''}">${isAsync?`<div style="position:absolute;display:none"></div>`:''}${who?`<div class="async-who">${who}</div>`:''}${v>0?`<span class="vcnt" style="margin-right:3px;">+${v}</span>`:''}<span class="st-t">${txt}</span><span class="vbtn" onclick="vote('${z}',${i})">▲</span></div>`;}).join('');const cnt=document.getElementById('nc-'+z);if(cnt)cnt.textContent=notes.length||'';}
-function vote(z,i){const k=z+':'+i;S.votes[k]=(S.votes[k]||0)+1;sv();renderNotes(z);}
-function addNote(z){const t=prompt('Add a note:');if(!t?.trim())return;if(!S.retro[z])S.retro[z]=[];S.retro[z].push(t.trim());sv();renderNotes(z);}
-/* ASYNC RETRO */
-function openAsync(){document.getElementById('asyncWell').value='';document.getElementById('asyncImprove').value='';document.getElementById('asyncActions').value='';document.getElementById('asyncExp').value='';document.getElementById('asyncOk').style.display='none';document.getElementById('asyncOv').style.display='flex';}
-function closeAsync(){document.getElementById('asyncOv').style.display='none';}
-function submitAsync(){const who=document.getElementById('asyncWho').value;if(!who){alert('Please select your name.');return;}const well=document.getElementById('asyncWell').value.trim().split('\n').filter(Boolean);const improve=document.getElementById('asyncImprove').value.trim().split('\n').filter(Boolean);const actions=document.getElementById('asyncActions').value.trim().split('\n').filter(Boolean);const exp=document.getElementById('asyncExp').value.trim().split('\n').filter(Boolean);if(!well.length&&!improve.length&&!actions.length&&!exp.length){alert('Please add at least one note.');return;}S.asyncNotes=S.asyncNotes.filter(n=>n.who!==who);S.asyncNotes.push({who,well,improve,actions,experiments:exp,date:new Date().toISOString()});sv();document.getElementById('asyncOk').style.display='block';setTimeout(()=>{document.getElementById('asyncOv').style.display='none';},2000);renderAsyncPreview();refreshDash();const dot=document.getElementById('asyncDot');if(dot)dot.style.display='block';}
-function renderAsyncPreview(){const el=document.getElementById('asyncPreview');if(!el)return;const cnt=document.getElementById('asyncCount');if(cnt)cnt.textContent=S.asyncNotes.length+' contributor'+(S.asyncNotes.length!==1?'s':'');const dot=document.getElementById('asyncDot');if(dot)dot.style.display=S.asyncNotes.length>0?'block':'none';if(!S.asyncNotes.length){el.innerHTML='<div style="font-size:13px;color:var(--tx3);text-align:center;padding:16px 0;">No async notes yet.</div>';return;}el.innerHTML=S.asyncNotes.map(n=>`<div class="ac-row"><div class="ac-who">${n.who}</div><div class="ac-notes">${[...n.well.map(t=>`✓ ${t}`),...n.improve.map(t=>`△ ${t}`),...n.actions.map(t=>`→ ${t}`),...(n.experiments||[]).map(t=>`⚡ ${t}`)].join('<br>')}</div></div>`).join('');}
-function loadAsyncNotes(){if(!S.asyncNotes.length){alert('No async notes yet.');return;}S.asyncNotes.forEach(n=>{['well','improve','actions','experiments'].forEach(z=>{const src=z==='experiments'?n.experiments:n[z];(src||[]).forEach(t=>{if(!S.retro[z])S.retro[z]=[];S.retro[z].push({text:t,who:n.who});});});});sv();['well','improve','actions','experiments'].forEach(z=>renderNotes(z));document.getElementById('asyncBadge').style.display='inline-flex';alert(`Loaded notes from ${S.asyncNotes.length} team member${S.asyncNotes.length>1?'s':''}! Notes are marked with their contributor's name.`);}
-function clearAsync(){if(!confirm('Clear all async notes?'))return;S.asyncNotes=[];sv();renderAsyncPreview();refreshDash();}
-/* TIMER */
-const PHASES=[{n:'Gather data',s:'Add notes to the board',m:10},{n:'Generate insights',s:'Discuss and vote on notes',m:15},{n:'Decide actions',s:'Commit to improvements',m:10}];
-let tPhase=0,tSecs=0,tRun=false,tInt=null;
-function initTimer(){tSecs=PHASES[tPhase].m*60;renderTimer();}
-function renderTimer(){const p=PHASES[tPhase];document.getElementById('tPhase').textContent=p.n;document.getElementById('tSub').textContent=p.s;const tot=p.m*60;const pct=Math.round(tSecs/tot*100);document.getElementById('tFill').style.width=pct+'%';document.getElementById('tFill').style.background=pct>50?'var(--acc)':pct>20?'var(--amb)':'var(--red)';const m=Math.floor(tSecs/60),s=tSecs%60;document.getElementById('tDisp').textContent=`${m}:${s.toString().padStart(2,'0')}`;document.getElementById('tBtn').textContent=tRun?'Pause':'Start';}
-function toggleTimer(){if(tRun){clearInterval(tInt);tRun=false;}else{if(tSecs===0)tSecs=PHASES[tPhase].m*60;tRun=true;tInt=setInterval(()=>{tSecs--;renderTimer();if(tSecs<=0){clearInterval(tInt);tRun=false;if(tPhase<PHASES.length-1)celebrate('⏰','Time\'s up!','Move to: '+PHASES[tPhase+1].n);}},1000);}renderTimer();}
-function nextPhase(){clearInterval(tInt);tRun=false;tPhase=(tPhase+1)%PHASES.length;tSecs=PHASES[tPhase].m*60;renderTimer();}
-initTimer();
-/* SAVE NOTION */
-function setSave(st,lb){document.getElementById('sdot').className='sd'+(st?' '+st:'');document.getElementById('slbl').textContent=lb;}
-async function saveNotion(){document.getElementById('savebtn').disabled=true;setSave('saving','Saving…');const n=S.retro;const num=S.retros.length+1;const title=`Retro #${num} · ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`;const txt=z=>((n[z]||[]).map(x=>typeof x==='object'?`[${x.who}] ${x.text}`:x)).join(' · ')||'—';try{const res=await fetch(PROXY+'/notion/pages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({parent:{database_id:NOTION_DB},properties:{Name:{title:[{text:{content:title}}]},Date:{date:{start:new Date().toISOString().split('T')[0]}},'What went well':{rich_text:[{text:{content:txt('well')}}]},Improve:{rich_text:[{text:{content:txt('improve')}}]},Actions:{rich_text:[{text:{content:txt('actions')}}]}}})});const data=await res.json();if(!res.ok)throw new Error(data.message||'Notion error');S.retros.push({date:new Date().toISOString(),title,well:(n.well||[]).map(x=>typeof x==='object'?x.text:x),improve:(n.improve||[]).map(x=>typeof x==='object'?x.text:x),actions:(n.actions||[]).map(x=>typeof x==='object'?x.text:x),experiments:(n.experiments||[]).map(x=>typeof x==='object'?x.text:x)});S.retro={well:[],improve:[],actions:[],experiments:[]};S.votes={};S.asyncNotes=[];updateStreak(true);if(S.obStep<3)S.obStep=3;sv();const now=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});setSave('saved','Saved · '+now);document.getElementById('nlast').textContent=now;const log=document.getElementById('nlog');log.innerHTML='';S.retros.slice().reverse().forEach(r=>{const d=document.createElement('div');d.className='log-e';d.innerHTML=`<div class="ldot" style="background:var(--grn)"></div><span style="flex:1">${r.title}</span><span style="color:var(--tx3)">${new Date(r.date).toLocaleDateString('en-GB')}</span>`;log.appendChild(d);});renderAsyncPreview();refreshDash();renderOnboarding();if(S.streak===1)celebrate('🎉','First retro saved!','Come back next week to start your streak.');else if(S.streak>0&&S.streak%5===0)celebrate('🔥','Streak milestone!',`${S.streak} weeks in a row!`);else if(S.team.slack)sendCelebrationSlack();}catch(e){setSave('error','Failed: '+e.message);}document.getElementById('savebtn').disabled=false;}
-async function testNotion(){const er=document.getElementById('nterr'),ok=document.getElementById('ntok');er.style.display='none';ok.style.display='none';try{const r=await fetch(PROXY+'/notion/test/'+NOTION_DB);const d=await r.json();if(d.ok){ok.textContent='Connected: "'+d.title+'"';ok.style.display='block';}else throw new Error(d.message);}catch(e){er.textContent='Failed: '+e.message;er.style.display='block';}}
-/* ACTIONS */
-function refreshActions(){const acts=S.actions;const done=acts.filter(a=>a.done).length;const over=acts.filter(a=>!a.done&&a.due&&new Date(a.due)<new Date()).length;const wk=new Date(Date.now()-7*864e5).toISOString();const pw=new Date(Date.now()-14*864e5).toISOString();const tw=acts.filter(a=>a.done&&a.closedAt&&a.closedAt>wk).length;const lw=acts.filter(a=>a.done&&a.closedAt&&a.closedAt>pw&&a.closedAt<=wk).length;document.getElementById('progLbl').textContent=`${done} of ${acts.length}`;document.getElementById('pfill').style.width=acts.length?Math.round(done/acts.length*100)+'%':'0%';document.getElementById('momV').textContent=tw;const mt=document.getElementById('momT');if(tw>lw){mt.textContent='↑ up from '+lw;mt.style.color='var(--grn)';}else if(tw<lw){mt.textContent='↓ down from '+lw;mt.style.color='var(--red)';}else{mt.textContent='= same';mt.style.color='var(--tx3)';}const b=document.getElementById('odBadge');if(over>0){b.style.display='inline-flex';b.textContent=over+' overdue';}else b.style.display='none';document.getElementById('odDot').style.display=over>0?'block':'none';const list=document.getElementById('alist');if(!acts.length){list.innerHTML='<div style="font-size:13px;color:var(--tx3);text-align:center;padding:16px 0;">No actions yet. Add one below or save a retro.</div>';return;}list.innerHTML='';acts.forEach((a,i)=>{const isOv=!a.done&&a.due&&new Date(a.due)<new Date();const isAI=a.fromAI;const d=document.createElement('div');d.className='ai';d.innerHTML=`<div class="chk ${a.done?'done':''}" onclick="toggleA(${i})">${a.done?'<svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2.5 2.5 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>':''}</div><div class="ab"><div class="at2 ${a.done?'stk':''}">${a.text}</div><div class="am2">${a.owner?`<strong>${a.owner}</strong> ·`:'Unassigned ·'} ${a.due?`Due ${new Date(a.due).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}`:'No due date'} ${isOv?'<span class="otag">Overdue</span>':''} ${isAI?'<span class="atag">from AI</span>':''}</div></div>`;list.appendChild(d);});}
-function toggleA(i){const was=!S.actions[i].done;S.actions[i].done=!S.actions[i].done;if(S.actions[i].done)S.actions[i].closedAt=new Date().toISOString();sv();refreshActions();refreshDash();if(was){const allDone=S.actions.length>0&&S.actions.every(a=>a.done);if(allDone)celebrate('🏆','All actions done!','Every action is closed. Outstanding team discipline!');}}
-function addA(text,owner,fromAI){const t=(text||document.getElementById('newin').value).trim();if(!t)return;const o=owner||document.getElementById('newOwner')?.value||'';const due=fromAI?'':document.getElementById('newDue')?.value||'';S.actions.push({text:t,owner:o,due,done:false,date:new Date().toISOString(),fromAI:!!fromAI});sv();refreshActions();refreshDash();if(!fromAI){document.getElementById('newin').value='';document.getElementById('newOwner').value='';document.getElementById('newDue').value='';}}
-/* PULSE */
-let pSelM='',pSc={energy:0,clarity:0,collab:0};
-function renderPulseSel(){const el=document.getElementById('pulseSel');if(!el)return;const ms=S.team.members.length?S.team.members:['Me'];el.innerHTML=ms.map(m=>`<button class="mb2 ${pSelM===m?'sel':''}" onclick="pSelM='${m}';renderPulseSel()">${m}</button>`).join('');}
-function bldScale(id,key){const el=document.getElementById(id);if(!el)return;el.innerHTML=[1,2,3,4,5].map(n=>`<div class="pn ${pSc[key]===n?'sel':''}" onclick="pSc['${key}']=${n};bldScale('${id}','${key}')">${n}</div>`).join('');}
-function refreshPulse(){renderPulseSel();bldScale('psE','energy');bldScale('psCl','clarity');bldScale('psCo','collab');const tr=document.getElementById('pulseTrend');if(!S.pulse.length){tr.innerHTML='<div style="font-size:13px;color:var(--tx3);text-align:center;padding:14px 0;">No data yet.</div>';return;}const wks=S.pulse.slice(-10);const mH=60;tr.innerHTML=`<div style="display:flex;align-items:flex-end;gap:5px;height:${mH}px;">${wks.map((p,i)=>{const avg=(p.energy+p.clarity+p.collab)/3;const h=Math.max(4,Math.round(avg/5*mH));const cur=i===wks.length-1;return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="font-size:10px;color:var(--tx3);">${avg.toFixed(1)}</div><div style="height:${h}px;width:100%;border-radius:3px 3px 0 0;background:${cur?'var(--acc)':'var(--acc-l)'};" title="${p.member}"></div></div>`;}).join('')}</div><div style="display:flex;gap:5px;padding:4px 0 0;">${wks.map(p=>`<div style="flex:1;font-size:10px;color:var(--tx3);text-align:center;overflow:hidden;white-space:nowrap;">${p.member.split(' ')[0]}</div>`).join('')}</div>`;const sc=document.getElementById('pulseScores');if(!S.team.members.length){sc.innerHTML='<div style="font-size:13px;color:var(--tx3);text-align:center;padding:10px 0;">Set up team members first.</div>';return;}sc.innerHTML=S.team.members.map(m=>{const es=S.pulse.filter(p=>p.member===m);if(!es.length)return`<div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--bor);"><span>${m}</span><span style="color:var(--tx3);">No data</span></div>`;const l=es[es.length-1];const avg=((l.energy+l.clarity+l.collab)/3).toFixed(1);const col=avg>=4?'var(--grn)':avg>=3?'var(--amb)':'var(--red)';return`<div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:8px 0;border-bottom:1px solid var(--bor);"><span style="font-weight:500;">${m}</span><div style="display:flex;gap:10px;align-items:center;"><span style="font-size:11px;color:var(--tx3);">E${l.energy} C${l.clarity} T${l.collab}</span><span style="font-weight:600;color:${col};">${avg}</span></div></div>`;}).join('');}
-function submitPulse(){if(!pSelM){alert('Select who is submitting.');return;}if(!pSc.energy||!pSc.clarity||!pSc.collab){alert('Please rate all three areas.');return;}S.pulse.push({member:pSelM,energy:pSc.energy,clarity:pSc.clarity,collab:pSc.collab,date:new Date().toISOString()});sv();pSc={energy:0,clarity:0,collab:0};pSelM='';document.getElementById('pulseOk').style.display='block';setTimeout(()=>document.getElementById('pulseOk').style.display='none',3000);refreshPulse();refreshDash();const avg=(S.pulse[S.pulse.length-1].energy+S.pulse[S.pulse.length-1].clarity+S.pulse[S.pulse.length-1].collab)/3;if(avg>=4.5)celebrate('💚','Fantastic pulse!','The team is energised and firing on all cylinders!');}
-/* LEARNING */
-function addLearn(){const t=document.getElementById('lTitle').value.trim();if(!t)return;S.learnings.push({title:t,type:document.getElementById('lType').value,note:document.getElementById('lNote').value.trim(),who:document.getElementById('lWho').value,date:new Date().toISOString()});sv();renderLearnings();document.getElementById('lTitle').value='';document.getElementById('lNote').value='';}
-const LTC={insight:'lt-i',experiment:'lt-e',article:'lt-a',tool:'lt-t'};const LTL={insight:'Insight',experiment:'Experiment',article:'Article',tool:'Tool'};
-function renderLearnings(){const el=document.getElementById('learnList');if(!el)return;if(!S.learnings.length){el.innerHTML='<div style="font-size:13px;color:var(--tx3);text-align:center;padding:14px 0;">No learnings yet.</div>';return;}el.innerHTML=S.learnings.slice().reverse().map(l=>`<div class="le"><div class="lh"><span class="lt ${LTC[l.type]||'lt-i'}">${LTL[l.type]||'Insight'}</span><span style="font-size:13px;font-weight:500;">${l.title}</span></div><div class="ln">${l.who?l.who+' · ':''}${new Date(l.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div>${l.note?`<div class="lnote">${l.note}</div>`:''}</div>`).join('');}
-/* NORMS */
-const NORM_SUGG=['We review PRs within 24 hours','We start and end meetings on time','We share blockers daily, not just in retros','We separate problem from solution discussions','We assume good intent in all communications','We protect focus time — no meetings before 10am','We celebrate small wins, not just big launches'];
-function renderNormSugg(){const el=document.getElementById('normSugg');if(!el)return;const ex=S.norms.map(n=>n.text.toLowerCase());const sg=NORM_SUGG.filter(s=>!ex.includes(s.toLowerCase())).slice(0,4);el.innerHTML=sg.map(s=>`<div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px solid var(--bor);color:var(--tx2);">${s}<button class="btn bs bxs" onclick="addSN('${s.replace(/'/g,'&apos;')}')" style="flex-shrink:0;margin-left:8px;">Add</button></div>`).join('');}
-function addSN(t){S.norms.push({text:t,date:new Date().toISOString()});sv();renderNorms();renderNormSugg();}
-function addNorm(){const t=document.getElementById('normIn').value.trim();if(!t)return;S.norms.push({text:t,date:new Date().toISOString()});sv();renderNorms();renderNormSugg();document.getElementById('normIn').value='';}
-function renderNorms(){const el=document.getElementById('normsList');if(!el)return;if(!S.norms.length){el.innerHTML='<div style="font-size:13px;color:var(--tx3);text-align:center;padding:14px 0;">No norms yet.</div>';return;}el.innerHTML=S.norms.map((n,i)=>`<div class="norm"><div class="nnum">${i+1}</div><div class="ntxt">${n.text}</div><span class="ndel" onclick="delNorm(${i})">×</span></div>`).join('');}
-function delNorm(i){S.norms.splice(i,1);sv();renderNorms();renderNormSugg();}
-/* ONBOARDING */
-const OB_STEPS=[{title:'Complete team setup',desc:'Add your team name, members, and current focus so the AI knows who it\'s working with.',action:'Open setup',actionFn:()=>showSetup()},{title:'Run your first retro',desc:'Go to "Run a retro", add a few notes to each column, and save it to Notion to complete your first session.',action:'Go to retro',actionFn:()=>go('retro',null)},{title:'Add your first action',desc:'In the Actions panel, add a concrete improvement from your retro with an owner and due date.',action:'Go to actions',actionFn:()=>go('actions',null)},{title:'Submit a pulse check',desc:'Have each team member rate their energy, clarity, and collaboration. Do this every week.',action:'Go to pulse',actionFn:()=>go('pulse',null)},{title:'Try async retro mode',desc:'Before your next retro, ask team members to add notes async. Then load them onto the board when you meet.',action:'Go to async',actionFn:()=>go('async',null)}];
-function renderOnboarding(){const el=document.getElementById('ob-steps');if(!el)return;const step=S.obStep||0;el.innerHTML=OB_STEPS.map((s,i)=>{const done=i<step;const cur=i===step;const cls=done?'ob-done':cur?'ob-cur':'ob-todo';const icon=done?'✓':cur?'→':(i+1);return`<div class="ob-step"><div class="ob-num ${cls}">${icon}</div><div class="ob-body"><div class="ob-title">${s.title}</div><div class="ob-desc">${s.desc}</div></div></div>`;}).join('');const acts=document.getElementById('ob-actions');if(!acts)return;if(step>=OB_STEPS.length){acts.innerHTML='<div style="display:flex;align-items:center;gap:10px;padding:8px 0;"><span style="font-size:24px;">🎓</span><div><div style="font-size:14px;font-weight:600;">Onboarding complete!</div><div style="font-size:13px;color:var(--tx2);">You\'re ready to facilitate high-performing retros. Keep the streak going!</div></div></div>';return;}const cur=OB_STEPS[step];acts.innerHTML=`<button class="btn bp bs" onclick="OB_STEPS[${step}].actionFn()">${cur.action} →</button><button class="btn bs" onclick="advanceOB()">Mark done</button>`;}
-function advanceOB(){if(S.obStep<OB_STEPS.length)S.obStep++;sv();renderOnboarding();if(S.obStep===OB_STEPS.length)celebrate('🎓','Onboarding complete!','You\'re all set to run high-performing retrospectives with your team.');}
-function startMiniRetro(){go('chat',null);setTimeout(()=>qs('I\'m new to retrospectives. Can you run a quick 5-minute practice retro with me to help me understand how it works? Ask me questions one at a time, like a real facilitator would.'),100);}
-/* SLACK */
-function saveSlack(){const v=document.getElementById('slackin').value.trim();if(v.startsWith('https://hooks.slack.com')){S.team.slack=v;sv();document.getElementById('slackok').style.display='block';}else alert('Enter a valid Slack webhook URL.');}
-function buildSlackMsg(type){const t=S.team;const open=S.actions.filter(a=>!a.done);const over=open.filter(a=>a.due&&new Date(a.due)<new Date());const wk=new Date(Date.now()-7*864e5).toISOString();const closed=S.actions.filter(a=>a.done&&a.closedAt&&a.closedAt>wk).length;const days=S.retros.length?Math.floor((Date.now()-new Date(S.retros[S.retros.length-1].date))/864e5):999;const tn=t.name||'Your team';const pAvg=S.pulse.length?((S.pulse[S.pulse.length-1].energy+S.pulse[S.pulse.length-1].clarity+S.pulse[S.pulse.length-1].collab)/3).toFixed(1):null;
-if(type==='nudge'){const lines=[`*👋 ${tn} · Weekly check-in from your facilitator*`,''];if(days>13)lines.push(`📅 No retro in *${days===999?'a while':days+' days'}* — time to schedule one!`);if(over.length)lines.push(`⚠️ *${over.length} overdue action${over.length>1?'s':''}*: ${over.map(a=>a.text+(a.owner?' ('+a.owner+')':'')).slice(0,3).join(', ')}`);else if(open.length)lines.push(`📋 *${open.length} open action${open.length>1?'s':''}* — keep the momentum going.`);if(closed)lines.push(`✅ *${closed} action${closed>1?'s':''} closed this week* — great work!`);if(pAvg)lines.push(`💚 Team pulse: *${pAvg}/5*`);if(S.streak)lines.push(`🔥 Retro streak: *${S.streak} week${S.streak>1?'s':''}*`);lines.push('','_Open your team facilitator to take action →_');return lines.filter(Boolean).join('\n');}
-if(type==='digest'){const lines=[`*${tn} · Weekly digest*`,`📋 Open: ${open.length} (${over.length} overdue)`,...over.slice(0,3).map(a=>`  ⚠️ ${a.text}${a.owner?' — '+a.owner:''}`),closed?`✅ Closed this week: ${closed}`:'',`📅 Retros: ${S.retros.length} | 🔥 Streak: ${S.streak||0} weeks`,pAvg?`💚 Latest pulse: ${pAvg}/5`:'','_Sent by Team Facilitator_'].filter(Boolean).join('\n');return lines;}
-if(type==='celebration'){const lines=[`🎉 *${tn} just completed retro #${S.retros.length}!*`,S.streak>1?`🔥 That's *${S.streak} weeks in a row* — a real continuous improvement habit.`:'',S.actions.length?`📋 Tracking *${S.actions.length} improvement action${S.actions.length>1?'s':''}* across ${S.retros.length} retros.`:'','_Powered by Team Facilitator_'].filter(Boolean).join('\n');return lines;}return '';}
-async function postSlack(text){const wh=S.team.slack;if(!wh){alert('No Slack webhook saved. Add it in Settings.');go('settings',null);return false;}try{await fetch(PROXY+'/slack',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({webhook:wh,text})});return true;}catch(e){alert('Slack error: '+e.message);return false;}}
-async function sendDigest(){const ok=await postSlack(buildSlackMsg('digest'));if(ok)alert('Digest sent! 🚀');}
-async function sendNudge(){const ok=await postSlack(buildSlackMsg('nudge'));if(ok)alert('Weekly nudge sent! 👋');}
-async function sendCelebration(){await postSlack(buildSlackMsg('celebration'));}
-async function sendCelebrationSlack(){if(S.team.slack)await postSlack(buildSlackMsg('celebration'));}
-function buildCronBlock(){const el=document.getElementById('cronBlock');if(!el)return;const day=S.team.nudgeDay||4;const script=`# Add to Railway: Settings → Cron Jobs → New Cron Job
-# Runs every ${['','Mon','Tue','Wed','Thu','Fri'][day]} at 9:00am
 
-0 9 * * ${day} node -e "
-const fetch = require('node-fetch');
-const webhook = process.env.SLACK_WEBHOOK;
-const msg = '👋 *Team Facilitator weekly nudge*\\nTime to check your retro actions and pulse!';
-fetch(webhook, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:msg})});
-"`;el.textContent=script;}
-function copyCron(){const el=document.getElementById('cronBlock');navigator.clipboard.writeText(el.textContent).then(()=>alert('Cron script copied!')).catch(()=>alert('Copy failed — select and copy manually.'));}
-/* CELEBRATE */
+async function doSetup(){
+  const n=document.getElementById('sName').value.trim();
+  if(!n){const e=document.getElementById('setupErr');e.textContent='Please enter a team name.';e.style.display='block';return;}
+  const btn=document.getElementById('setupBtn');btn.disabled=true;btn.textContent='Creating…';
+  try{
+    const rows=await sb('POST','teams',{name:n,members:setupMs,focus:document.getElementById('sFocus').value.trim(),slack_webhook:document.getElementById('sSlack').value.trim()});
+    const team=Array.isArray(rows)?rows[0]:rows;
+    TEAM_ID=team.id;localStorage.setItem('tf-v6-team',TEAM_ID);
+    document.getElementById('setupOv').style.display='none';
+    await loadAll();
+  }catch(e){const er=document.getElementById('setupErr');er.textContent='Error: '+e.message;er.style.display='block';}
+  btn.disabled=false;btn.textContent='Create team';
+}
+
+async function loadExisting(){const id=document.getElementById('existId').value.trim();if(!id)return;TEAM_ID=id;localStorage.setItem('tf-v6-team',TEAM_ID);document.getElementById('setupOv').style.display='none';await loadAll();}
+
+async function loadAll(){
+  try{
+    const rows=await sb('GET','teams','',{id:'eq.'+TEAM_ID});
+    if(!rows||!rows.length){localStorage.removeItem('tf-v6-team');document.getElementById('setupOv').style.display='flex';return;}
+    T=rows[0];
+    await Promise.all([loadRetros(),loadActions(),loadPulse(),loadLearnings(),loadNorms(),loadBoard()]);
+    initUI();
+    setInterval(async()=>{await Promise.all([loadBoard(),loadActions(),loadPulse()]);renderBoard();renderActions();renderPulseScores();refreshDash();},5000);
+  }catch(e){console.error(e);document.getElementById('setupOv').style.display='flex';}
+}
+
+async function loadRetros(){retros=await sb('GET','retros','',{team_id:'eq.'+TEAM_ID,order:'created_at.asc'})||[];}
+async function loadActions(){actions=await sb('GET','actions','',{team_id:'eq.'+TEAM_ID,order:'created_at.asc'})||[];}
+async function loadPulse(){pulse=await sb('GET','pulse','',{team_id:'eq.'+TEAM_ID,order:'created_at.asc'})||[];}
+async function loadLearnings(){learnings=await sb('GET','learnings','',{team_id:'eq.'+TEAM_ID,order:'created_at.desc'})||[];}
+async function loadNorms(){norms=await sb('GET','norms','',{team_id:'eq.'+TEAM_ID,order:'created_at.asc'})||[];}
+async function loadBoard(){board=await sb('GET','retro_board','',{team_id:'eq.'+TEAM_ID,order:'created_at.asc'})||[];}
+
+const TITLES={home:'Team dashboard',chat:'Ask the facilitator',retro:'Run a retrospective',async:'Async retro',actions:'Improvement actions',pulse:'Pulse check',learning:'Learning log',norms:'Team norms',onboarding:'Onboarding',settings:'Settings'};
+const METAS={home:'Real-time · Supabase',chat:'Powered by Claude',retro:'5 formats · timer · voting · Notion',async:'Collect notes before the session',actions:'Shared · real-time',pulse:'Weekly health check',learning:'Team knowledge',norms:'Working agreements',onboarding:'Get started',settings:'Notion · Slack · team config'};
+
+function go(id,el){['home','chat','retro','async','actions','pulse','learning','norms','onboarding','settings'].forEach(p=>{const e=document.getElementById('p-'+p);if(e)e.classList.remove('visible');});const p=document.getElementById('p-'+id);if(p)p.classList.add('visible');document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));if(el)el.classList.add('active');else{const m={home:0,chat:1,retro:2,async:3,actions:4,pulse:5,learning:6,norms:7,onboarding:8,settings:9};document.querySelectorAll('.ni')[m[id]]?.classList.add('active');}document.getElementById('ttl').textContent=TITLES[id]||id;document.getElementById('tmt').textContent=METAS[id]||'';}
+
+function initUI(){
+  document.getElementById('navName').textContent=T.name||'Facilitator';
+  document.getElementById('teamIdDisplay').textContent='ID: '+TEAM_ID.substring(0,8)+'…';
+  if(document.getElementById('sTeamId'))document.getElementById('sTeamId').textContent=TEAM_ID;
+  if(document.getElementById('sMembers'))document.getElementById('sMembers').textContent=(T.members||[]).join(', ')||'—';
+  if(T.slack_webhook&&document.getElementById('slackin'))document.getElementById('slackin').value=T.slack_webhook;
+  document.getElementById('rdate').textContent=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+  ['newOwner','lWho'].forEach(id=>{const s=document.getElementById(id);if(!s)return;const f=s.options[0].text;s.innerHTML=`<option value="">${f}</option>`;(T.members||[]).forEach(m=>{const o=document.createElement('option');o.value=m;o.textContent=m;s.appendChild(o);});});
+  initTemplates();renderBoard();renderActions();renderPulseScores();renderPulseSel();refreshDash();renderLearnings();renderNorms();renderNormSugg();calcStreak();
+  const wm=document.getElementById('wMsg');if(wm)wm.innerHTML=`Hi! I'm your AI facilitator for <strong>${T.name}</strong>. Everything is live and shared across your team in real time via Supabase.<br><br>Try <strong>"Pre-retro brief"</strong> before your next session.`;
+  const cc=document.getElementById('chatCtx');if(cc)cc.textContent=`${T.name} · ${(T.members||[]).length} members · live`;
+}
+
+function getWk(d){const s=new Date(d);s.setHours(0,0,0,0);s.setDate(s.getDate()+4-(s.getDay()||7));const y=new Date(s.getFullYear(),0,1);return Math.ceil(((s-y)/864e5+1)/7);}
+function calcStreak(){const weeks=[...new Set(retros.map(r=>getWk(r.created_at)))].sort();let streak=0,tw=getWk(new Date());for(let i=weeks.length-1;i>=0;i--){if(weeks[i]===tw||weeks[i]===tw-1){streak++;tw=weeks[i]-1;}else break;}['strkV','strkBig'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=streak;});const sm=document.getElementById('strkMsg');if(sm)sm.textContent=streak===0?'Run your first retro to start!':streak<3?`${streak} week${streak>1?'s':''} — keep going!`:streak<6?`${streak} weeks strong! 💪`:`${streak} weeks — outstanding! 🏆`;}
+
+function refreshDash(){
+  const done=actions.filter(a=>a.done).length,over=actions.filter(a=>!a.done&&a.due&&new Date(a.due)<new Date()).length;
+  const pct=actions.length?Math.round(done/actions.length*100):null;
+  const wk=new Date(Date.now()-7*864e5).toISOString(),pw=new Date(Date.now()-14*864e5).toISOString();
+  const tw=actions.filter(a=>a.done&&a.closed_at&&a.closed_at>wk).length;
+  const lw=actions.filter(a=>a.done&&a.closed_at&&a.closed_at>pw&&a.closed_at<=wk).length;
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  set('mRet',retros.length);set('mRes',pct!==null?pct+'%':'—');
+  set('mResS',pct!==null?(pct>70?'on track ↑':'needs attention'):'no actions yet');
+  set('mMom',tw);
+  const ms=document.getElementById('mMomS');
+  if(ms){if(tw>lw){ms.textContent='↑ up from '+lw;ms.className='ms up';}else if(tw<lw){ms.textContent='↓ from '+lw;ms.className='ms dn';}else{ms.textContent='same as last week';ms.className='ms';}}
+  const od=document.getElementById('odDot');if(od)od.style.display=over>0?'block':'none';
+  if(pulse.length){const r=pulse.slice(-10);const avg=(r.reduce((s,p)=>s+(p.energy+p.clarity+p.collab)/3,0)/r.length).toFixed(1);set('mPul',avg);set('mPulS','avg last '+r.length);}
+  const ins=[];const days=retros.length?Math.floor((Date.now()-new Date(retros[retros.length-1].created_at))/864e5):999;
+  if(days>13)ins.push({c:'#f59e0b',bg:'#fef3c7',t:`No retro in <strong>${days===999?'a while':days+' days'}</strong>.`});
+  if(over>0)ins.push({c:'#ef4444',bg:'#fee2e2',t:`<strong>${over} action${over>1?'s':''}</strong> overdue.`});
+  if(tw>0)ins.push({c:'#10b981',bg:'#d1fae5',t:`<strong>${tw} action${tw>1?'s':''}</strong> closed this week! 🎯`});
+  if(pulse.length){const l=pulse[pulse.length-1];const a=(l.energy+l.clarity+l.collab)/3;if(a<3)ins.push({c:'#ef4444',bg:'#fee2e2',t:`Latest pulse <strong>${a.toFixed(1)}/5</strong> — team may need support.`});else if(a>=4)ins.push({c:'#10b981',bg:'#d1fae5',t:`Latest pulse <strong>${a.toFixed(1)}/5</strong> — great team energy! 💚`});}
+  if(!ins.length)ins.push({c:'#10b981',bg:'#d1fae5',t:'All good! Keep the momentum going.'});
+  const iel=document.getElementById('insights');if(iel)iel.innerHTML=ins.map(i=>`<div class="insight"><div class="iic" style="background:${i.bg}"><div style="width:8px;height:8px;border-radius:50%;background:${i.c};"></div></div><div>${i.t}</div></div>`).join('');
+  const tc=['b-grn','b-amb','b-blu','b-acc'],themes=retros.flatMap(r=>r.improve||[]).slice(-6);
+  const tel=document.getElementById('themes');if(tel)tel.innerHTML=themes.length?themes.map((t,i)=>`<span class="badge ${tc[i%4]}">${t.substring(0,35)}</span>`).join(''):'<span style="font-size:13px;color:var(--tx3);">Run your first retro.</span>';
+  calcStreak();
+}
+
+// RETRO TEMPLATES
+const TEMPLATES={
+  'What/Improve/Actions':[{id:'well',label:'What went well',color:'#10b981',tc:'#065f46'},{id:'improve',label:'What to improve',color:'#f59e0b',tc:'#92400e'},{id:'actions',label:'Actions',color:'#3b82f6',tc:'#1e40af'},{id:'experiments',label:'Experiments',color:'#6C63FF',tc:'#3730a3'}],
+  'Start/Stop/Continue':[{id:'start',label:'Start doing',color:'#10b981',tc:'#065f46'},{id:'stop',label:'Stop doing',color:'#ef4444',tc:'#991b1b'},{id:'continue',label:'Continue doing',color:'#3b82f6',tc:'#1e40af'},{id:'actions',label:'Actions',color:'#6C63FF',tc:'#3730a3'}],
+  '4Ls':[{id:'liked',label:'Liked',color:'#10b981',tc:'#065f46'},{id:'learned',label:'Learned',color:'#3b82f6',tc:'#1e40af'},{id:'lacked',label:'Lacked',color:'#f59e0b',tc:'#92400e'},{id:'longed',label:'Longed for',color:'#6C63FF',tc:'#3730a3'}],
+  'Mad/Sad/Glad':[{id:'mad',label:'Mad',color:'#ef4444',tc:'#991b1b'},{id:'sad',label:'Sad',color:'#f59e0b',tc:'#92400e'},{id:'glad',label:'Glad',color:'#10b981',tc:'#065f46'},{id:'actions',label:'Actions',color:'#3b82f6',tc:'#1e40af'}],
+  'Sailboat':[{id:'wind',label:'Wind (helps us)',color:'#10b981',tc:'#065f46'},{id:'anchor',label:'Anchor (slows us)',color:'#ef4444',tc:'#991b1b'},{id:'rocks',label:'Rocks (risks)',color:'#f59e0b',tc:'#92400e'},{id:'island',label:'Island (goal)',color:'#6C63FF',tc:'#3730a3'}]
+};
+let curTmpl='What/Improve/Actions';
+
+function initTemplates(){
+  const el=document.getElementById('tmplRow');
+  if(!el)return;
+  el.innerHTML=Object.keys(TEMPLATES).map(k=>`<button class="tmpl-btn ${k===curTmpl?'active':''}" onclick="setTmpl('${k}')">${k}</button>`).join('');
+  renderBoard();
+}
+
+function setTmpl(name){
+  if(board.length&&!confirm('Switching format clears the current board. Continue?'))return;
+  curTmpl=name;initTemplates();
+}
+
+function renderBoard(){
+  const el=document.getElementById('retroCols');if(!el)return;
+  const cols=TEMPLATES[curTmpl];
+  el.style.gridTemplateColumns=`repeat(${cols.length},1fr)`;
+  el.innerHTML=cols.map(c=>{const notes=board.filter(n=>n.zone===c.id);return`<div class="zone"><div class="zh"><div class="zp" style="background:${c.color};"></div><div class="zl" style="color:${c.tc};">${c.label}</div><span class="note-cnt">${notes.length||''}</span></div><div>${notes.map(n=>`<div class="sticky">${n.votes>0?`<span class="vcnt">+${n.votes}</span>`:''}<span class="st-t">${n.text}</span><span class="vbtn" onclick="voteNote('${n.id}',${n.votes||0})">▲</span></div>`).join('')}</div><div class="an" onclick="addNote('${c.id}')">+ Add note</div></div>`;}).join('');
+}
+
+async function addNote(zone){const t=prompt('Add a note:');if(!t?.trim())return;await sb('POST','retro_board',{team_id:TEAM_ID,zone,text:t.trim(),votes:0});await loadBoard();renderBoard();}
+async function voteNote(id,cur){await sb('PATCH','retro_board',{votes:cur+1},{id:'eq.'+id});await loadBoard();renderBoard();}
+
+function setSave(st,lb){const d=document.getElementById('sdot');const s=document.getElementById('slbl');if(d)d.className='sd'+(st?' '+st:'');if(s)s.textContent=lb;}
+
+async function saveRetro(){
+  const btn=document.getElementById('savebtn');if(btn)btn.disabled=true;setSave('saving','Saving…');
+  const cols=TEMPLATES[curTmpl];const num=retros.length+1;
+  const title=`Retro #${num} · ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})} · ${curTmpl}`;
+  const byZone={};cols.forEach(c=>{byZone[c.id]=board.filter(n=>n.zone===c.id).map(n=>n.text);});
+  const well=byZone['well']||byZone['start']||byZone['liked']||byZone['glad']||byZone['wind']||[];
+  const improve=byZone['improve']||byZone['stop']||byZone['lacked']||byZone['mad']||byZone['anchor']||[];
+  const acts=byZone['actions']||[];const exps=byZone['experiments']||byZone['longed']||byZone['rocks']||[];
+  try{
+    await sb('POST','retros',{team_id:TEAM_ID,title,well,improve,actions:acts,experiments:exps});
+    await fetch(PROXY+'/notion/pages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({parent:{database_id:NOTION_DB},properties:{Name:{title:[{text:{content:title}}]},Date:{date:{start:new Date().toISOString().split('T')[0]}},'What went well':{rich_text:[{text:{content:well.join(' · ')||'—'}}]},Improve:{rich_text:[{text:{content:improve.join(' · ')||'—'}}]},Actions:{rich_text:[{text:{content:acts.join(' · ')||'—'}}]}}})});
+    await sb('DELETE','retro_board','',{team_id:'eq.'+TEAM_ID});
+    await loadRetros();await loadBoard();
+    const now=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    setSave('saved','Saved · '+now);const nl=document.getElementById('nlast');if(nl)nl.textContent=now;
+    renderBoard();refreshDash();
+    if(T.slack_webhook)postSlack(buildMsg('celebration'));
+    if(retros.length===1)celebrate('🎉','First retro saved!','Your team is on the board!');
+    else if(retros.length%5===0)celebrate('🔥',retros.length+' retros!','Your team has built a real continuous improvement habit.');
+  }catch(e){setSave('error','Failed: '+e.message);}
+  if(btn)btn.disabled=false;
+}
+
+function renderActions(){
+  const done=actions.filter(a=>a.done).length,over=actions.filter(a=>!a.done&&a.due&&new Date(a.due)<new Date()).length;
+  const wk=new Date(Date.now()-7*864e5).toISOString(),pw=new Date(Date.now()-14*864e5).toISOString();
+  const tw=actions.filter(a=>a.done&&a.closed_at&&a.closed_at>wk).length;
+  const lw=actions.filter(a=>a.done&&a.closed_at&&a.closed_at>pw&&a.closed_at<=wk).length;
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  set('progLbl',`${done} of ${actions.length}`);
+  const pf=document.getElementById('pfill');if(pf)pf.style.width=actions.length?Math.round(done/actions.length*100)+'%':'0%';
+  set('momV',tw);const mt=document.getElementById('momT');
+  if(mt){if(tw>lw){mt.textContent='↑ up from '+lw;mt.style.color='var(--grn)';}else if(tw<lw){mt.textContent='↓ from '+lw;mt.style.color='var(--red)';}else{mt.textContent='= same';mt.style.color='var(--tx3)';}}
+  const b=document.getElementById('odBadge');if(b){b.style.display=over>0?'inline-flex':'none';if(over>0)b.textContent=over+' overdue';}
+  const od=document.getElementById('odDot');if(od)od.style.display=over>0?'block':'none';
+  const list=document.getElementById('alist');if(!list)return;
+  if(!actions.length){list.innerHTML='<div style="font-size:13px;color:var(--tx3);text-align:center;padding:16px 0;">No actions yet.</div>';return;}
+  list.innerHTML='';actions.forEach(a=>{const isOv=!a.done&&a.due&&new Date(a.due)<new Date();const d=document.createElement('div');d.className='ai';d.innerHTML=`<div class="chk ${a.done?'done':''}" onclick="toggleAction('${a.id}',${a.done})">${a.done?'<svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2.5 2.5 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>':''}</div><div class="ab"><div class="at2 ${a.done?'stk':''}">${a.text}</div><div class="am2">${a.owner?`<strong>${a.owner}</strong> ·`:'Unassigned ·'} ${a.due?`Due ${new Date(a.due).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}`:'No due date'} ${isOv?'<span class="otag">Overdue</span>':''} ${a.from_ai?'<span class="atag">from AI</span>':''}</div></div>`;list.appendChild(d);});
+}
+async function toggleAction(id,wasDone){const patch={done:!wasDone};if(!wasDone)patch.closed_at=new Date().toISOString();await sb('PATCH','actions',patch,{id:'eq.'+id});await loadActions();renderActions();refreshDash();if(!wasDone&&actions.length>0&&actions.every(a=>a.done))celebrate('🏆','All actions done!','Outstanding!');}
+async function addAction(text,owner,fromAI){const t=(text||document.getElementById('newin')?.value||'').trim();if(!t)return;const o=owner||document.getElementById('newOwner')?.value||'';const due=fromAI?null:document.getElementById('newDue')?.value||null;await sb('POST','actions',{team_id:TEAM_ID,text:t,owner:o,due:due||null,done:false,from_ai:!!fromAI});await loadActions();renderActions();refreshDash();if(!fromAI){['newin','newDue'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});const no=document.getElementById('newOwner');if(no)no.value='';}}
+
+let pSelM='',pSc={energy:0,clarity:0,collab:0};
+function renderPulseSel(){const el=document.getElementById('pulseSel');if(!el)return;const ms=T.members?.length?T.members:['Me'];el.innerHTML=ms.map(m=>`<button class="mb2 ${pSelM===m?'sel':''}" onclick="pSelM='${m}';renderPulseSel()">${m}</button>`).join('');}
+function bldScale(id,key){const el=document.getElementById(id);if(!el)return;el.innerHTML=[1,2,3,4,5].map(n=>`<div class="pn ${pSc[key]===n?'sel':''}" onclick="pSc['${key}']=${n};bldScale('${id}','${key}')">${n}</div>`).join('');}
+function renderPulseScores(){bldScale('psE','energy');bldScale('psCl','clarity');bldScale('psCo','collab');const sc=document.getElementById('pulseScores');if(!sc)return;if(!pulse.length){sc.innerHTML='<div style="font-size:13px;color:var(--tx3);text-align:center;padding:10px 0;">No scores yet.</div>';return;}sc.innerHTML=(T.members||[]).map(m=>{const es=pulse.filter(p=>p.member===m);if(!es.length)return`<div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--bor);"><span>${m}</span><span style="color:var(--tx3);">No data</span></div>`;const l=es[es.length-1];const avg=((l.energy+l.clarity+l.collab)/3).toFixed(1);const col=avg>=4?'var(--grn)':avg>=3?'var(--amb)':'var(--red)';return`<div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:8px 0;border-bottom:1px solid var(--bor);"><span style="font-weight:500;">${m}</span><div style="display:flex;gap:10px;align-items:center;"><span style="font-size:11px;color:var(--tx3);">E${l.energy} C${l.clarity} T${l.collab}</span><span style="font-weight:600;color:${col};">${avg}</span></div></div>`;}).join('');}
+async function submitPulse(){if(!pSelM){alert('Select who is submitting.');return;}if(!pSc.energy||!pSc.clarity||!pSc.collab){alert('Please rate all three areas.');return;}const wk=`${new Date().getFullYear()}-W${String(getWk(new Date())).padStart(2,'0')}`;await sb('POST','pulse',{team_id:TEAM_ID,member:pSelM,energy:pSc.energy,clarity:pSc.clarity,collab:pSc.collab,week:wk});await loadPulse();pSc={energy:0,clarity:0,collab:0};pSelM='';const ok=document.getElementById('pulseOk');if(ok){ok.style.display='block';setTimeout(()=>ok.style.display='none',3000);}renderPulseScores();renderPulseSel();refreshDash();const avg=(pulse[pulse.length-1].energy+pulse[pulse.length-1].clarity+pulse[pulse.length-1].collab)/3;if(avg>=4.5)celebrate('💚','Fantastic pulse!','The team is firing on all cylinders!');}
+
+const LTC={insight:'lt-i',experiment:'lt-e',article:'lt-a',tool:'lt-t'};const LTL={insight:'Insight',experiment:'Experiment',article:'Article',tool:'Tool'};
+async function addLearning(){const t=document.getElementById('lTitle')?.value.trim();if(!t)return;await sb('POST','learnings',{team_id:TEAM_ID,title:t,type:document.getElementById('lType')?.value||'insight',note:document.getElementById('lNote')?.value.trim()||'',who:document.getElementById('lWho')?.value||''});await loadLearnings();renderLearnings();['lTitle','lNote'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});}
+function renderLearnings(){const el=document.getElementById('learnList');if(!el)return;if(!learnings.length){el.innerHTML='<div style="font-size:13px;color:var(--tx3);text-align:center;padding:14px 0;">No learnings yet.</div>';return;}el.innerHTML=learnings.map(l=>`<div class="le"><div class="lh"><span class="lt ${LTC[l.type]||'lt-i'}">${LTL[l.type]||'Insight'}</span><span style="font-size:13px;font-weight:500;">${l.title}</span></div><div class="ln">${l.who?l.who+' · ':''}${new Date(l.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div>${l.note?`<div class="lnote">${l.note}</div>`:''}</div>`).join('');}
+
+const NS_SUGG=['We review PRs within 24 hours','We start and end meetings on time','We share blockers daily, not just in retros','We separate problem from solution discussions','We assume good intent in all communications','We protect focus time — no meetings before 10am'];
+async function addNorm(){const t=document.getElementById('normIn')?.value.trim();if(!t)return;await sb('POST','norms',{team_id:TEAM_ID,text:t});await loadNorms();renderNorms();renderNormSugg();const ni=document.getElementById('normIn');if(ni)ni.value='';}
+async function addSN(t){await sb('POST','norms',{team_id:TEAM_ID,text:t});await loadNorms();renderNorms();renderNormSugg();}
+async function delNorm(id){await sb('DELETE','norms','',{id:'eq.'+id});await loadNorms();renderNorms();renderNormSugg();}
+function renderNorms(){const el=document.getElementById('normsList');if(!el)return;if(!norms.length){el.innerHTML='<div style="font-size:13px;color:var(--tx3);text-align:center;padding:14px 0;">No norms yet.</div>';return;}el.innerHTML=norms.map((n,i)=>`<div class="norm"><div class="nnum">${i+1}</div><div class="ntxt">${n.text}</div><span class="ndel" onclick="delNorm('${n.id}')">×</span></div>`).join('');}
+function renderNormSugg(){const el=document.getElementById('normSugg');if(!el)return;const ex=norms.map(n=>n.text.toLowerCase());const sg=NS_SUGG.filter(s=>!ex.includes(s.toLowerCase())).slice(0,4);el.innerHTML=sg.map(s=>`<div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px solid var(--bor);color:var(--tx2);">${s}<button class="btn bs bxs" onclick="addSN('${s.replace(/'/g,'&apos;')}')" style="flex-shrink:0;margin-left:8px;">Add</button></div>`).join('');}
+
+async function saveSlack(){const v=document.getElementById('slackin')?.value.trim();if(!v?.startsWith('https://hooks.slack.com')){alert('Enter a valid Slack webhook URL.');return;}await sb('PATCH','teams',{slack_webhook:v},{id:'eq.'+TEAM_ID});T.slack_webhook=v;const ok=document.getElementById('slackok');if(ok)ok.style.display='block';}
+function buildMsg(type){const tn=T.name||'Team';const open=actions.filter(a=>!a.done);const over=open.filter(a=>a.due&&new Date(a.due)<new Date());const wk=new Date(Date.now()-7*864e5).toISOString();const closed=actions.filter(a=>a.done&&a.closed_at&&a.closed_at>wk).length;const pAvg=pulse.length?((pulse[pulse.length-1].energy+pulse[pulse.length-1].clarity+pulse[pulse.length-1].collab)/3).toFixed(1):null;
+if(type==='digest')return[`*${tn} · Weekly digest*`,`📋 Open: ${open.length} (${over.length} overdue)`,...over.slice(0,3).map(a=>`  ⚠️ ${a.text}${a.owner?' — '+a.owner:''}`),closed?`✅ Closed this week: ${closed}`:'',pAvg?`💚 Pulse: ${pAvg}/5`:'','_Sent by Team Facilitator_'].filter(Boolean).join('\n');
+if(type==='nudge')return[`*👋 ${tn} · Weekly check-in*`,over.length?`⚠️ ${over.length} overdue action${over.length>1?'s':''}`:open.length?`📋 ${open.length} open action${open.length>1?'s':''}`:'',...over.slice(0,2).map(a=>`  • ${a.text}${a.owner?' ('+a.owner+')':''}`),pAvg?`💚 Team pulse: ${pAvg}/5`:'','_Open your facilitator →_'].filter(Boolean).join('\n');
+if(type==='celebration')return[`🎉 *${tn} just completed retro #${retros.length}!*`,`📋 Tracking ${actions.length} action${actions.length>1?'s':''} across ${retros.length} retros.`,'_Powered by Team Facilitator_'].join('\n');return '';}
+async function postSlack(text){if(!T.slack_webhook)return;await fetch(PROXY+'/slack',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({webhook:T.slack_webhook,text})});}
+async function sendDigest(){await postSlack(buildMsg('digest'));alert('Digest sent!');}
+async function sendNudge(){await postSlack(buildMsg('nudge'));alert('Nudge sent!');}
+
+async function testNotion(){const er=document.getElementById('nterr'),ok=document.getElementById('ntok');if(er)er.style.display='none';if(ok)ok.style.display='none';try{const r=await fetch(PROXY+'/notion/test/'+NOTION_DB);const d=await r.json();if(d.ok){if(ok){ok.textContent='Connected: "'+d.title+'"';ok.style.display='block';}}else throw new Error(d.message);}catch(e){if(er){er.textContent='Failed: '+e.message;er.style.display='block';}}}
+function copyId(){navigator.clipboard.writeText(TEAM_ID).then(()=>alert('Team ID copied!')).catch(()=>alert(TEAM_ID));}
+function signOut(){localStorage.removeItem('tf-v6-team');location.reload();}
+
 function celebrate(em,ti,su){document.getElementById('celEm').textContent=em;document.getElementById('celTi').textContent=ti;document.getElementById('celSu').textContent=su;const ov=document.getElementById('celOv');ov.classList.add('show');const c=document.getElementById('conf');c.innerHTML='';const cols=['#6C63FF','#10b981','#f59e0b','#3b82f6','#ef4444','#fff'];for(let i=0;i<40;i++){const d=document.createElement('div');d.className='cf';d.style.cssText=`left:${Math.random()*100}%;background:${cols[Math.floor(Math.random()*cols.length)]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.5}s;width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;`;c.appendChild(d);}}
 function closeCel(){document.getElementById('celOv').classList.remove('show');}
-function resetAll(){if(!confirm('Delete all data?'))return;localStorage.removeItem('tf-v5');location.reload();}
-/* CHAT + AUTO-EXTRACT */
-let hist=[],loading=false;
-function buildSys(){const t=S.team;const open=S.actions.filter(a=>!a.done);const over=open.filter(a=>a.due&&new Date(a.due)<new Date());const wk=new Date(Date.now()-7*864e5).toISOString();const tw=S.actions.filter(a=>a.done&&a.closedAt&&a.closedAt>wk).length;const lastRetro=S.retros[S.retros.length-1];return`You are an expert AI team facilitator for ${t.name||'this team'}.
-Team: ${t.members.join(', ')||'not set'} | Kanban | Focus: ${t.focus||'not set'}
-Retros: ${S.retros.length} | Streak: ${S.streak||0} weeks | Open actions: ${open.length} (${over.length} overdue) | Closed this week: ${tw}
-${over.length?'Overdue: '+over.map(a=>a.text+(a.owner?' ('+a.owner+')':'')).join(', '):''}
-${S.pulse.length?'Latest pulse: '+((S.pulse[S.pulse.length-1].energy+S.pulse[S.pulse.length-1].clarity+S.pulse[S.pulse.length-1].collab)/3).toFixed(1)+'/5':''}
-${S.learnings.length?'Recent learnings: '+S.learnings.slice(-3).map(l=>l.title).join(', '):''}
-${S.norms.length?'Team norms: '+S.norms.slice(0,4).map(n=>n.text).join(' | '):''}
-${lastRetro?'Last retro themes: '+(lastRetro.improve||[]).join(', '):''}
-${S.asyncNotes.length?'Async notes pending from: '+S.asyncNotes.map(n=>n.who).join(', '):''}
 
-When giving a pre-retro brief: 3-5 sentences covering (1) open/overdue action status, (2) last retro themes to revisit, (3) one specific focus for today. Be direct and data-driven.
-When you identify a clear action item in your response, format it as: ACTION: [description] | OWNER: [name or "team"] so the UI can extract it.
+const PHASES=[{n:'Gather data',s:'Add notes to the board',m:10},{n:'Generate insights',s:'Discuss and vote',m:15},{n:'Decide actions',s:'Commit',m:10}];
+let tPhase=0,tSecs=0,tRun=false,tInt=null;
+function initTimer(){tSecs=PHASES[tPhase].m*60;renderTimer();}
+function renderTimer(){const p=PHASES[tPhase];const tp=document.getElementById('tPhase');const ts=document.getElementById('tSub');if(tp)tp.textContent=p.n;if(ts)ts.textContent=p.s;const tot=p.m*60;const pct=Math.round(tSecs/tot*100);const tf=document.getElementById('tFill');if(tf){tf.style.width=pct+'%';tf.style.background=pct>50?'var(--acc)':pct>20?'var(--amb)':'var(--red)';}const m=Math.floor(tSecs/60),s=tSecs%60;const td=document.getElementById('tDisp');if(td)td.textContent=`${m}:${s.toString().padStart(2,'0')}`;const tb=document.getElementById('tBtn');if(tb)tb.textContent=tRun?'Pause':'Start';}
+function toggleTimer(){if(tRun){clearInterval(tInt);tRun=false;}else{if(tSecs===0)tSecs=PHASES[tPhase].m*60;tRun=true;tInt=setInterval(()=>{tSecs--;renderTimer();if(tSecs<=0){clearInterval(tInt);tRun=false;if(tPhase<PHASES.length-1)celebrate('⏰',"Time's up!",'Move to: '+PHASES[tPhase+1].n);}},1000);}renderTimer();}
+function nextPhase(){clearInterval(tInt);tRun=false;tPhase=(tPhase+1)%PHASES.length;tSecs=PHASES[tPhase].m*60;renderTimer();}
+initTimer();
+
+let hist=[],chatLoading=false;
+function buildSys(){const open=actions.filter(a=>!a.done);const over=open.filter(a=>a.due&&new Date(a.due)<new Date());const wk=new Date(Date.now()-7*864e5).toISOString();const tw=actions.filter(a=>a.done&&a.closed_at&&a.closed_at>wk).length;const freq={};retros.flatMap(r=>r.improve||[]).forEach(t=>{const k=t.toLowerCase().substring(0,50);freq[k]=(freq[k]||0)+1;});const top=Object.entries(freq).filter(([,v])=>v>1).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([t,c])=>`"${t}" (${c}x)`).join(', ');const lastR=retros[retros.length-1];return`You are an expert AI team facilitator for ${T.name||'this team'}.
+Team: ${(T.members||[]).join(', ')||'not set'} | Kanban | Focus: ${T.focus||'not set'}
+Retros: ${retros.length} | Open actions: ${open.length} (${over.length} overdue) | Closed this week: ${tw}
+${over.length?'Overdue: '+over.map(a=>a.text+(a.owner?' ('+a.owner+')':'')).join(', '):''}
+${pulse.length?'Latest pulse: '+((pulse[pulse.length-1].energy+pulse[pulse.length-1].clarity+pulse[pulse.length-1].collab)/3).toFixed(1)+'/5':''}
+${top?'Recurring patterns: '+top:''}
+${lastR?'Last retro themes: '+(lastR.improve||[]).slice(0,3).join(', '):''}
+${norms.length?'Team norms: '+norms.slice(0,4).map(n=>n.text).join(' | '):''}
+
+Pre-retro brief: 3-5 sentences covering (1) open/overdue action status, (2) patterns to revisit, (3) one specific focus for today.
+Pattern analysis: list top themes with frequency, note what has improved, suggest the one systemic change with highest leverage.
+When identifying an action item, format as: ACTION: [description] | OWNER: [name or team]
 Be warm, practical, concise. Reference team members by name. Suggest small concrete experiments.`;}
-function extractActions(text){const pattern=/ACTION:\s*([^|]+)\|?\s*OWNER:\s*([^\n]+)/gi;const found=[];let m;while((m=pattern.exec(text))!==null){found.push({text:m[1].trim(),owner:m[2].trim().replace(/^team$/i,'')});}return found;}
+
+function extractActions(text){const p=/ACTION:\s*([^|]+)\|?\s*OWNER:\s*([^\n]+)/gi;const found=[];let m;while((m=p.exec(text))!==null)found.push({text:m[1].trim(),owner:m[2].trim().replace(/^team$/i,'')});return found;}
 function gchat(t){go('chat',null);document.getElementById('cin').value=t;sendChat();}
 function qs(t){document.getElementById('cin').value=t;sendChat();}
 function onKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}}
-function addMsg(role,text,actions){const el=document.getElementById('msgs');const d=document.createElement('div');d.className='msg'+(role==='user'?' user':'');const cleanText=text.replace(/ACTION:[^\n]*/gi,'').trim();d.innerHTML=`<div class="av ${role==='user'?'av-u':'av-ai'}">${role==='user'?'You':'AI'}</div><div class="bbl ${role==='user'?'bbl-u':'bbl-ai'}">${cleanText.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>')}</div>`;if(actions&&actions.length){const ec=document.createElement('div');ec.className='extract-card';ec.innerHTML=`<div class="extract-title">⚡ ${actions.length} action${actions.length>1?'s':''} identified — add to list?</div>${actions.map((a,i)=>`<div class="extract-item"><span class="extract-text">${a.text}${a.owner?' — '+a.owner:''}</span><button class="btn bp bxs" onclick="addExtractedAction(${JSON.stringify(a).replace(/"/g,'&quot;')},this)">Add</button></div>`).join('')}`;d.appendChild(ec);}el.appendChild(d);el.scrollTop=el.scrollHeight;}
-function addExtractedAction(a,btn){addA(a.text,a.owner,true);btn.textContent='Added ✓';btn.disabled=true;btn.style.background='var(--grn)';btn.style.borderColor='var(--grn)';}
+function addMsg(role,text,ex){const el=document.getElementById('msgs');const d=document.createElement('div');d.className='msg'+(role==='user'?' user':'');const clean=text.replace(/ACTION:[^\n]*/gi,'').trim();d.innerHTML=`<div class="av ${role==='user'?'av-u':'av-ai'}">${role==='user'?'You':'AI'}</div><div class="bbl ${role==='user'?'bbl-u':'bbl-ai'}">${clean.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>')}</div>`;if(ex?.length){const ec=document.createElement('div');ec.className='extract-card';ec.innerHTML=`<div class="extract-title">⚡ ${ex.length} action${ex.length>1?'s':''} identified</div>${ex.map(a=>`<div class="extract-item"><span style="flex:1;">${a.text}${a.owner?' — '+a.owner:''}</span><button class="btn bp bxs" onclick="addAction('${a.text.replace(/'/g,'\\\'')}','${a.owner}',true);this.textContent='Added ✓';this.disabled=true;this.style.background='var(--grn)';">Add</button></div>`).join('')}`;d.appendChild(ec);}el.appendChild(d);el.scrollTop=el.scrollHeight;}
 function showTyp(){const el=document.getElementById('msgs');const d=document.createElement('div');d.className='msg';d.id='typ';d.innerHTML='<div class="av av-ai">AI</div><div class="bbl bbl-ai typing"><span></span><span></span><span></span></div>';el.appendChild(d);el.scrollTop=el.scrollHeight;}
 function hideTyp(){document.getElementById('typ')?.remove();}
-async function sendChat(){if(loading)return;const inp=document.getElementById('cin'),txt=inp.value.trim();if(!txt)return;inp.value='';document.getElementById('cerr').style.display='none';addMsg('user',txt);hist.push({role:'user',content:txt});loading=true;document.getElementById('sbtn').disabled=true;showTyp();try{const res=await fetch(PROXY+'/anthropic/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:buildSys(),messages:hist})});const data=await res.json();hideTyp();if(data.error)throw new Error(data.error.message);const reply=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');hist.push({role:'assistant',content:reply});const extracted=extractActions(reply);addMsg('assistant',reply,extracted.length?extracted:null);}catch(e){hideTyp();hist.pop();const ce=document.getElementById('cerr');ce.textContent='Error: '+e.message;ce.style.display='block';}loading=false;document.getElementById('sbtn').disabled=false;}
-if(S.setupDone)document.getElementById('setupOv').style.display='none';
-initApp();
+async function sendChat(){if(chatLoading)return;const inp=document.getElementById('cin'),txt=inp.value.trim();if(!txt)return;inp.value='';const ce=document.getElementById('cerr');if(ce)ce.style.display='none';addMsg('user',txt);hist.push({role:'user',content:txt});chatLoading=true;const sb2=document.getElementById('sbtn');if(sb2)sb2.disabled=true;showTyp();try{const res=await fetch(PROXY+'/anthropic/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:buildSys(),messages:hist})});const data=await res.json();hideTyp();if(data.error)throw new Error(data.error.message);const reply=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');hist.push({role:'assistant',content:reply});const ex=extractActions(reply);addMsg('assistant',reply,ex.length?ex:null);}catch(e){hideTyp();hist.pop();if(ce){ce.textContent='Error: '+e.message;ce.style.display='block';}}chatLoading=false;if(sb2)sb2.disabled=false;}
+
+if(TEAM_ID){document.getElementById('setupOv').style.display='none';loadAll();}
+else document.getElementById('setupOv').style.display='flex';
 </script>
 </body>
 </html>
