@@ -1,15 +1,9 @@
 {
-  "name": "team-facilitator",
-  "version": "1.0.0",
-  "description": "AI Team Facilitator — app + proxy combined",
+  "name": "team-facilitator-v6",
+  "version": "6.0.0",
+  "description": "Team Facilitator — proxy + app with Supabase, Notion, Anthropic, Slack",
   "main": "index.js",
-  "scripts": {
-    "start": "node index.js"
-  },
-  "dependencies": {
-    "express": "^4.18.2"
-  },
-  "engines": {
-    "node": ">=18"
-  }
+  "scripts": { "start": "node index.js" },
+  "dependencies": { "express": "^4.18.2" },
+  "engines": { "node": ">=18" }
 }
