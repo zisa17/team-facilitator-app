@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Team Facilitator v4</title>
+<title>Team Facilitator v5</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -37,6 +37,7 @@ body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:v
 .dot-g{width:6px;height:6px;border-radius:50%;background:var(--grn);margin-left:auto;animation:glow 2s infinite;}
 .dot-b{width:6px;height:6px;border-radius:50%;background:var(--blu);margin-left:auto;}
 .dot-a{width:6px;height:6px;border-radius:50%;background:var(--amb);margin-left:auto;}
+.dot-p{width:6px;height:6px;border-radius:50%;background:var(--acc);margin-left:auto;animation:glow 2s infinite;}
 @keyframes glow{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(16,185,129,.4)}50%{opacity:.6;box-shadow:0 0 0 4px rgba(16,185,129,0)}}
 .sb-foot{padding:12px 16px;border-top:1px solid var(--sb-b);font-size:11px;color:#3d4266;display:flex;align-items:center;gap:6px;}
 .st-pip{width:5px;height:5px;border-radius:50%;background:var(--grn);}
@@ -64,6 +65,7 @@ body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:v
 .bp{background:var(--acc);color:#fff;border-color:var(--acc);}
 .bp:hover{background:#5a52d5;}
 .bg2{background:var(--grn);color:#fff;border-color:var(--grn);}
+.bg2:hover{background:#059669;}
 .br2{background:var(--red);color:#fff;border-color:var(--red);}
 .bn{background:var(--blu-l);color:var(--blu-t);border-color:#bfdbfe;}
 .bn:hover{background:#bfdbfe;}
@@ -82,10 +84,10 @@ body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:v
 .ms{font-size:11px;color:var(--tx3);margin-top:2px;}
 .ms.up{color:var(--grn);}
 .ms.dn{color:var(--red);}
-.ms.wn{color:var(--amb);}
 .insight{display:flex;gap:10px;font-size:13px;line-height:1.6;padding:8px 0;border-bottom:1px solid var(--bor);}
 .insight:last-of-type{border-bottom:none;padding-bottom:0;}
 .iic{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+/* CHAT */
 .chat-wrap{display:flex;flex-direction:column;height:100%;}
 .chat-top{padding:8px 18px;background:var(--sur);border-bottom:1px solid var(--bor);font-size:11px;color:var(--tx3);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
 .msgs{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:11px;background:var(--bg);}
@@ -102,6 +104,11 @@ body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:v
 .typing span:nth-child(2){animation-delay:.2s;}
 .typing span:nth-child(3){animation-delay:.4s;}
 @keyframes bns{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+/* action extract card */
+.extract-card{margin-top:6px;background:var(--acc-l);border:1px solid #c4b5fd;border-radius:8px;padding:8px 11px;display:flex;flex-direction:column;gap:5px;}
+.extract-title{font-size:11px;font-weight:600;color:var(--acc-t);}
+.extract-item{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;color:var(--acc-t);}
+.extract-text{flex:1;}
 .chat-bot{padding:10px 14px;border-top:1px solid var(--bor);flex-shrink:0;background:var(--sur);}
 .cin{width:100%;font-size:13px;padding:8px 12px;border:1px solid var(--bor);border-radius:8px;background:var(--bg);color:var(--tx);outline:none;resize:none;font-family:inherit;line-height:1.5;margin-bottom:7px;}
 .cin:focus{border-color:var(--acc);background:#fff;}
@@ -113,25 +120,29 @@ body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:v
 .okmsg{font-size:12px;color:var(--grn);margin-top:5px;display:none;}
 /* RETRO */
 .timer-strip{display:flex;align-items:center;gap:10px;background:#1e2130;border-radius:8px;padding:8px 14px;margin-bottom:12px;}
-.t-phase{font-size:12px;font-weight:600;color:#fff;min-width:120px;}
-.t-sub{font-size:11px;color:var(--sb-t);flex:1;}
+.t-phase{font-size:12px;font-weight:600;color:#fff;min-width:100px;}
+.t-sub{font-size:11px;color:var(--sb-t);}
 .t-time{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:#fff;min-width:52px;text-align:right;}
 .t-prog{flex:2;height:4px;background:#3d4266;border-radius:99px;overflow:hidden;}
 .t-fill{height:100%;background:var(--acc);border-radius:99px;transition:width 1s linear;}
-.tbtn{padding:4px 10px;border:1px solid #3d4266;border-radius:6px;background:transparent;color:#c5c8d8;font-size:11px;cursor:pointer;font-family:inherit;white-space:nowrap;}
+.tbtn{padding:4px 10px;border:1px solid #3d4266;border-radius:6px;background:transparent;color:#c5c8d8;font-size:11px;cursor:pointer;font-family:inherit;}
 .tbtn:hover{background:#1e2130;border-color:var(--acc);}
 .rcols{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;}
-.zone{background:var(--bg);border-radius:var(--rs);padding:10px;min-height:130px;border:1px solid var(--bor);}
+.zone{background:var(--bg);border-radius:var(--rs);padding:10px;min-height:120px;border:1px solid var(--bor);}
 .zh{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
 .zp{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 .zl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
+.note-cnt{font-size:10px;color:var(--tx3);margin-left:auto;}
 .sticky{background:var(--sur);border:1px solid var(--bor);border-radius:var(--rs);padding:6px 8px;font-size:12px;line-height:1.5;margin-bottom:4px;display:flex;align-items:flex-start;gap:5px;}
 .st-t{flex:1;}
-.vbtn{font-size:10px;color:var(--tx3);cursor:pointer;padding:1px 5px;border-radius:4px;border:1px solid transparent;white-space:nowrap;}
+.vbtn{font-size:10px;color:var(--tx3);cursor:pointer;padding:1px 4px;border-radius:4px;border:1px solid transparent;}
 .vbtn:hover{background:var(--acc-l);color:var(--acc-t);}
 .vcnt{font-size:10px;font-weight:600;color:var(--acc-t);background:var(--acc-l);padding:1px 5px;border-radius:99px;}
 .an{font-size:12px;color:var(--tx3);cursor:pointer;padding:3px 0;}
 .an:hover{color:var(--acc);}
+/* async badge */
+.async-note{border-left:3px solid var(--acc);}
+.async-who{font-size:10px;color:var(--acc-t);font-weight:500;margin-bottom:2px;}
 .save-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 15px;border-top:1px solid var(--bor);background:var(--sur);flex-shrink:0;}
 .ss{font-size:12px;color:var(--tx3);display:flex;align-items:center;gap:6px;}
 .sd{width:7px;height:7px;border-radius:50%;background:#ddd;}
@@ -149,6 +160,7 @@ body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:v
 .at2.stk{text-decoration:line-through;color:var(--tx3);}
 .am2{font-size:11px;color:var(--tx3);margin-top:2px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
 .otag{background:var(--red-l);color:var(--red-t);padding:1px 6px;border-radius:99px;font-size:10px;font-weight:600;}
+.atag{background:var(--acc-l);color:var(--acc-t);padding:1px 6px;border-radius:99px;font-size:10px;font-weight:500;}
 .pbar{height:4px;background:var(--bg);border-radius:99px;overflow:hidden;margin:5px 0;}
 .pfill{height:100%;background:var(--grn);border-radius:99px;transition:width .4s;}
 .mom-bar{display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--bor);border-radius:var(--rs);padding:10px 14px;margin-bottom:12px;}
@@ -187,9 +199,24 @@ body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:v
 .ntxt{flex:1;font-size:13px;line-height:1.5;}
 .ndel{font-size:14px;color:var(--tx3);cursor:pointer;opacity:.5;}
 .ndel:hover{opacity:1;color:var(--red);}
+/* ONBOARDING */
+.ob-step{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--bor);}
+.ob-step:last-child{border-bottom:none;}
+.ob-num{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;}
+.ob-done{background:var(--grn-l);color:var(--grn-t);}
+.ob-cur{background:var(--acc);color:#fff;}
+.ob-todo{background:var(--bg);color:var(--tx3);border:1px solid var(--bor);}
+.ob-body{flex:1;}
+.ob-title{font-size:13px;font-weight:600;margin-bottom:3px;}
+.ob-desc{font-size:13px;color:var(--tx2);line-height:1.6;}
+/* SLACK SCHEDULE */
+.sched-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bor);}
+.sched-row:last-child{border-bottom:none;}
+.sched-label{font-size:13px;flex:1;}
+.sched-val{font-size:13px;font-weight:500;color:var(--acc-t);}
 /* SETUP */
 .overlay{position:absolute;inset:0;background:rgba(15,17,23,.75);display:flex;align-items:center;justify-content:center;z-index:100;border-radius:16px;}
-.modal{background:var(--sur);border-radius:16px;padding:28px 30px;width:520px;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+.modal{background:var(--sur);border-radius:16px;padding:28px 30px;width:520px;box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:90vh;overflow-y:auto;}
 .mo-t{font-size:20px;font-weight:600;margin-bottom:3px;}
 .mo-s{font-size:13px;color:var(--tx2);margin-bottom:20px;}
 .sf{margin-bottom:14px;}
@@ -211,7 +238,6 @@ body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:v
 .conf{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:16px;}
 .cf{position:absolute;width:8px;height:8px;border-radius:2px;animation:fall linear forwards;}
 @keyframes fall{0%{transform:translateY(-20px) rotate(0);opacity:1;}100%{transform:translateY(780px) rotate(720deg);opacity:0;}}
-/* KV */
 .kv{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:9px 0;border-bottom:1px solid var(--bor);}
 .kv:last-child{border-bottom:none;}
 .kvl{color:var(--tx2);}
@@ -220,32 +246,52 @@ body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:v
 .ldot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
 .pc3{font-size:13px;padding:9px 12px;background:var(--bg);border-radius:var(--rs);cursor:pointer;border:1px solid var(--bor);color:var(--tx2);transition:all .12s;display:flex;align-items:center;justify-content:space-between;}
 .pc3:hover{background:var(--acc-l);border-color:#c4b5fd;color:var(--acc-t);}
+/* ASYNC PANEL */
+.async-contrib{display:flex;flex-direction:column;gap:8px;}
+.ac-row{display:flex;gap:8px;align-items:flex-start;padding:8px;background:var(--bg);border-radius:var(--rs);border:1px solid var(--bor);}
+.ac-who{font-size:11px;font-weight:600;color:var(--acc-t);min-width:60px;}
+.ac-notes{flex:1;font-size:12px;color:var(--tx2);line-height:1.6;}
+/* CRON BLOCK */
+.cron-block{background:#0f1117;border-radius:8px;padding:12px 14px;font-family:'DM Mono',monospace;font-size:11px;color:#a5f3b8;line-height:1.8;overflow-x:auto;margin-top:8px;}
 </style>
 </head>
 <body>
 <div class="shell" id="shell">
 
 <!-- CELEBRATE -->
-<div class="cel-ov" id="celOv">
-  <div class="conf" id="conf"></div>
-  <div class="cel-box">
-    <div class="cel-em" id="celEm">🎉</div>
-    <div class="cel-t" id="celTi">Nice work!</div>
-    <div class="cel-s" id="celSu">Keep it up.</div>
-    <button class="btn bp" onclick="closeCel()">Thanks! ✓</button>
-  </div>
-</div>
+<div class="cel-ov" id="celOv"><div class="conf" id="conf"></div><div class="cel-box"><div class="cel-em" id="celEm">🎉</div><div class="cel-t" id="celTi">Nice work!</div><div class="cel-s" id="celSu">Keep it up.</div><button class="btn bp" onclick="closeCel()">Thanks! ✓</button></div></div>
 
 <!-- SETUP -->
 <div class="overlay" id="setupOv">
   <div class="modal">
     <div class="mo-t">Welcome to Team Facilitator</div>
     <div class="mo-s">Tell me about your team — I'll personalise every session.</div>
-    <div class="sf"><div class="sl">Team name</div><input class="si" id="sName" placeholder="e.g. Platform Team…"></div>
-    <div class="sf"><div class="sl">Team members</div><input class="si" id="sMIn" placeholder="Type a name and press Enter…" onkeydown="addM(event)"><div class="mtags" id="mTags"></div><div class="sh">Used for action ownership and pulse tracking.</div></div>
-    <div class="sf"><div class="sl">Current focus</div><input class="si" id="sFocus" placeholder="e.g. Launch v2.0, improve code review…"></div>
-    <div class="sf"><div class="sl">Slack webhook (optional)</div><input class="si" id="sSlack" placeholder="https://hooks.slack.com/services/…"><div class="sh">For weekly digests and retro reminders.</div></div>
+    <div class="sf"><div class="sl">Team name</div><input class="si" id="sName" placeholder="e.g. Platform Team, Squad Alpha…"></div>
+    <div class="sf"><div class="sl">Team members</div><input class="si" id="sMIn" placeholder="Type a name and press Enter…" onkeydown="addM(event)"><div class="mtags" id="mTags"></div><div class="sh">Used for action ownership, pulse tracking, and async retros.</div></div>
+    <div class="sf"><div class="sl">Current focus</div><input class="si" id="sFocus" placeholder="e.g. Launch v2.0, improve code review speed…"></div>
+    <div class="sf"><div class="sl">Slack webhook (optional)</div><input class="si" id="sSlack" placeholder="https://hooks.slack.com/services/…"><div class="sh">For weekly digests, retro reminders, and celebration messages.</div></div>
+    <div class="sf"><div class="sl">Weekly nudge day</div>
+      <select class="si" id="sNudgeDay"><option value="1">Monday</option><option value="2">Tuesday</option><option value="3">Wednesday</option><option value="4" selected>Thursday</option><option value="5">Friday</option></select>
+      <div class="sh">Which day should the proactive Slack nudge go out each week?</div>
+    </div>
     <button class="btn bp" onclick="doSetup()" style="width:100%;padding:10px;margin-top:4px;">Save & get started</button>
+  </div>
+</div>
+
+<!-- ASYNC RETRO OVERLAY -->
+<div class="overlay" id="asyncOv" style="display:none;">
+  <div class="modal" style="width:480px;">
+    <div class="mo-t">Add your retro notes</div>
+    <div class="mo-s" id="asyncSubtitle">Add notes before the live session. Your input will be ready when the team meets.</div>
+    <div class="sf"><div class="sl">Your name</div>
+      <select class="si" id="asyncWho"><option value="">Select your name…</option></select>
+    </div>
+    <div class="sf"><div class="sl" style="color:#065f46;">✓ What went well</div><textarea class="si" id="asyncWell" rows="2" placeholder="One thing per line…" style="resize:vertical;"></textarea></div>
+    <div class="sf"><div class="sl" style="color:#92400e;">△ What to improve</div><textarea class="si" id="asyncImprove" rows="2" placeholder="One thing per line…" style="resize:vertical;"></textarea></div>
+    <div class="sf"><div class="sl" style="color:#1e40af;">→ Action ideas</div><textarea class="si" id="asyncActions" rows="2" placeholder="One thing per line…" style="resize:vertical;"></textarea></div>
+    <div class="sf"><div class="sl" style="color:#3730a3;">⚡ Experiments</div><textarea class="si" id="asyncExp" rows="2" placeholder="Small bets to try…" style="resize:vertical;"></textarea></div>
+    <div style="display:flex;gap:8px;"><button class="btn bp" onclick="submitAsync()" style="flex:1;padding:10px;">Submit notes</button><button class="btn" onclick="closeAsync()" style="padding:10px;">Cancel</button></div>
+    <div class="okmsg" id="asyncOk" style="text-align:center;margin-top:8px;">Notes submitted! ✓ See you at the retro.</div>
   </div>
 </div>
 
@@ -261,12 +307,14 @@ body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:v
     <div class="ni" onclick="go('chat',this)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 9a1.5 1.5 0 01-1.5 1.5H4L2 13V3.5A1.5 1.5 0 013.5 2h7A1.5 1.5 0 0112 3.5V9z"/></svg>Ask facilitator</div>
     <div class="ns">Retrospectives</div>
     <div class="ni" onclick="go('retro',this)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5.5"/><path d="M7 4v3.5l2 2"/></svg>Run a retro</div>
+    <div class="ni" onclick="go('async',this)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7h10M2 4h7M2 10h5"/></svg>Async retro<div class="dot-p" id="asyncDot" style="display:none;"></div></div>
     <div class="ni" onclick="go('actions',this)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2.5 7l3 3 6-6"/></svg>Actions<div class="dot-a" id="odDot" style="display:none;"></div></div>
     <div class="ns">Team health</div>
     <div class="ni" onclick="go('pulse',this)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 7h2.5l2-4 2.5 7 2-6L12 7h1"/></svg>Pulse check<div class="dot-b"></div></div>
     <div class="ns">Team space</div>
     <div class="ni" onclick="go('learning',this)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 1.5L1.5 4.5v5L7 12.5l5.5-3v-5L7 1.5z"/><path d="M7 1.5v11M1.5 4.5l5.5 3 5.5-3"/></svg>Learning log</div>
     <div class="ni" onclick="go('norms',this)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="1.5" width="10" height="11" rx="1.5"/><path d="M4.5 5h5M4.5 7.5h5M4.5 10h3"/></svg>Team norms</div>
+    <div class="ni" onclick="go('onboarding',this)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="5" r="2.5"/><path d="M2 12c0-2.8 2.2-5 5-5s5 2.2 5 5"/></svg>Onboarding</div>
     <div class="ns">Integrations</div>
     <div class="ni" onclick="go('settings',this)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="2.5"/><path d="M7 1v1.5M7 11.5V13M1 7h1.5M11.5 7H13M2.6 2.6l1 1M10.4 10.4l1 1M11.4 2.6l-1 1M3.6 10.4l-1 1"/></svg>Settings</div>
   </div>
@@ -287,12 +335,12 @@ body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:v
         <div class="metric m-a"><div class="ml">Retros run</div><div class="mv" id="mRet">0</div><div class="ms" id="mRetS">this quarter</div></div>
         <div class="metric m-g"><div class="ml">Actions resolved</div><div class="mv" id="mRes">—</div><div class="ms up" id="mResS">no actions yet</div></div>
         <div class="metric m-am"><div class="ml">Team pulse</div><div class="mv" id="mPul">—</div><div class="ms" id="mPulS">no data yet</div></div>
-        <div class="metric m-b"><div class="ml">Momentum</div><div class="mv" id="mMom">—</div><div class="ms" id="mMomS">actions this week</div></div>
+        <div class="metric m-b"><div class="ml">Momentum</div><div class="mv" id="mMom">—</div><div class="ms" id="mMomS">this week</div></div>
       </div>
-      <div class="card"><div class="ct">Facilitator insights</div><div id="insights"></div><div style="display:flex;gap:8px;margin-top:14px;"><button class="btn bp bs" onclick="go('retro',null)">Start a retro</button><button class="btn bs" onclick="go('chat',null)">Ask facilitator ↗</button><button class="btn bs" onclick="go('pulse',null)">Pulse ↗</button></div></div>
+      <div class="card"><div class="ct">Facilitator insights</div><div id="insights"></div><div style="display:flex;gap:8px;margin-top:14px;"><button class="btn bp bs" onclick="go('retro',null)">Start a retro</button><button class="btn bs" onclick="go('chat',null)">Ask facilitator ↗</button><button class="btn bs" onclick="go('async',null)">Async retro ↗</button></div></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
         <div class="card"><div class="ct">Improvement themes</div><div id="themes" style="display:flex;flex-wrap:wrap;gap:6px;"></div></div>
-        <div class="card"><div class="ct">Weekly streak</div><div style="display:flex;align-items:center;gap:12px;"><div style="font-size:40px;">🔥</div><div><div style="font-size:28px;font-weight:600;" id="strkBig">0</div><div style="font-size:12px;color:var(--tx2);">consecutive weeks with a retro</div><div style="font-size:11px;color:var(--tx3);margin-top:3px;" id="strkMsg">Run your first retro to start your streak!</div></div></div></div>
+        <div class="card"><div class="ct">Weekly streak</div><div style="display:flex;align-items:center;gap:12px;"><div style="font-size:40px;">🔥</div><div><div style="font-size:28px;font-weight:600;" id="strkBig">0</div><div style="font-size:12px;color:var(--tx2);">consecutive weeks with a retro</div><div style="font-size:11px;color:var(--tx3);margin-top:3px;" id="strkMsg">Run your first retro to start!</div></div></div></div>
       </div>
     </div></div>
 
@@ -316,29 +364,53 @@ body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:v
     <!-- RETRO -->
     <div id="p-retro" class="panel"><div class="scroll">
       <div class="card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><div class="ct" style="margin:0;">Retro · <span id="rdate" style="font-weight:400;color:var(--tx3);"></span></div><div style="display:flex;gap:6px;"><span class="badge b-gray" style="font-size:10px;">Click ▲ to vote</span><button class="btn bs bxs" onclick="qs('Give me a pre-retro brief.')">AI brief ↗</button></div></div>
-        <div class="timer-strip" id="timerBar">
-          <div style="min-width:110px;"><div class="t-phase" id="tPhase">Gather data</div><div class="t-sub" id="tSub">Add notes to the board</div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><div class="ct" style="margin:0;">Retro · <span id="rdate" style="font-weight:400;color:var(--tx3);"></span></div><div style="display:flex;gap:6px;"><span class="badge b-gray" id="asyncBadge" style="display:none;font-size:10px;">Async notes loaded</span><button class="btn bs bxs" onclick="loadAsyncNotes()">Load async notes</button><button class="btn bs bxs" onclick="qs('Give me a pre-retro brief.')">AI brief ↗</button></div></div>
+        <div class="timer-strip">
+          <div style="min-width:100px;"><div class="t-phase" id="tPhase">Gather data</div><div class="t-sub" id="tSub">Add notes to the board</div></div>
           <div class="t-prog"><div class="t-fill" id="tFill" style="width:100%;"></div></div>
           <div class="t-time" id="tDisp">10:00</div>
           <button class="tbtn" id="tBtn" onclick="toggleTimer()">Start</button>
           <button class="tbtn" onclick="nextPhase()">Next →</button>
         </div>
         <div class="rcols">
-          <div class="zone"><div class="zh"><div class="zp" style="background:#10b981;"></div><div class="zl" style="color:#065f46;">What went well</div></div><div id="z-well"></div><div class="an" onclick="addNote('well')">+ Add note</div></div>
-          <div class="zone"><div class="zh"><div class="zp" style="background:#f59e0b;"></div><div class="zl" style="color:#92400e;">What to improve</div></div><div id="z-improve"></div><div class="an" onclick="addNote('improve')">+ Add note</div></div>
-          <div class="zone"><div class="zh"><div class="zp" style="background:#3b82f6;"></div><div class="zl" style="color:#1e40af;">Action items</div></div><div id="z-actions"></div><div class="an" onclick="addNote('actions')">+ Add note</div></div>
-          <div class="zone"><div class="zh"><div class="zp" style="background:#6C63FF;"></div><div class="zl" style="color:#3730a3;">Experiments</div></div><div id="z-experiments"></div><div class="an" onclick="addNote('experiments')">+ Add note</div></div>
+          <div class="zone"><div class="zh"><div class="zp" style="background:#10b981;"></div><div class="zl" style="color:#065f46;">What went well</div><span class="note-cnt" id="nc-well">0</span></div><div id="z-well"></div><div class="an" onclick="addNote('well')">+ Add note</div></div>
+          <div class="zone"><div class="zh"><div class="zp" style="background:#f59e0b;"></div><div class="zl" style="color:#92400e;">What to improve</div><span class="note-cnt" id="nc-improve">0</span></div><div id="z-improve"></div><div class="an" onclick="addNote('improve')">+ Add note</div></div>
+          <div class="zone"><div class="zh"><div class="zp" style="background:#3b82f6;"></div><div class="zl" style="color:#1e40af;">Action items</div><span class="note-cnt" id="nc-actions">0</span></div><div id="z-actions"></div><div class="an" onclick="addNote('actions')">+ Add note</div></div>
+          <div class="zone"><div class="zh"><div class="zp" style="background:#6C63FF;"></div><div class="zl" style="color:#3730a3;">Experiments</div><span class="note-cnt" id="nc-experiments">0</span></div><div id="z-experiments"></div><div class="an" onclick="addNote('experiments')">+ Add note</div></div>
         </div>
       </div>
       <div class="card"><div class="ct">AI prompts</div><div style="display:flex;flex-direction:column;gap:7px;">
-        <div class="pc3" onclick="qs('Our Kanban flow felt blocked. Facilitate a team discussion to find root causes and experiments.')">Flow was blocked last cycle <span>↗</span></div>
+        <div class="pc3" onclick="qs('Our Kanban flow felt blocked. Facilitate a discussion to find root causes and experiments.')">Flow was blocked last cycle <span>↗</span></div>
         <div class="pc3" onclick="qs('Generate 5 powerful retro questions for a Kanban team focused on improving flow.')">Generate retro questions <span>↗</span></div>
         <div class="pc3" onclick="qs('Summarise our retro notes and suggest the top 3 action items.')">Summarise & suggest actions <span>↗</span></div>
       </div></div>
     </div>
     <div class="save-bar"><div class="ss"><div class="sd" id="sdot"></div><span id="slbl">Not yet saved</span></div><div style="display:flex;gap:8px;"><button class="btn bs" onclick="qs('Summarise retro notes and suggest top 3 actions.')">AI summarise ↗</button><button class="btn bn bs" id="savebtn" onclick="saveNotion()">Save to Notion</button></div></div>
     </div>
+
+    <!-- ASYNC RETRO -->
+    <div id="p-async" class="panel"><div class="scroll">
+      <div class="card">
+        <div class="ct">Async retro mode</div>
+        <div style="font-size:13px;color:var(--tx2);line-height:1.7;margin-bottom:14px;">Team members add notes throughout the week. When you're ready to meet, click "Load async notes" in the retro panel to pull everything onto the board.</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn bp bs" onclick="openAsync()">Add my notes ↗</button>
+          <button class="btn bs" onclick="clearAsync()">Clear all async notes</button>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><div class="ct" style="margin:0;">Notes collected so far</div><span class="badge b-acc" id="asyncCount">0 contributors</span></div>
+        <div id="asyncPreview"><div style="font-size:13px;color:var(--tx3);text-align:center;padding:16px 0;">No async notes yet. Share this tool with your team and ask them to add notes before the retro.</div></div>
+      </div>
+      <div class="card">
+        <div class="ct">How async retros work</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;gap:10px;font-size:13px;color:var(--tx2);"><div style="width:22px;height:22px;border-radius:50%;background:var(--acc-l);color:var(--acc-t);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</div><div>Each team member clicks "Add my notes" and submits their thoughts before the meeting.</div></div>
+          <div style="display:flex;gap:10px;font-size:13px;color:var(--tx2);"><div style="width:22px;height:22px;border-radius:50%;background:var(--acc-l);color:var(--acc-t);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</div><div>The facilitator sees a preview of all contributions here before the live session.</div></div>
+          <div style="display:flex;gap:10px;font-size:13px;color:var(--tx2);"><div style="width:22px;height:22px;border-radius:50%;background:var(--acc-l);color:var(--acc-t);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</div><div>During the retro, click "Load async notes" to pull all notes onto the board — then use the timer and voting to focus the discussion.</div></div>
+        </div>
+      </div>
+    </div></div>
 
     <!-- ACTIONS -->
     <div id="p-actions" class="panel"><div class="scroll"><div class="card">
@@ -362,57 +434,107 @@ body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:v
       <div class="card"><div class="ct">Add to learning log</div>
         <div style="display:flex;flex-direction:column;gap:8px;">
           <div class="ar"><input class="fi" type="text" id="lTitle" placeholder="What did the team learn?" style="flex:2;"><select class="fi" id="lType"><option value="insight">Insight</option><option value="experiment">Experiment</option><option value="article">Article / resource</option><option value="tool">Tool / technique</option></select></div>
-          <div class="ar"><input class="fi" type="text" id="lNote" placeholder="Key takeaway or notes…" style="flex:1;"><select class="fi" id="lWho" style="flex:0 0 140px;"><option value="">Who shared this?</option></select></div>
+          <div class="ar"><input class="fi" type="text" id="lNote" placeholder="Key takeaway…" style="flex:1;"><select class="fi" id="lWho" style="flex:0 0 140px;"><option value="">Who shared this?</option></select></div>
           <button class="btn bp bs" onclick="addLearn()" style="align-self:flex-start;">Add to log</button>
         </div>
       </div>
-      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><div class="ct" style="margin:0;">Learning log</div><button class="btn bs bxs" onclick="qs('Based on our learning log entries, what patterns do you see and what should we focus on next?')">AI insights ↗</button></div><div id="learnList"><div style="font-size:13px;color:var(--tx3);text-align:center;padding:16px 0;">No learnings yet. Start capturing what the team discovers!</div></div></div>
+      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><div class="ct" style="margin:0;">Learning log</div><button class="btn bs bxs" onclick="qs('Based on our learning log, what patterns do you see and what should we focus on learning next?')">AI insights ↗</button></div><div id="learnList"><div style="font-size:13px;color:var(--tx3);text-align:center;padding:14px 0;">No learnings yet.</div></div></div>
     </div></div>
 
     <!-- NORMS -->
     <div id="p-norms" class="panel"><div class="scroll">
       <div class="card"><div class="ct">Add a team norm</div><div style="display:flex;gap:8px;"><input class="fi" type="text" id="normIn" placeholder="e.g. We review PRs within 24 hours…" onkeydown="if(event.key==='Enter')addNorm()" style="flex:1;"><button class="btn bp bs" onclick="addNorm()">Add</button></div><div style="font-size:11px;color:var(--tx3);margin-top:5px;">Working agreements — how you collaborate, decide, and treat each other.</div></div>
-      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><div class="ct" style="margin:0;">Our working agreements</div><button class="btn bs bxs" onclick="qs('Review our team norms and suggest improvements based on high-performing team patterns.')">AI review ↗</button></div><div id="normsList"><div style="font-size:13px;color:var(--tx3);text-align:center;padding:16px 0;">No norms yet.</div></div></div>
-      <div class="card"><div class="ct">Suggested norms</div><div id="normSugg" style="display:flex;flex-direction:column;gap:0;"></div></div>
+      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><div class="ct" style="margin:0;">Our working agreements</div><button class="btn bs bxs" onclick="qs('Review our team norms and suggest improvements based on high-performing team patterns.')">AI review ↗</button></div><div id="normsList"><div style="font-size:13px;color:var(--tx3);text-align:center;padding:14px 0;">No norms yet.</div></div></div>
+      <div class="card"><div class="ct">Suggested norms</div><div id="normSugg"></div></div>
+    </div></div>
+
+    <!-- ONBOARDING -->
+    <div id="p-onboarding" class="panel"><div class="scroll">
+      <div class="card">
+        <div class="ct">Team onboarding</div>
+        <div style="font-size:13px;color:var(--tx2);margin-bottom:16px;line-height:1.7;">New to the team or the tool? Work through these steps to get comfortable before your first real retro.</div>
+        <div id="ob-steps"></div>
+        <div style="margin-top:16px;display:flex;gap:8px;" id="ob-actions"></div>
+      </div>
+      <div class="card">
+        <div class="ct">Mini retro with the AI</div>
+        <div style="font-size:13px;color:var(--tx2);line-height:1.7;margin-bottom:12px;">Not sure how a retro works? Let the AI run a quick 5-minute practice session with you — no pressure, no team, just you and the facilitator.</div>
+        <button class="btn bp bs" onclick="startMiniRetro()">Start mini retro ↗</button>
+      </div>
+      <div class="card">
+        <div class="ct">Why retrospectives matter</div>
+        <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;color:var(--tx2);line-height:1.7;">
+          <div>📈 Teams that run regular retros <strong>improve 40% faster</strong> than those that don't, according to research on high-performing agile teams.</div>
+          <div>🔁 A retro isn't a complaint session — it's a <strong>structured learning loop</strong>. What worked? What didn't? What will we try next?</div>
+          <div>🎯 The most important part is the <strong>action items</strong>. A retro without committed actions is just a conversation.</div>
+          <div>⏱️ Keep retros <strong>time-boxed</strong>. 45-60 minutes is enough for most teams. Use the built-in timer to stay on track.</div>
+        </div>
+      </div>
     </div></div>
 
     <!-- SETTINGS -->
     <div id="p-settings" class="panel"><div class="scroll">
       <div class="card"><div class="ct">Notion connection</div><div class="kv"><span class="kvl">Proxy</span><span style="font-family:'DM Mono',monospace;font-size:11px;">team-facilitator-proxy-production.up.railway.app</span></div><div class="kv"><span class="kvl">Database</span><span style="font-weight:500;">Retrospectives</span></div><div class="kv"><span class="kvl">Last saved</span><span id="nlast">Never</span></div><div style="margin-top:12px;display:flex;gap:8px;"><button class="btn bn bs" onclick="testNotion()">Test connection</button></div><div class="errmsg" id="nterr"></div><div class="okmsg" id="ntok"></div></div>
       <div class="card"><div class="ct">Retro save log</div><div id="nlog"><div style="font-size:13px;color:var(--tx3);text-align:center;padding:12px 0;">No retros saved yet.</div></div></div>
-      <div class="card"><div class="ct">Slack</div><div style="font-size:13px;color:var(--tx2);margin-bottom:10px;">Weekly digests with open actions, overdue items and pulse.</div><div style="display:flex;gap:8px;"><input class="fi" type="text" id="slackin" placeholder="https://hooks.slack.com/services/…" style="flex:1;"><button class="btn bp bs" onclick="saveSlack()">Save</button></div><div class="okmsg" id="slackok">Webhook saved.</div><div style="margin-top:10px;"><button class="btn bsl bs" onclick="sendDigest()">Send digest now</button></div></div>
+      <div class="card">
+        <div class="ct">Slack integration</div>
+        <div style="font-size:13px;color:var(--tx2);margin-bottom:10px;">Weekly digests, overdue nudges, and celebration messages.</div>
+        <div style="display:flex;gap:8px;margin-bottom:10px;"><input class="fi" type="text" id="slackin" placeholder="https://hooks.slack.com/services/…" style="flex:1;"><button class="btn bp bs" onclick="saveSlack()">Save</button></div>
+        <div class="okmsg" id="slackok">Webhook saved.</div>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+          <button class="btn bsl bs" onclick="sendDigest()">Send digest now</button>
+          <button class="btn bs" onclick="sendNudge()">Send weekly nudge</button>
+          <button class="btn bs" onclick="sendCelebration()">Test celebration msg</button>
+        </div>
+        <div style="margin-top:14px;border-top:1px solid var(--bor);padding-top:14px;">
+          <div class="ct" style="margin-bottom:8px;">Auto-nudge cron script</div>
+          <div style="font-size:13px;color:var(--tx2);margin-bottom:8px;">Add this to your Railway server to send the weekly nudge automatically every Thursday at 9am.</div>
+          <div class="cron-block" id="cronBlock">Loading…</div>
+          <button class="btn bs bxs" onclick="copyCron()" style="margin-top:8px;">Copy script</button>
+        </div>
+      </div>
       <div class="card"><div class="ct">Reset</div><div style="font-size:13px;color:var(--tx2);margin-bottom:10px;">Clear all data and restart setup.</div><button class="btn br2 bs" onclick="resetAll()">Reset everything</button></div>
     </div></div>
 
   </div>
 </div>
 </div>
+
 <script>
 const PROXY='https://team-facilitator-proxy-production.up.railway.app';
 const NOTION_DB='327617cd5ec180e6a2a2d8103cc44a88';
-function defS(){return{team:{name:'',members:[],focus:'',slack:''},retros:[],actions:[],pulse:[],learnings:[],norms:[],setupDone:false,retro:{well:[],improve:[],actions:[],experiments:[]},votes:{},streak:0,lastRetroWeek:null};}
-function loadS(){try{const s=JSON.parse(localStorage.getItem('tf-v4'));if(!s)return defS();if(!s.retro)s.retro={well:[],improve:[],actions:[],experiments:[]};['well','improve','actions','experiments'].forEach(k=>{if(!s.retro[k])s.retro[k]=[];});if(!s.learnings)s.learnings=[];if(!s.norms)s.norms=[];if(!s.votes)s.votes={};if(s.streak===undefined)s.streak=0;return s;}catch(e){return defS();}}
-function sv(){localStorage.setItem('tf-v4',JSON.stringify(S));}
+
+function defS(){return{team:{name:'',members:[],focus:'',slack:'',nudgeDay:4},retros:[],actions:[],pulse:[],learnings:[],norms:[],setupDone:false,retro:{well:[],improve:[],actions:[],experiments:[]},votes:{},asyncNotes:[],streak:0,lastRetroWeek:null,obStep:0};}
+function loadS(){try{const s=JSON.parse(localStorage.getItem('tf-v5'));if(!s)return defS();if(!s.retro)s.retro={well:[],improve:[],actions:[],experiments:[]};['well','improve','actions','experiments'].forEach(k=>{if(!s.retro[k])s.retro[k]=[];});if(!s.learnings)s.learnings=[];if(!s.norms)s.norms=[];if(!s.votes)s.votes={};if(!s.asyncNotes)s.asyncNotes=[];if(s.streak===undefined)s.streak=0;if(s.obStep===undefined)s.obStep=0;return s;}catch(e){return defS();}}
+function sv(){localStorage.setItem('tf-v5',JSON.stringify(S));}
 let S=loadS();
 let setupMs=[];
 function addM(e){if(e.key!=='Enter')return;const i=document.getElementById('sMIn'),n=i.value.trim();if(!n)return;if(!setupMs.includes(n))setupMs.push(n);renderMT();i.value='';}
 function renderMT(){document.getElementById('mTags').innerHTML=setupMs.map((m,i)=>`<div class="mtag">${m}<span class="mx" onclick="setupMs.splice(${i},1);renderMT()">×</span></div>`).join('');}
-function doSetup(){const n=document.getElementById('sName').value.trim();if(!n){alert('Please enter a team name.');return;}S.team={name:n,members:[...setupMs],focus:document.getElementById('sFocus').value.trim(),slack:document.getElementById('sSlack').value.trim()};S.setupDone=true;sv();document.getElementById('setupOv').style.display='none';initApp();}
-function showSetup(){document.getElementById('sName').value=S.team.name;document.getElementById('sFocus').value=S.team.focus;document.getElementById('sSlack').value=S.team.slack;setupMs=[...S.team.members];renderMT();document.getElementById('setupOv').style.display='flex';}
-const TITLES={home:'Team dashboard',chat:'Ask the facilitator',retro:'Run a retrospective',actions:'Improvement actions',pulse:'Pulse check',learning:'Learning log',norms:'Team norms',settings:'Settings'};
-const METAS={home:'AI insights active',chat:'Powered by Claude',retro:'Timer · voting · Notion',actions:'Ownership · momentum',pulse:'Weekly health check',learning:'Capture discoveries',norms:'Working agreements',settings:'Notion · Slack · data'};
-function go(id,el){['home','chat','retro','actions','pulse','learning','norms','settings'].forEach(p=>{const e=document.getElementById('p-'+p);if(e)e.classList.remove('visible');});const p=document.getElementById('p-'+id);if(p)p.classList.add('visible');document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));if(el)el.classList.add('active');else{const m={home:0,chat:1,retro:2,actions:3,pulse:4,learning:5,norms:6,settings:7};document.querySelectorAll('.ni')[m[id]]?.classList.add('active');}document.getElementById('ttl').textContent=TITLES[id]||id;document.getElementById('tmt').textContent=METAS[id]||'';}
-function initApp(){const t=S.team;document.getElementById('navName').textContent=t.name||'Facilitator';if(t.slack)document.getElementById('slackin').value=t.slack;['newOwner','lWho'].forEach(id=>{const s=document.getElementById(id);if(!s)return;const f=s.options[0].text;s.innerHTML=`<option value="">${f}</option>`;t.members.forEach(m=>{const o=document.createElement('option');o.value=m;o.textContent=m;s.appendChild(o);});});document.getElementById('rdate').textContent=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});['well','improve','actions','experiments'].forEach(z=>renderNotes(z));refreshDash();refreshActions();refreshPulse();renderLearnings();renderNorms();renderNormSugg();updateStreak(false);if(t.name){document.getElementById('wMsg').innerHTML=`Hi! I'm your AI facilitator for <strong>${t.name}</strong>.${t.focus?` Focus: <em>${t.focus}</em>.`:''}<br><br>I know your team, your open actions, and your pulse. Hit "Pre-retro brief" for a quick summary before your next retro.`;document.getElementById('chatCtx').textContent=`${t.name} · ${t.members.length} members · Kanban`;}}
+function doSetup(){const n=document.getElementById('sName').value.trim();if(!n){alert('Please enter a team name.');return;}S.team={name:n,members:[...setupMs],focus:document.getElementById('sFocus').value.trim(),slack:document.getElementById('sSlack').value.trim(),nudgeDay:parseInt(document.getElementById('sNudgeDay').value)||4};S.setupDone=true;if(!S.obStep)S.obStep=1;sv();document.getElementById('setupOv').style.display='none';initApp();}
+function showSetup(){document.getElementById('sName').value=S.team.name;document.getElementById('sFocus').value=S.team.focus;document.getElementById('sSlack').value=S.team.slack||'';setupMs=[...S.team.members];renderMT();document.getElementById('setupOv').style.display='flex';}
+const TITLES={home:'Team dashboard',chat:'Ask the facilitator',retro:'Run a retrospective',async:'Async retro',actions:'Improvement actions',pulse:'Pulse check',learning:'Learning log',norms:'Team norms',onboarding:'Onboarding',settings:'Settings'};
+const METAS={home:'AI insights active',chat:'Powered by Claude',retro:'Timer · voting · async notes',async:'Collect notes before the session',actions:'Ownership · momentum',pulse:'Weekly health check',learning:'Capture discoveries',norms:'Working agreements',onboarding:'Get started with the team',settings:'Notion · Slack · proactive nudges'};
+function go(id,el){Object.keys(TITLES).forEach(p=>{const e=document.getElementById('p-'+p);if(e)e.classList.remove('visible');});const p=document.getElementById('p-'+id);if(p)p.classList.add('visible');document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));if(el)el.classList.add('active');else{const m={home:0,chat:1,retro:2,async:3,actions:4,pulse:5,learning:6,norms:7,onboarding:8,settings:9};document.querySelectorAll('.ni')[m[id]]?.classList.add('active');}document.getElementById('ttl').textContent=TITLES[id]||id;document.getElementById('tmt').textContent=METAS[id]||'';}
+function initApp(){const t=S.team;document.getElementById('navName').textContent=t.name||'Facilitator';if(t.slack)document.getElementById('slackin').value=t.slack;['newOwner','lWho'].forEach(id=>{const s=document.getElementById(id);if(!s)return;const f=s.options[0].text;s.innerHTML=`<option value="">${f}</option>`;t.members.forEach(m=>{const o=document.createElement('option');o.value=m;o.textContent=m;s.appendChild(o);});});const aw=document.getElementById('asyncWho');if(aw){aw.innerHTML='<option value="">Select your name…</option>';t.members.forEach(m=>{const o=document.createElement('option');o.value=m;o.textContent=m;aw.appendChild(o);});}document.getElementById('rdate').textContent=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});['well','improve','actions','experiments'].forEach(z=>renderNotes(z));refreshDash();refreshActions();refreshPulse();renderLearnings();renderNorms();renderNormSugg();renderOnboarding();renderAsyncPreview();updateStreak(false);buildCronBlock();if(t.name){document.getElementById('wMsg').innerHTML=`Hi! I'm your AI facilitator for <strong>${t.name}</strong>.${t.focus?` Current focus: <em>${t.focus}</em>.`:''}<br><br>I know your team, your open actions, and your history. Try the "Pre-retro brief" button for a quick summary before your next session.`;document.getElementById('chatCtx').textContent=`${t.name} · ${t.members.length} members · Kanban`;}}
 function getWk(d){const s=new Date(d);s.setHours(0,0,0,0);s.setDate(s.getDate()+4-(s.getDay()||7));const y=new Date(s.getFullYear(),0,1);return Math.ceil(((s-y)/864e5+1)/7);}
-function updateStreak(ran){const tw=getWk(new Date());if(ran){if(S.lastRetroWeek===tw-1)S.streak=(S.streak||0)+1;else if(S.lastRetroWeek===tw){}else S.streak=1;S.lastRetroWeek=tw;sv();}const s=S.streak||0;document.getElementById('strkV').textContent=s;document.getElementById('strkBig').textContent=s;document.getElementById('strkMsg').textContent=s===0?'Run your first retro to start!':s<3?`${s} week${s>1?'s':''} — keep going!`:s<6?`${s} weeks strong! 💪`:`${s} weeks — outstanding habit! 🏆`;}
-function refreshDash(){const acts=S.actions;const done=acts.filter(a=>a.done).length;const open=acts.filter(a=>!a.done).length;const over=acts.filter(a=>!a.done&&a.due&&new Date(a.due)<new Date()).length;const pct=acts.length?Math.round(done/acts.length*100):null;const wkAgo=new Date(Date.now()-7*864e5).toISOString();const pw=new Date(Date.now()-14*864e5).toISOString();const tw=acts.filter(a=>a.done&&a.closedAt&&a.closedAt>wkAgo).length;const lw=acts.filter(a=>a.done&&a.closedAt&&a.closedAt>pw&&a.closedAt<=wkAgo).length;document.getElementById('mRet').textContent=S.retros.length;document.getElementById('mRes').textContent=pct!==null?pct+'%':'—';document.getElementById('mResS').textContent=pct!==null?(pct>70?'on track ↑':'needs attention'):'no actions yet';document.getElementById('mMom').textContent=tw===undefined?'—':tw;const ms=document.getElementById('mMomS');if(tw>lw){ms.textContent='↑ up from '+lw+' last week';ms.className='ms up';}else if(tw<lw){ms.textContent='↓ down from '+lw;ms.className='ms dn';}else{ms.textContent='same as last week';ms.className='ms';}document.getElementById('odDot').style.display=over>0?'block':'none';if(S.pulse.length){const r=S.pulse.slice(-5);const avg=(r.reduce((s,p)=>s+(p.energy+p.clarity+p.collab)/3,0)/r.length).toFixed(1);document.getElementById('mPul').textContent=avg;document.getElementById('mPulS').textContent='avg last '+r.length;}
-const ins=[];const days=S.retros.length?Math.floor((Date.now()-new Date(S.retros[S.retros.length-1].date))/864e5):999;if(days>13)ins.push({c:'#f59e0b',bg:'#fef3c7',t:`No retro in <strong>${days===999?'a while':days+' days'}</strong>. Bi-weekly retros are the heartbeat of a Kanban team.`});if(over>0)ins.push({c:'#ef4444',bg:'#fee2e2',t:`<strong>${over} action${over>1?'s':''}</strong> overdue. Review before your next retro.`});if(tw>0)ins.push({c:'#10b981',bg:'#d1fae5',t:`<strong>${tw} action${tw>1?'s':''}</strong> closed this week — great momentum! 🎯`});if(S.pulse.length){const l=S.pulse[S.pulse.length-1];const a=(l.energy+l.clarity+l.collab)/3;if(a<3)ins.push({c:'#ef4444',bg:'#fee2e2',t:`Latest pulse <strong>${a.toFixed(1)}/5</strong> — team may need support.`});else if(a>=4)ins.push({c:'#10b981',bg:'#d1fae5',t:`Latest pulse <strong>${a.toFixed(1)}/5</strong> — great team energy! 💚`});}if(!ins.length)ins.push({c:'#10b981',bg:'#d1fae5',t:'All good! Keep the momentum going.'});
+function updateStreak(ran){const tw=getWk(new Date());if(ran){if(S.lastRetroWeek===tw-1)S.streak=(S.streak||0)+1;else if(S.lastRetroWeek===tw){}else S.streak=1;S.lastRetroWeek=tw;sv();}const s=S.streak||0;['strkV','strkBig'].forEach(id=>document.getElementById(id).textContent=s);document.getElementById('strkMsg').textContent=s===0?'Run your first retro to start!':s<3?`${s} week${s>1?'s':''} — keep it going!`:s<6?`${s} weeks strong! 💪`:`${s} weeks in a row — outstanding! 🏆`;}
+function refreshDash(){const acts=S.actions;const done=acts.filter(a=>a.done).length;const over=acts.filter(a=>!a.done&&a.due&&new Date(a.due)<new Date()).length;const pct=acts.length?Math.round(done/acts.length*100):null;const wk=new Date(Date.now()-7*864e5).toISOString();const pw=new Date(Date.now()-14*864e5).toISOString();const tw=acts.filter(a=>a.done&&a.closedAt&&a.closedAt>wk).length;const lw=acts.filter(a=>a.done&&a.closedAt&&a.closedAt>pw&&a.closedAt<=wk).length;document.getElementById('mRet').textContent=S.retros.length;document.getElementById('mRes').textContent=pct!==null?pct+'%':'—';document.getElementById('mResS').textContent=pct!==null?(pct>70?'on track ↑':'needs attention'):'no actions yet';document.getElementById('mMom').textContent=tw;const ms=document.getElementById('mMomS');if(tw>lw){ms.textContent='↑ up from '+lw+' last week';ms.className='ms up';}else if(tw<lw){ms.textContent='↓ down from '+lw;ms.className='ms dn';}else{ms.textContent='same as last week';ms.className='ms';}document.getElementById('odDot').style.display=over>0?'block':'none';if(S.pulse.length){const r=S.pulse.slice(-5);const avg=(r.reduce((s,p)=>s+(p.energy+p.clarity+p.collab)/3,0)/r.length).toFixed(1);document.getElementById('mPul').textContent=avg;document.getElementById('mPulS').textContent='avg last '+r.length;}
+const ins=[];const days=S.retros.length?Math.floor((Date.now()-new Date(S.retros[S.retros.length-1].date))/864e5):999;if(days>13)ins.push({c:'#f59e0b',bg:'#fef3c7',t:`No retro in <strong>${days===999?'a while':days+' days'}</strong>. Bi-weekly retros are the heartbeat of a Kanban team.`});if(over>0)ins.push({c:'#ef4444',bg:'#fee2e2',t:`<strong>${over} action${over>1?'s':''}</strong> overdue. Review before your next retro.`});if(tw>0)ins.push({c:'#10b981',bg:'#d1fae5',t:`<strong>${tw} action${tw>1?'s':''}</strong> closed this week — great momentum! 🎯`});if(S.asyncNotes.length>0)ins.push({c:'#6C63FF',bg:'#ede9ff',t:`<strong>${S.asyncNotes.length} team member${S.asyncNotes.length>1?'s have':'has'}</strong> added async retro notes. Ready to run the retro!`});if(S.pulse.length){const l=S.pulse[S.pulse.length-1];const a=(l.energy+l.clarity+l.collab)/3;if(a<3)ins.push({c:'#ef4444',bg:'#fee2e2',t:`Latest pulse <strong>${a.toFixed(1)}/5</strong> — team may need support.`});else if(a>=4)ins.push({c:'#10b981',bg:'#d1fae5',t:`Latest pulse <strong>${a.toFixed(1)}/5</strong> — great team energy! 💚`});}if(!ins.length)ins.push({c:'#10b981',bg:'#d1fae5',t:'All good! Keep the momentum going.'});
 document.getElementById('insights').innerHTML=ins.map(i=>`<div class="insight"><div class="iic" style="background:${i.bg}"><div style="width:8px;height:8px;border-radius:50%;background:${i.c};"></div></div><div>${i.t}</div></div>`).join('')+'<div style="padding-bottom:2px"></div>';
-const tc=['b-grn','b-amb','b-blu','b-acc'];const themes=S.retros.flatMap(r=>r.improve||[]).slice(-6);document.getElementById('themes').innerHTML=themes.length?themes.map((t,i)=>`<span class="badge ${tc[i%4]}">${t.substring(0,35)}</span>`).join(''):'<span style="font-size:13px;color:var(--tx3);">Run your first retro to see themes.</span>';
-updateStreak(false);}
-function renderNotes(z){const el=document.getElementById('z-'+z);if(!el)return;el.innerHTML=(S.retro[z]||[]).map((t,i)=>{const k=z+':'+i;const v=S.votes[k]||0;return`<div class="sticky"><span class="st-t">${t}</span>${v>0?`<span class="vcnt">+${v}</span>`:''}<span class="vbtn" onclick="vote('${z}',${i})">▲</span></div>`;}).join('');}
+const tc=['b-grn','b-amb','b-blu','b-acc'];const themes=S.retros.flatMap(r=>r.improve||[]).slice(-6);document.getElementById('themes').innerHTML=themes.length?themes.map((t,i)=>`<span class="badge ${tc[i%4]}">${t.substring(0,35)}</span>`).join(''):'<span style="font-size:13px;color:var(--tx3);">Run your first retro to see themes.</span>';updateStreak(false);}
+/* RETRO NOTES + VOTING */
+function renderNotes(z){const el=document.getElementById('z-'+z);if(!el)return;const notes=S.retro[z]||[];el.innerHTML=notes.map((n,i)=>{const k=z+':'+i;const v=S.votes[k]||0;const isAsync=typeof n==='object';const txt=isAsync?n.text:n;const who=isAsync?n.who:'';return`<div class="sticky${isAsync?' async-note':''}">${isAsync?`<div style="position:absolute;display:none"></div>`:''}${who?`<div class="async-who">${who}</div>`:''}${v>0?`<span class="vcnt" style="margin-right:3px;">+${v}</span>`:''}<span class="st-t">${txt}</span><span class="vbtn" onclick="vote('${z}',${i})">▲</span></div>`;}).join('');const cnt=document.getElementById('nc-'+z);if(cnt)cnt.textContent=notes.length||'';}
 function vote(z,i){const k=z+':'+i;S.votes[k]=(S.votes[k]||0)+1;sv();renderNotes(z);}
 function addNote(z){const t=prompt('Add a note:');if(!t?.trim())return;if(!S.retro[z])S.retro[z]=[];S.retro[z].push(t.trim());sv();renderNotes(z);}
+/* ASYNC RETRO */
+function openAsync(){document.getElementById('asyncWell').value='';document.getElementById('asyncImprove').value='';document.getElementById('asyncActions').value='';document.getElementById('asyncExp').value='';document.getElementById('asyncOk').style.display='none';document.getElementById('asyncOv').style.display='flex';}
+function closeAsync(){document.getElementById('asyncOv').style.display='none';}
+function submitAsync(){const who=document.getElementById('asyncWho').value;if(!who){alert('Please select your name.');return;}const well=document.getElementById('asyncWell').value.trim().split('\n').filter(Boolean);const improve=document.getElementById('asyncImprove').value.trim().split('\n').filter(Boolean);const actions=document.getElementById('asyncActions').value.trim().split('\n').filter(Boolean);const exp=document.getElementById('asyncExp').value.trim().split('\n').filter(Boolean);if(!well.length&&!improve.length&&!actions.length&&!exp.length){alert('Please add at least one note.');return;}S.asyncNotes=S.asyncNotes.filter(n=>n.who!==who);S.asyncNotes.push({who,well,improve,actions,experiments:exp,date:new Date().toISOString()});sv();document.getElementById('asyncOk').style.display='block';setTimeout(()=>{document.getElementById('asyncOv').style.display='none';},2000);renderAsyncPreview();refreshDash();const dot=document.getElementById('asyncDot');if(dot)dot.style.display='block';}
+function renderAsyncPreview(){const el=document.getElementById('asyncPreview');if(!el)return;const cnt=document.getElementById('asyncCount');if(cnt)cnt.textContent=S.asyncNotes.length+' contributor'+(S.asyncNotes.length!==1?'s':'');const dot=document.getElementById('asyncDot');if(dot)dot.style.display=S.asyncNotes.length>0?'block':'none';if(!S.asyncNotes.length){el.innerHTML='<div style="font-size:13px;color:var(--tx3);text-align:center;padding:16px 0;">No async notes yet.</div>';return;}el.innerHTML=S.asyncNotes.map(n=>`<div class="ac-row"><div class="ac-who">${n.who}</div><div class="ac-notes">${[...n.well.map(t=>`✓ ${t}`),...n.improve.map(t=>`△ ${t}`),...n.actions.map(t=>`→ ${t}`),...(n.experiments||[]).map(t=>`⚡ ${t}`)].join('<br>')}</div></div>`).join('');}
+function loadAsyncNotes(){if(!S.asyncNotes.length){alert('No async notes yet.');return;}S.asyncNotes.forEach(n=>{['well','improve','actions','experiments'].forEach(z=>{const src=z==='experiments'?n.experiments:n[z];(src||[]).forEach(t=>{if(!S.retro[z])S.retro[z]=[];S.retro[z].push({text:t,who:n.who});});});});sv();['well','improve','actions','experiments'].forEach(z=>renderNotes(z));document.getElementById('asyncBadge').style.display='inline-flex';alert(`Loaded notes from ${S.asyncNotes.length} team member${S.asyncNotes.length>1?'s':''}! Notes are marked with their contributor's name.`);}
+function clearAsync(){if(!confirm('Clear all async notes?'))return;S.asyncNotes=[];sv();renderAsyncPreview();refreshDash();}
+/* TIMER */
 const PHASES=[{n:'Gather data',s:'Add notes to the board',m:10},{n:'Generate insights',s:'Discuss and vote on notes',m:15},{n:'Decide actions',s:'Commit to improvements',m:10}];
 let tPhase=0,tSecs=0,tRun=false,tInt=null;
 function initTimer(){tSecs=PHASES[tPhase].m*60;renderTimer();}
@@ -420,50 +542,85 @@ function renderTimer(){const p=PHASES[tPhase];document.getElementById('tPhase').
 function toggleTimer(){if(tRun){clearInterval(tInt);tRun=false;}else{if(tSecs===0)tSecs=PHASES[tPhase].m*60;tRun=true;tInt=setInterval(()=>{tSecs--;renderTimer();if(tSecs<=0){clearInterval(tInt);tRun=false;if(tPhase<PHASES.length-1)celebrate('⏰','Time\'s up!','Move to: '+PHASES[tPhase+1].n);}},1000);}renderTimer();}
 function nextPhase(){clearInterval(tInt);tRun=false;tPhase=(tPhase+1)%PHASES.length;tSecs=PHASES[tPhase].m*60;renderTimer();}
 initTimer();
+/* SAVE NOTION */
 function setSave(st,lb){document.getElementById('sdot').className='sd'+(st?' '+st:'');document.getElementById('slbl').textContent=lb;}
-async function saveNotion(){document.getElementById('savebtn').disabled=true;setSave('saving','Saving…');const n=S.retro;const num=S.retros.length+1;const title=`Retro #${num} · ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`;try{const res=await fetch(PROXY+'/notion/pages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({parent:{database_id:NOTION_DB},properties:{Name:{title:[{text:{content:title}}]},Date:{date:{start:new Date().toISOString().split('T')[0]}},'What went well':{rich_text:[{text:{content:(n.well||[]).join(' · ')||'—'}}]},Improve:{rich_text:[{text:{content:(n.improve||[]).join(' · ')||'—'}}]},Actions:{rich_text:[{text:{content:(n.actions||[]).join(' · ')||'—'}}]}}})});const data=await res.json();if(!res.ok)throw new Error(data.message||'Notion error');S.retros.push({date:new Date().toISOString(),title,well:n.well,improve:n.improve,actions:n.actions,experiments:n.experiments});S.retro={well:[],improve:[],actions:[],experiments:[]};S.votes={};updateStreak(true);sv();const now=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});setSave('saved','Saved · '+now);document.getElementById('nlast').textContent=now;const log=document.getElementById('nlog');log.innerHTML='';S.retros.slice().reverse().forEach(r=>{const d=document.createElement('div');d.className='log-e';d.innerHTML=`<div class="ldot" style="background:var(--grn)"></div><span style="flex:1">${r.title}</span><span style="color:var(--tx3)">${new Date(r.date).toLocaleDateString('en-GB')}</span>`;log.appendChild(d);});refreshDash();['well','improve','actions','experiments'].forEach(z=>renderNotes(z));if(S.streak===1)celebrate('🎉','First retro saved!','Come back next week to start your streak.');else if(S.streak>0&&S.streak%5===0)celebrate('🔥','Streak milestone!',`${S.streak} weeks in a row. Outstanding commitment!`);}catch(e){setSave('error','Failed: '+e.message);}document.getElementById('savebtn').disabled=false;}
+async function saveNotion(){document.getElementById('savebtn').disabled=true;setSave('saving','Saving…');const n=S.retro;const num=S.retros.length+1;const title=`Retro #${num} · ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}`;const txt=z=>((n[z]||[]).map(x=>typeof x==='object'?`[${x.who}] ${x.text}`:x)).join(' · ')||'—';try{const res=await fetch(PROXY+'/notion/pages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({parent:{database_id:NOTION_DB},properties:{Name:{title:[{text:{content:title}}]},Date:{date:{start:new Date().toISOString().split('T')[0]}},'What went well':{rich_text:[{text:{content:txt('well')}}]},Improve:{rich_text:[{text:{content:txt('improve')}}]},Actions:{rich_text:[{text:{content:txt('actions')}}]}}})});const data=await res.json();if(!res.ok)throw new Error(data.message||'Notion error');S.retros.push({date:new Date().toISOString(),title,well:(n.well||[]).map(x=>typeof x==='object'?x.text:x),improve:(n.improve||[]).map(x=>typeof x==='object'?x.text:x),actions:(n.actions||[]).map(x=>typeof x==='object'?x.text:x),experiments:(n.experiments||[]).map(x=>typeof x==='object'?x.text:x)});S.retro={well:[],improve:[],actions:[],experiments:[]};S.votes={};S.asyncNotes=[];updateStreak(true);if(S.obStep<3)S.obStep=3;sv();const now=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});setSave('saved','Saved · '+now);document.getElementById('nlast').textContent=now;const log=document.getElementById('nlog');log.innerHTML='';S.retros.slice().reverse().forEach(r=>{const d=document.createElement('div');d.className='log-e';d.innerHTML=`<div class="ldot" style="background:var(--grn)"></div><span style="flex:1">${r.title}</span><span style="color:var(--tx3)">${new Date(r.date).toLocaleDateString('en-GB')}</span>`;log.appendChild(d);});renderAsyncPreview();refreshDash();renderOnboarding();if(S.streak===1)celebrate('🎉','First retro saved!','Come back next week to start your streak.');else if(S.streak>0&&S.streak%5===0)celebrate('🔥','Streak milestone!',`${S.streak} weeks in a row!`);else if(S.team.slack)sendCelebrationSlack();}catch(e){setSave('error','Failed: '+e.message);}document.getElementById('savebtn').disabled=false;}
 async function testNotion(){const er=document.getElementById('nterr'),ok=document.getElementById('ntok');er.style.display='none';ok.style.display='none';try{const r=await fetch(PROXY+'/notion/test/'+NOTION_DB);const d=await r.json();if(d.ok){ok.textContent='Connected: "'+d.title+'"';ok.style.display='block';}else throw new Error(d.message);}catch(e){er.textContent='Failed: '+e.message;er.style.display='block';}}
-function refreshActions(){const acts=S.actions;const done=acts.filter(a=>a.done).length;const over=acts.filter(a=>!a.done&&a.due&&new Date(a.due)<new Date()).length;const wkAgo=new Date(Date.now()-7*864e5).toISOString();const pw=new Date(Date.now()-14*864e5).toISOString();const tw=acts.filter(a=>a.done&&a.closedAt&&a.closedAt>wkAgo).length;const lw=acts.filter(a=>a.done&&a.closedAt&&a.closedAt>pw&&a.closedAt<=wkAgo).length;document.getElementById('progLbl').textContent=`${done} of ${acts.length}`;document.getElementById('pfill').style.width=acts.length?Math.round(done/acts.length*100)+'%':'0%';document.getElementById('momV').textContent=tw;const mt=document.getElementById('momT');if(tw>lw){mt.textContent='↑ up from '+lw;mt.style.color='var(--grn)';}else if(tw<lw){mt.textContent='↓ down from '+lw;mt.style.color='var(--red)';}else{mt.textContent='= same';mt.style.color='var(--tx3)';}const b=document.getElementById('odBadge');if(over>0){b.style.display='inline-flex';b.textContent=over+' overdue';}else b.style.display='none';document.getElementById('odDot').style.display=over>0?'block':'none';const list=document.getElementById('alist');if(!acts.length){list.innerHTML='<div style="font-size:13px;color:var(--tx3);text-align:center;padding:16px 0;">No actions yet.</div>';return;}list.innerHTML='';acts.forEach((a,i)=>{const isOv=!a.done&&a.due&&new Date(a.due)<new Date();const d=document.createElement('div');d.className='ai';d.innerHTML=`<div class="chk ${a.done?'done':''}" onclick="toggleA(${i})">${a.done?'<svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2.5 2.5 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>':''}</div><div class="ab"><div class="at2 ${a.done?'stk':''}">${a.text}</div><div class="am2">${a.owner?`<strong>${a.owner}</strong> ·`:'Unassigned ·'} ${a.due?`Due ${new Date(a.due).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}`:'No due date'} ${isOv?'<span class="otag">Overdue</span>':''}</div></div>`;list.appendChild(d);});}
-function toggleA(i){const was=!S.actions[i].done;S.actions[i].done=!S.actions[i].done;if(S.actions[i].done)S.actions[i].closedAt=new Date().toISOString();sv();refreshActions();refreshDash();if(was){const allDone=S.actions.length>0&&S.actions.every(a=>a.done);if(allDone)celebrate('🏆','All actions done!','Every action is closed. Your team follows through — that\'s rare and powerful.');}}
-function addA(){const t=document.getElementById('newin').value.trim();if(!t)return;S.actions.push({text:t,owner:document.getElementById('newOwner').value,due:document.getElementById('newDue').value,done:false,date:new Date().toISOString()});sv();refreshActions();refreshDash();document.getElementById('newin').value='';document.getElementById('newOwner').value='';document.getElementById('newDue').value='';}
+/* ACTIONS */
+function refreshActions(){const acts=S.actions;const done=acts.filter(a=>a.done).length;const over=acts.filter(a=>!a.done&&a.due&&new Date(a.due)<new Date()).length;const wk=new Date(Date.now()-7*864e5).toISOString();const pw=new Date(Date.now()-14*864e5).toISOString();const tw=acts.filter(a=>a.done&&a.closedAt&&a.closedAt>wk).length;const lw=acts.filter(a=>a.done&&a.closedAt&&a.closedAt>pw&&a.closedAt<=wk).length;document.getElementById('progLbl').textContent=`${done} of ${acts.length}`;document.getElementById('pfill').style.width=acts.length?Math.round(done/acts.length*100)+'%':'0%';document.getElementById('momV').textContent=tw;const mt=document.getElementById('momT');if(tw>lw){mt.textContent='↑ up from '+lw;mt.style.color='var(--grn)';}else if(tw<lw){mt.textContent='↓ down from '+lw;mt.style.color='var(--red)';}else{mt.textContent='= same';mt.style.color='var(--tx3)';}const b=document.getElementById('odBadge');if(over>0){b.style.display='inline-flex';b.textContent=over+' overdue';}else b.style.display='none';document.getElementById('odDot').style.display=over>0?'block':'none';const list=document.getElementById('alist');if(!acts.length){list.innerHTML='<div style="font-size:13px;color:var(--tx3);text-align:center;padding:16px 0;">No actions yet. Add one below or save a retro.</div>';return;}list.innerHTML='';acts.forEach((a,i)=>{const isOv=!a.done&&a.due&&new Date(a.due)<new Date();const isAI=a.fromAI;const d=document.createElement('div');d.className='ai';d.innerHTML=`<div class="chk ${a.done?'done':''}" onclick="toggleA(${i})">${a.done?'<svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2.5 2.5 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>':''}</div><div class="ab"><div class="at2 ${a.done?'stk':''}">${a.text}</div><div class="am2">${a.owner?`<strong>${a.owner}</strong> ·`:'Unassigned ·'} ${a.due?`Due ${new Date(a.due).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}`:'No due date'} ${isOv?'<span class="otag">Overdue</span>':''} ${isAI?'<span class="atag">from AI</span>':''}</div></div>`;list.appendChild(d);});}
+function toggleA(i){const was=!S.actions[i].done;S.actions[i].done=!S.actions[i].done;if(S.actions[i].done)S.actions[i].closedAt=new Date().toISOString();sv();refreshActions();refreshDash();if(was){const allDone=S.actions.length>0&&S.actions.every(a=>a.done);if(allDone)celebrate('🏆','All actions done!','Every action is closed. Outstanding team discipline!');}}
+function addA(text,owner,fromAI){const t=(text||document.getElementById('newin').value).trim();if(!t)return;const o=owner||document.getElementById('newOwner')?.value||'';const due=fromAI?'':document.getElementById('newDue')?.value||'';S.actions.push({text:t,owner:o,due,done:false,date:new Date().toISOString(),fromAI:!!fromAI});sv();refreshActions();refreshDash();if(!fromAI){document.getElementById('newin').value='';document.getElementById('newOwner').value='';document.getElementById('newDue').value='';}}
+/* PULSE */
 let pSelM='',pSc={energy:0,clarity:0,collab:0};
 function renderPulseSel(){const el=document.getElementById('pulseSel');if(!el)return;const ms=S.team.members.length?S.team.members:['Me'];el.innerHTML=ms.map(m=>`<button class="mb2 ${pSelM===m?'sel':''}" onclick="pSelM='${m}';renderPulseSel()">${m}</button>`).join('');}
 function bldScale(id,key){const el=document.getElementById(id);if(!el)return;el.innerHTML=[1,2,3,4,5].map(n=>`<div class="pn ${pSc[key]===n?'sel':''}" onclick="pSc['${key}']=${n};bldScale('${id}','${key}')">${n}</div>`).join('');}
-function refreshPulse(){renderPulseSel();['energy','clarity','collab'].forEach(k=>bldScale('ps'+k[0].toUpperCase()+k.slice(1)[0],''+k));bldScale('psE','energy');bldScale('psCl','clarity');bldScale('psCo','collab');const tr=document.getElementById('pulseTrend');if(!S.pulse.length){tr.innerHTML='<div style="font-size:13px;color:var(--tx3);text-align:center;padding:16px 0;">No data yet.</div>';return;}const wks=S.pulse.slice(-10);const mH=60;tr.innerHTML=`<div style="display:flex;align-items:flex-end;gap:5px;height:${mH}px;">${wks.map((p,i)=>{const avg=(p.energy+p.clarity+p.collab)/3;const h=Math.max(4,Math.round(avg/5*mH));const cur=i===wks.length-1;return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="font-size:10px;color:var(--tx3);">${avg.toFixed(1)}</div><div style="height:${h}px;width:100%;border-radius:3px 3px 0 0;background:${cur?'var(--acc)':'var(--acc-l)'};" title="${p.member}"></div></div>`;}).join('')}</div><div style="display:flex;gap:5px;padding:4px 0 0;">${wks.map(p=>`<div style="flex:1;font-size:10px;color:var(--tx3);text-align:center;overflow:hidden;white-space:nowrap;">${p.member.split(' ')[0]}</div>`).join('')}</div>`;const sc=document.getElementById('pulseScores');const ms=S.team.members;if(!ms.length){sc.innerHTML='<div style="font-size:13px;color:var(--tx3);text-align:center;padding:10px 0;">Set up team members first.</div>';return;}sc.innerHTML=ms.map(m=>{const es=S.pulse.filter(p=>p.member===m);if(!es.length)return`<div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--bor);"><span>${m}</span><span style="color:var(--tx3);">No data</span></div>`;const l=es[es.length-1];const avg=((l.energy+l.clarity+l.collab)/3).toFixed(1);const col=avg>=4?'var(--grn)':avg>=3?'var(--amb)':'var(--red)';return`<div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:8px 0;border-bottom:1px solid var(--bor);"><span style="font-weight:500;">${m}</span><div style="display:flex;gap:10px;align-items:center;"><span style="font-size:11px;color:var(--tx3);">E${l.energy} C${l.clarity} T${l.collab}</span><span style="font-weight:600;color:${col};">${avg}</span></div></div>`;}).join('');}
+function refreshPulse(){renderPulseSel();bldScale('psE','energy');bldScale('psCl','clarity');bldScale('psCo','collab');const tr=document.getElementById('pulseTrend');if(!S.pulse.length){tr.innerHTML='<div style="font-size:13px;color:var(--tx3);text-align:center;padding:14px 0;">No data yet.</div>';return;}const wks=S.pulse.slice(-10);const mH=60;tr.innerHTML=`<div style="display:flex;align-items:flex-end;gap:5px;height:${mH}px;">${wks.map((p,i)=>{const avg=(p.energy+p.clarity+p.collab)/3;const h=Math.max(4,Math.round(avg/5*mH));const cur=i===wks.length-1;return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="font-size:10px;color:var(--tx3);">${avg.toFixed(1)}</div><div style="height:${h}px;width:100%;border-radius:3px 3px 0 0;background:${cur?'var(--acc)':'var(--acc-l)'};" title="${p.member}"></div></div>`;}).join('')}</div><div style="display:flex;gap:5px;padding:4px 0 0;">${wks.map(p=>`<div style="flex:1;font-size:10px;color:var(--tx3);text-align:center;overflow:hidden;white-space:nowrap;">${p.member.split(' ')[0]}</div>`).join('')}</div>`;const sc=document.getElementById('pulseScores');if(!S.team.members.length){sc.innerHTML='<div style="font-size:13px;color:var(--tx3);text-align:center;padding:10px 0;">Set up team members first.</div>';return;}sc.innerHTML=S.team.members.map(m=>{const es=S.pulse.filter(p=>p.member===m);if(!es.length)return`<div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--bor);"><span>${m}</span><span style="color:var(--tx3);">No data</span></div>`;const l=es[es.length-1];const avg=((l.energy+l.clarity+l.collab)/3).toFixed(1);const col=avg>=4?'var(--grn)':avg>=3?'var(--amb)':'var(--red)';return`<div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:8px 0;border-bottom:1px solid var(--bor);"><span style="font-weight:500;">${m}</span><div style="display:flex;gap:10px;align-items:center;"><span style="font-size:11px;color:var(--tx3);">E${l.energy} C${l.clarity} T${l.collab}</span><span style="font-weight:600;color:${col};">${avg}</span></div></div>`;}).join('');}
 function submitPulse(){if(!pSelM){alert('Select who is submitting.');return;}if(!pSc.energy||!pSc.clarity||!pSc.collab){alert('Please rate all three areas.');return;}S.pulse.push({member:pSelM,energy:pSc.energy,clarity:pSc.clarity,collab:pSc.collab,date:new Date().toISOString()});sv();pSc={energy:0,clarity:0,collab:0};pSelM='';document.getElementById('pulseOk').style.display='block';setTimeout(()=>document.getElementById('pulseOk').style.display='none',3000);refreshPulse();refreshDash();const avg=(S.pulse[S.pulse.length-1].energy+S.pulse[S.pulse.length-1].clarity+S.pulse[S.pulse.length-1].collab)/3;if(avg>=4.5)celebrate('💚','Fantastic pulse!','The team is energised and firing on all cylinders!');}
+/* LEARNING */
 function addLearn(){const t=document.getElementById('lTitle').value.trim();if(!t)return;S.learnings.push({title:t,type:document.getElementById('lType').value,note:document.getElementById('lNote').value.trim(),who:document.getElementById('lWho').value,date:new Date().toISOString()});sv();renderLearnings();document.getElementById('lTitle').value='';document.getElementById('lNote').value='';}
-const LT_CLS={insight:'lt-i',experiment:'lt-e',article:'lt-a',tool:'lt-t'};const LT_LBL={insight:'Insight',experiment:'Experiment',article:'Article',tool:'Tool'};
-function renderLearnings(){const el=document.getElementById('learnList');if(!el)return;if(!S.learnings.length){el.innerHTML='<div style="font-size:13px;color:var(--tx3);text-align:center;padding:14px 0;">No learnings yet.</div>';return;}el.innerHTML=S.learnings.slice().reverse().map(l=>`<div class="le"><div class="lh"><span class="lt ${LT_CLS[l.type]||'lt-i'}">${LT_LBL[l.type]||'Insight'}</span><span style="font-size:13px;font-weight:500;">${l.title}</span></div><div class="ln">${l.who?l.who+' · ':''}${new Date(l.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div>${l.note?`<div class="lnote">${l.note}</div>`:''}</div>`).join('');}
+const LTC={insight:'lt-i',experiment:'lt-e',article:'lt-a',tool:'lt-t'};const LTL={insight:'Insight',experiment:'Experiment',article:'Article',tool:'Tool'};
+function renderLearnings(){const el=document.getElementById('learnList');if(!el)return;if(!S.learnings.length){el.innerHTML='<div style="font-size:13px;color:var(--tx3);text-align:center;padding:14px 0;">No learnings yet.</div>';return;}el.innerHTML=S.learnings.slice().reverse().map(l=>`<div class="le"><div class="lh"><span class="lt ${LTC[l.type]||'lt-i'}">${LTL[l.type]||'Insight'}</span><span style="font-size:13px;font-weight:500;">${l.title}</span></div><div class="ln">${l.who?l.who+' · ':''}${new Date(l.date).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div>${l.note?`<div class="lnote">${l.note}</div>`:''}</div>`).join('');}
+/* NORMS */
 const NORM_SUGG=['We review PRs within 24 hours','We start and end meetings on time','We share blockers daily, not just in retros','We separate problem from solution discussions','We assume good intent in all communications','We protect focus time — no meetings before 10am','We celebrate small wins, not just big launches'];
 function renderNormSugg(){const el=document.getElementById('normSugg');if(!el)return;const ex=S.norms.map(n=>n.text.toLowerCase());const sg=NORM_SUGG.filter(s=>!ex.includes(s.toLowerCase())).slice(0,4);el.innerHTML=sg.map(s=>`<div style="display:flex;align-items:center;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px solid var(--bor);color:var(--tx2);">${s}<button class="btn bs bxs" onclick="addSN('${s.replace(/'/g,'&apos;')}')" style="flex-shrink:0;margin-left:8px;">Add</button></div>`).join('');}
 function addSN(t){S.norms.push({text:t,date:new Date().toISOString()});sv();renderNorms();renderNormSugg();}
 function addNorm(){const t=document.getElementById('normIn').value.trim();if(!t)return;S.norms.push({text:t,date:new Date().toISOString()});sv();renderNorms();renderNormSugg();document.getElementById('normIn').value='';}
 function renderNorms(){const el=document.getElementById('normsList');if(!el)return;if(!S.norms.length){el.innerHTML='<div style="font-size:13px;color:var(--tx3);text-align:center;padding:14px 0;">No norms yet.</div>';return;}el.innerHTML=S.norms.map((n,i)=>`<div class="norm"><div class="nnum">${i+1}</div><div class="ntxt">${n.text}</div><span class="ndel" onclick="delNorm(${i})">×</span></div>`).join('');}
 function delNorm(i){S.norms.splice(i,1);sv();renderNorms();renderNormSugg();}
+/* ONBOARDING */
+const OB_STEPS=[{title:'Complete team setup',desc:'Add your team name, members, and current focus so the AI knows who it\'s working with.',action:'Open setup',actionFn:()=>showSetup()},{title:'Run your first retro',desc:'Go to "Run a retro", add a few notes to each column, and save it to Notion to complete your first session.',action:'Go to retro',actionFn:()=>go('retro',null)},{title:'Add your first action',desc:'In the Actions panel, add a concrete improvement from your retro with an owner and due date.',action:'Go to actions',actionFn:()=>go('actions',null)},{title:'Submit a pulse check',desc:'Have each team member rate their energy, clarity, and collaboration. Do this every week.',action:'Go to pulse',actionFn:()=>go('pulse',null)},{title:'Try async retro mode',desc:'Before your next retro, ask team members to add notes async. Then load them onto the board when you meet.',action:'Go to async',actionFn:()=>go('async',null)}];
+function renderOnboarding(){const el=document.getElementById('ob-steps');if(!el)return;const step=S.obStep||0;el.innerHTML=OB_STEPS.map((s,i)=>{const done=i<step;const cur=i===step;const cls=done?'ob-done':cur?'ob-cur':'ob-todo';const icon=done?'✓':cur?'→':(i+1);return`<div class="ob-step"><div class="ob-num ${cls}">${icon}</div><div class="ob-body"><div class="ob-title">${s.title}</div><div class="ob-desc">${s.desc}</div></div></div>`;}).join('');const acts=document.getElementById('ob-actions');if(!acts)return;if(step>=OB_STEPS.length){acts.innerHTML='<div style="display:flex;align-items:center;gap:10px;padding:8px 0;"><span style="font-size:24px;">🎓</span><div><div style="font-size:14px;font-weight:600;">Onboarding complete!</div><div style="font-size:13px;color:var(--tx2);">You\'re ready to facilitate high-performing retros. Keep the streak going!</div></div></div>';return;}const cur=OB_STEPS[step];acts.innerHTML=`<button class="btn bp bs" onclick="OB_STEPS[${step}].actionFn()">${cur.action} →</button><button class="btn bs" onclick="advanceOB()">Mark done</button>`;}
+function advanceOB(){if(S.obStep<OB_STEPS.length)S.obStep++;sv();renderOnboarding();if(S.obStep===OB_STEPS.length)celebrate('🎓','Onboarding complete!','You\'re all set to run high-performing retrospectives with your team.');}
+function startMiniRetro(){go('chat',null);setTimeout(()=>qs('I\'m new to retrospectives. Can you run a quick 5-minute practice retro with me to help me understand how it works? Ask me questions one at a time, like a real facilitator would.'),100);}
+/* SLACK */
 function saveSlack(){const v=document.getElementById('slackin').value.trim();if(v.startsWith('https://hooks.slack.com')){S.team.slack=v;sv();document.getElementById('slackok').style.display='block';}else alert('Enter a valid Slack webhook URL.');}
-async function sendDigest(){const wh=S.team.slack;if(!wh){alert('No Slack webhook saved. Add it in Settings.');go('settings',null);return;}const open=S.actions.filter(a=>!a.done);const over=open.filter(a=>a.due&&new Date(a.due)<new Date());const wkAgo=new Date(Date.now()-7*864e5).toISOString();const closed=S.actions.filter(a=>a.done&&a.closedAt&&a.closedAt>wkAgo).length;const tn=S.team.name||'Your team';const lines=[`*${tn} · Weekly digest*`,`📋 *Open actions:* ${open.length} (${over.length} overdue)`,...over.map(a=>`  ⚠️ ${a.text}${a.owner?' — '+a.owner:''}`),closed?`✅ *Closed this week:* ${closed}`:'',`📅 *Retros:* ${S.retros.length} | 🔥 *Streak:* ${S.streak||0} weeks`,S.pulse.length?`💚 *Latest pulse:* ${((S.pulse[S.pulse.length-1].energy+S.pulse[S.pulse.length-1].clarity+S.pulse[S.pulse.length-1].collab)/3).toFixed(1)}/5`:'','_Sent by Team Facilitator_'].filter(Boolean).join('\n');try{await fetch(PROXY+'/slack',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({webhook:wh,text:lines})});alert('Slack digest sent! 🚀');}catch(e){alert('Failed: '+e.message);}}
+function buildSlackMsg(type){const t=S.team;const open=S.actions.filter(a=>!a.done);const over=open.filter(a=>a.due&&new Date(a.due)<new Date());const wk=new Date(Date.now()-7*864e5).toISOString();const closed=S.actions.filter(a=>a.done&&a.closedAt&&a.closedAt>wk).length;const days=S.retros.length?Math.floor((Date.now()-new Date(S.retros[S.retros.length-1].date))/864e5):999;const tn=t.name||'Your team';const pAvg=S.pulse.length?((S.pulse[S.pulse.length-1].energy+S.pulse[S.pulse.length-1].clarity+S.pulse[S.pulse.length-1].collab)/3).toFixed(1):null;
+if(type==='nudge'){const lines=[`*👋 ${tn} · Weekly check-in from your facilitator*`,''];if(days>13)lines.push(`📅 No retro in *${days===999?'a while':days+' days'}* — time to schedule one!`);if(over.length)lines.push(`⚠️ *${over.length} overdue action${over.length>1?'s':''}*: ${over.map(a=>a.text+(a.owner?' ('+a.owner+')':'')).slice(0,3).join(', ')}`);else if(open.length)lines.push(`📋 *${open.length} open action${open.length>1?'s':''}* — keep the momentum going.`);if(closed)lines.push(`✅ *${closed} action${closed>1?'s':''} closed this week* — great work!`);if(pAvg)lines.push(`💚 Team pulse: *${pAvg}/5*`);if(S.streak)lines.push(`🔥 Retro streak: *${S.streak} week${S.streak>1?'s':''}*`);lines.push('','_Open your team facilitator to take action →_');return lines.filter(Boolean).join('\n');}
+if(type==='digest'){const lines=[`*${tn} · Weekly digest*`,`📋 Open: ${open.length} (${over.length} overdue)`,...over.slice(0,3).map(a=>`  ⚠️ ${a.text}${a.owner?' — '+a.owner:''}`),closed?`✅ Closed this week: ${closed}`:'',`📅 Retros: ${S.retros.length} | 🔥 Streak: ${S.streak||0} weeks`,pAvg?`💚 Latest pulse: ${pAvg}/5`:'','_Sent by Team Facilitator_'].filter(Boolean).join('\n');return lines;}
+if(type==='celebration'){const lines=[`🎉 *${tn} just completed retro #${S.retros.length}!*`,S.streak>1?`🔥 That's *${S.streak} weeks in a row* — a real continuous improvement habit.`:'',S.actions.length?`📋 Tracking *${S.actions.length} improvement action${S.actions.length>1?'s':''}* across ${S.retros.length} retros.`:'','_Powered by Team Facilitator_'].filter(Boolean).join('\n');return lines;}return '';}
+async function postSlack(text){const wh=S.team.slack;if(!wh){alert('No Slack webhook saved. Add it in Settings.');go('settings',null);return false;}try{await fetch(PROXY+'/slack',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({webhook:wh,text})});return true;}catch(e){alert('Slack error: '+e.message);return false;}}
+async function sendDigest(){const ok=await postSlack(buildSlackMsg('digest'));if(ok)alert('Digest sent! 🚀');}
+async function sendNudge(){const ok=await postSlack(buildSlackMsg('nudge'));if(ok)alert('Weekly nudge sent! 👋');}
+async function sendCelebration(){await postSlack(buildSlackMsg('celebration'));}
+async function sendCelebrationSlack(){if(S.team.slack)await postSlack(buildSlackMsg('celebration'));}
+function buildCronBlock(){const el=document.getElementById('cronBlock');if(!el)return;const day=S.team.nudgeDay||4;const script=`# Add to Railway: Settings → Cron Jobs → New Cron Job
+# Runs every ${['','Mon','Tue','Wed','Thu','Fri'][day]} at 9:00am
+
+0 9 * * ${day} node -e "
+const fetch = require('node-fetch');
+const webhook = process.env.SLACK_WEBHOOK;
+const msg = '👋 *Team Facilitator weekly nudge*\\nTime to check your retro actions and pulse!';
+fetch(webhook, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:msg})});
+"`;el.textContent=script;}
+function copyCron(){const el=document.getElementById('cronBlock');navigator.clipboard.writeText(el.textContent).then(()=>alert('Cron script copied!')).catch(()=>alert('Copy failed — select and copy manually.'));}
+/* CELEBRATE */
 function celebrate(em,ti,su){document.getElementById('celEm').textContent=em;document.getElementById('celTi').textContent=ti;document.getElementById('celSu').textContent=su;const ov=document.getElementById('celOv');ov.classList.add('show');const c=document.getElementById('conf');c.innerHTML='';const cols=['#6C63FF','#10b981','#f59e0b','#3b82f6','#ef4444','#fff'];for(let i=0;i<40;i++){const d=document.createElement('div');d.className='cf';d.style.cssText=`left:${Math.random()*100}%;background:${cols[Math.floor(Math.random()*cols.length)]};animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*.5}s;width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;`;c.appendChild(d);}}
 function closeCel(){document.getElementById('celOv').classList.remove('show');}
-function resetAll(){if(!confirm('Delete all data?'))return;localStorage.removeItem('tf-v4');location.reload();}
+function resetAll(){if(!confirm('Delete all data?'))return;localStorage.removeItem('tf-v5');location.reload();}
+/* CHAT + AUTO-EXTRACT */
 let hist=[],loading=false;
-function buildSys(){const t=S.team;const open=S.actions.filter(a=>!a.done);const over=open.filter(a=>a.due&&new Date(a.due)<new Date());const wkAgo=new Date(Date.now()-7*864e5).toISOString();const tw=S.actions.filter(a=>a.done&&a.closedAt&&a.closedAt>wkAgo).length;const rLearnings=S.learnings.slice(-3).map(l=>l.title).join(', ');const lastRetro=S.retros[S.retros.length-1];return`You are an expert AI team facilitator for ${t.name||'this team'}.
-Team: ${t.members.join(', ')||'unknown'} | Workflow: Kanban | Focus: ${t.focus||'not set'}
-Retros run: ${S.retros.length} | Streak: ${S.streak||0} weeks | Open actions: ${open.length} (${over.length} overdue) | Closed this week: ${tw}
-${over.length?'Overdue actions: '+over.map(a=>a.text+(a.owner?' ('+a.owner+')':'')).join(', '):''}
+function buildSys(){const t=S.team;const open=S.actions.filter(a=>!a.done);const over=open.filter(a=>a.due&&new Date(a.due)<new Date());const wk=new Date(Date.now()-7*864e5).toISOString();const tw=S.actions.filter(a=>a.done&&a.closedAt&&a.closedAt>wk).length;const lastRetro=S.retros[S.retros.length-1];return`You are an expert AI team facilitator for ${t.name||'this team'}.
+Team: ${t.members.join(', ')||'not set'} | Kanban | Focus: ${t.focus||'not set'}
+Retros: ${S.retros.length} | Streak: ${S.streak||0} weeks | Open actions: ${open.length} (${over.length} overdue) | Closed this week: ${tw}
+${over.length?'Overdue: '+over.map(a=>a.text+(a.owner?' ('+a.owner+')':'')).join(', '):''}
 ${S.pulse.length?'Latest pulse: '+((S.pulse[S.pulse.length-1].energy+S.pulse[S.pulse.length-1].clarity+S.pulse[S.pulse.length-1].collab)/3).toFixed(1)+'/5':''}
-${rLearnings?'Recent learnings: '+rLearnings:''}
-${S.norms.length?'Team norms: '+S.norms.map(n=>n.text).slice(0,4).join(' | '):''}
+${S.learnings.length?'Recent learnings: '+S.learnings.slice(-3).map(l=>l.title).join(', '):''}
+${S.norms.length?'Team norms: '+S.norms.slice(0,4).map(n=>n.text).join(' | '):''}
 ${lastRetro?'Last retro themes: '+(lastRetro.improve||[]).join(', '):''}
+${S.asyncNotes.length?'Async notes pending from: '+S.asyncNotes.map(n=>n.who).join(', '):''}
 
-When asked for a pre-retro brief: give a focused 3-5 sentence brief covering: (1) status of open/overdue actions, (2) key themes from last retro to revisit, (3) one specific suggestion for today's focus. Use actual team data above. Be specific and direct.
-Be warm, practical, concise (2-4 paragraphs max unless running a retro). Reference team members by name. Suggest small concrete experiments.`;}
+When giving a pre-retro brief: 3-5 sentences covering (1) open/overdue action status, (2) last retro themes to revisit, (3) one specific focus for today. Be direct and data-driven.
+When you identify a clear action item in your response, format it as: ACTION: [description] | OWNER: [name or "team"] so the UI can extract it.
+Be warm, practical, concise. Reference team members by name. Suggest small concrete experiments.`;}
+function extractActions(text){const pattern=/ACTION:\s*([^|]+)\|?\s*OWNER:\s*([^\n]+)/gi;const found=[];let m;while((m=pattern.exec(text))!==null){found.push({text:m[1].trim(),owner:m[2].trim().replace(/^team$/i,'')});}return found;}
 function gchat(t){go('chat',null);document.getElementById('cin').value=t;sendChat();}
 function qs(t){document.getElementById('cin').value=t;sendChat();}
 function onKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}}
-function addMsg(role,text){const el=document.getElementById('msgs');const d=document.createElement('div');d.className='msg'+(role==='user'?' user':'');d.innerHTML=`<div class="av ${role==='user'?'av-u':'av-ai'}">${role==='user'?'You':'AI'}</div><div class="bbl ${role==='user'?'bbl-u':'bbl-ai'}">${text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>')}</div>`;el.appendChild(d);el.scrollTop=el.scrollHeight;}
+function addMsg(role,text,actions){const el=document.getElementById('msgs');const d=document.createElement('div');d.className='msg'+(role==='user'?' user':'');const cleanText=text.replace(/ACTION:[^\n]*/gi,'').trim();d.innerHTML=`<div class="av ${role==='user'?'av-u':'av-ai'}">${role==='user'?'You':'AI'}</div><div class="bbl ${role==='user'?'bbl-u':'bbl-ai'}">${cleanText.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>')}</div>`;if(actions&&actions.length){const ec=document.createElement('div');ec.className='extract-card';ec.innerHTML=`<div class="extract-title">⚡ ${actions.length} action${actions.length>1?'s':''} identified — add to list?</div>${actions.map((a,i)=>`<div class="extract-item"><span class="extract-text">${a.text}${a.owner?' — '+a.owner:''}</span><button class="btn bp bxs" onclick="addExtractedAction(${JSON.stringify(a).replace(/"/g,'&quot;')},this)">Add</button></div>`).join('')}`;d.appendChild(ec);}el.appendChild(d);el.scrollTop=el.scrollHeight;}
+function addExtractedAction(a,btn){addA(a.text,a.owner,true);btn.textContent='Added ✓';btn.disabled=true;btn.style.background='var(--grn)';btn.style.borderColor='var(--grn)';}
 function showTyp(){const el=document.getElementById('msgs');const d=document.createElement('div');d.className='msg';d.id='typ';d.innerHTML='<div class="av av-ai">AI</div><div class="bbl bbl-ai typing"><span></span><span></span><span></span></div>';el.appendChild(d);el.scrollTop=el.scrollHeight;}
 function hideTyp(){document.getElementById('typ')?.remove();}
-async function sendChat(){if(loading)return;const inp=document.getElementById('cin'),txt=inp.value.trim();if(!txt)return;inp.value='';document.getElementById('cerr').style.display='none';addMsg('user',txt);hist.push({role:'user',content:txt});loading=true;document.getElementById('sbtn').disabled=true;showTyp();try{const res=await fetch(PROXY+'/anthropic/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:buildSys(),messages:hist})});const data=await res.json();hideTyp();if(data.error)throw new Error(data.error.message);const reply=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');hist.push({role:'assistant',content:reply});addMsg('assistant',reply);}catch(e){hideTyp();hist.pop();const ce=document.getElementById('cerr');ce.textContent='Error: '+e.message;ce.style.display='block';}loading=false;document.getElementById('sbtn').disabled=false;}
+async function sendChat(){if(loading)return;const inp=document.getElementById('cin'),txt=inp.value.trim();if(!txt)return;inp.value='';document.getElementById('cerr').style.display='none';addMsg('user',txt);hist.push({role:'user',content:txt});loading=true;document.getElementById('sbtn').disabled=true;showTyp();try{const res=await fetch(PROXY+'/anthropic/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:buildSys(),messages:hist})});const data=await res.json();hideTyp();if(data.error)throw new Error(data.error.message);const reply=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');hist.push({role:'assistant',content:reply});const extracted=extractActions(reply);addMsg('assistant',reply,extracted.length?extracted:null);}catch(e){hideTyp();hist.pop();const ce=document.getElementById('cerr');ce.textContent='Error: '+e.message;ce.style.display='block';}loading=false;document.getElementById('sbtn').disabled=false;}
 if(S.setupDone)document.getElementById('setupOv').style.display='none';
 initApp();
 </script>
