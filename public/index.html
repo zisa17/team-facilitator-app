@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Team Facilitator v6</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -519,24 +522,45 @@ function addM(e){if(e.key!=='Enter')return;const i=document.getElementById('sMIn
 function renderMT(){document.getElementById('mTags').innerHTML=setupMs.map((m,i)=>`<div class="mtag">${m}<span class="mx" onclick="setupMs.splice(${i},1);renderMT()">×</span></div>`).join('');}
 
 async function doSetup(){
+  // Get elements safely
+  const nameEl=document.getElementById('sName');
+  const focusEl=document.getElementById('sFocus');
+  const slackEl=document.getElementById('sSlack');
+  const btnEl=document.getElementById('setupBtn');
   const errEl=document.getElementById('setupErr');
-  if(errEl)errEl.style.display='none';
-  const n=document.getElementById('sName').value.trim();
-  if(!n){if(errEl){errEl.textContent='Please enter a team name.';errEl.style.display='block';}return;}
-  const btn=document.getElementById('setupBtn');if(btn){btn.disabled=true;btn.textContent='Creating…';}
+  const ovEl=document.getElementById('setupOv');
+
+  if(errEl){errEl.style.display='none';errEl.textContent='';}
+
+  const n=(nameEl&&nameEl.value||'').trim();
+  if(!n){
+    alert('Please enter a team name.');
+    return;
+  }
+
+  if(btnEl){btnEl.disabled=true;btnEl.textContent='Creating…';}
+
   try{
-    const rows=await sb('POST','teams',{name:n,members:setupMs,focus:document.getElementById('sFocus').value.trim(),slack_webhook:document.getElementById('sSlack').value.trim()});
+    const payload={
+      name:n,
+      members:setupMs,
+      focus:(focusEl&&focusEl.value||'').trim(),
+      slack_webhook:(slackEl&&slackEl.value||'').trim()
+    };
+    const rows=await sb('POST','teams',payload);
     const team=Array.isArray(rows)?rows[0]:rows;
-    if(!team||!team.id)throw new Error('No team ID returned from Supabase');
-    TEAM_ID=team.id;localStorage.setItem('tf-v6-team',TEAM_ID);
-    if(btn){btn.textContent='Loading…';}
+    if(!team||!team.id)throw new Error('No team ID returned — check Supabase tables exist');
+    TEAM_ID=team.id;
+    localStorage.setItem('tf-v6-team',TEAM_ID);
+    if(btnEl){btnEl.textContent='Loading…';}
     await loadAll();
   }catch(e){
     console.error('doSetup error:',e);
-    if(errEl){errEl.textContent='Error: '+e.message;errEl.style.display='block';}
-    document.getElementById('setupOv').style.display='flex';
+    alert('Setup failed: '+e.message);
+    if(ovEl)ovEl.style.display='flex';
   }
-  if(btn){btn.disabled=false;btn.textContent='Save & get started';}
+
+  if(btnEl){btnEl.disabled=false;btnEl.textContent='Save & get started';}
 }
 
 async function loadExisting(){const id=document.getElementById('existId').value.trim();if(!id)return;TEAM_ID=id;localStorage.setItem('tf-v6-team',TEAM_ID);document.getElementById('setupOv').style.display='none';await loadAll();}
