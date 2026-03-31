@@ -109,6 +109,7 @@ app.all('/supabase/*', async (req, res) => {
 });
 
 // Slack
+
 app.post('/slack', async (req, res) => {
   const { webhook, text } = req.body;
   if (!webhook) return res.status(400).json({ error: 'No webhook' });
