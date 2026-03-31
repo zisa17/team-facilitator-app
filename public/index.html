@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -506,7 +507,7 @@ let retros=[],actions=[],pulse=[],learnings=[],norms=[],board=[];
 
 async function sb(method,table,body,query){
   const q=query?'?'+new URLSearchParams(query).toString():'';
-  const opts={method,headers:{'Content-Type':'application/json','Prefer':'return=representation'}};
+  const opts={method,headers:{'Content-Type':'application/json'}};
   if(body&&['POST','PATCH'].includes(method))opts.body=JSON.stringify(body);
   const r=await fetch(PROXY+'/supabase/'+table+q,opts);
   const text=await r.text();let data;try{data=JSON.parse(text);}catch{data=text;}
