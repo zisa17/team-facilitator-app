@@ -568,24 +568,32 @@ async function doSetup(){
 async function loadExisting(){const id=document.getElementById('existId').value.trim();if(!id)return;TEAM_ID=id;localStorage.setItem('tf-v6-team',TEAM_ID);document.getElementById('setupOv').style.display='none';await loadAll();}
 
 async function loadAll(){
-  const errEl=document.getElementById('setupErr');
   try{
     const rows=await sb('GET','teams','',{id:'eq.'+TEAM_ID});
     if(!rows||!rows.length){
       localStorage.removeItem('tf-v6-team');
-      if(errEl){errEl.textContent='Team not found. Please create a new team.';errEl.style.display='block';}
+      alert('Team not found in database. Please create a new team.');
       document.getElementById('setupOv').style.display='flex';return;
     }
     T=rows[0];
+  }catch(e){alert('Step 1 failed (load team): '+e.message);document.getElementById('setupOv').style.display='flex';return;}
+
+  try{
     await Promise.all([loadRetros(),loadActions(),loadPulse(),loadLearnings(),loadNorms(),loadBoard()]);
+  }catch(e){alert('Step 2 failed (load data): '+e.message);document.getElementById('setupOv').style.display='flex';return;}
+
+  try{
     document.getElementById('setupOv').style.display='none';
     initUI();
-    setInterval(async()=>{try{await Promise.all([loadBoard(),loadActions(),loadPulse()]);renderBoard();renderActions();renderPulseScores();refreshDash();}catch(e){console.warn('poll',e);}},5000);
   }catch(e){
-    console.error('loadAll:',e);
-    if(errEl){errEl.textContent='Error: '+e.message;errEl.style.display='block';}
-    document.getElementById('setupOv').style.display='flex';
+    alert('Step 3 failed (initUI): '+e.message+' — stack: '+e.stack.substring(0,300));
+    return;
   }
+
+  setInterval(async()=>{
+    try{await Promise.all([loadBoard(),loadActions(),loadPulse()]);renderBoard();renderActions();renderPulseScores();refreshDash();}
+    catch(e){console.warn('poll',e);}
+  },5000);
 }
 
 async function loadRetros(){retros=await sb('GET','retros','',{team_id:'eq.'+TEAM_ID,order:'created_at.asc'})||[];}
