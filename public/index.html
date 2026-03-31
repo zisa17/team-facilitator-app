@@ -274,7 +274,8 @@ body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:v
       <select class="si" id="sNudgeDay"><option value="1">Monday</option><option value="2">Tuesday</option><option value="3">Wednesday</option><option value="4" selected>Thursday</option><option value="5">Friday</option></select>
       <div class="sh">Which day should the proactive Slack nudge go out each week?</div>
     </div>
-    <button class="btn bp" onclick="doSetup()" style="width:100%;padding:10px;margin-top:4px;">Save & get started</button>
+    <button class="btn bp" id="setupBtn" onclick="doSetup()" style="width:100%;padding:10px;margin-top:4px;">Save & get started</button>
+    <div id="setupErr" style="font-size:12px;color:var(--red);margin-top:8px;text-align:center;display:none;"></div>
   </div>
 </div>
 
@@ -520,15 +521,15 @@ function renderMT(){document.getElementById('mTags').innerHTML=setupMs.map((m,i)
 async function doSetup(){
   const n=document.getElementById('sName').value.trim();
   if(!n){const e=document.getElementById('setupErr');e.textContent='Please enter a team name.';e.style.display='block';return;}
-  const btn=document.getElementById('setupBtn');btn.disabled=true;btn.textContent='Creating…';
+  const btn=document.getElementById('setupBtn');if(btn){btn.disabled=true;btn.textContent='Creating…';}
   try{
     const rows=await sb('POST','teams',{name:n,members:setupMs,focus:document.getElementById('sFocus').value.trim(),slack_webhook:document.getElementById('sSlack').value.trim()});
     const team=Array.isArray(rows)?rows[0]:rows;
     TEAM_ID=team.id;localStorage.setItem('tf-v6-team',TEAM_ID);
     document.getElementById('setupOv').style.display='none';
     await loadAll();
-  }catch(e){const er=document.getElementById('setupErr');er.textContent='Error: '+e.message;er.style.display='block';}
-  btn.disabled=false;btn.textContent='Create team';
+  }catch(e){const er=document.getElementById('setupErr');if(er){er.textContent='Error: '+e.message;er.style.display='block';}}
+  if(btn){btn.disabled=false;btn.textContent='Save & get started';}
 }
 
 async function loadExisting(){const id=document.getElementById('existId').value.trim();if(!id)return;TEAM_ID=id;localStorage.setItem('tf-v6-team',TEAM_ID);document.getElementById('setupOv').style.display='none';await loadAll();}
