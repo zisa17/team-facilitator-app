@@ -277,8 +277,9 @@ body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:v
       <select class="si" id="sNudgeDay"><option value="1">Monday</option><option value="2">Tuesday</option><option value="3">Wednesday</option><option value="4" selected>Thursday</option><option value="5">Friday</option></select>
       <div class="sh">Which day should the proactive Slack nudge go out each week?</div>
     </div>
-    <button class="btn bp" id="setupBtn" onclick="doSetup()" style="width:100%;padding:10px;margin-top:4px;">Save & get started</button>
-    <div id="setupErr" style="font-size:12px;color:var(--red);margin-top:8px;text-align:center;display:none;"></div>
+    <button class="btn bp" id="setupBtn" onclick="doSetup()" style="width:100%;padding:10px;margin-top:4px;">Save &amp; get started</button>
+    <button class="btn" onclick="runDiagnostic()" style="width:100%;padding:8px;margin-top:6px;font-size:11px;">🔍 Run diagnostic (tap if stuck)</button>
+    <div id="setupErr" style="font-size:12px;color:#ef4444;margin-top:8px;text-align:center;word-break:break-all;"></div>
   </div>
 </div>
 
@@ -781,6 +782,21 @@ function showTyp(){const el=document.getElementById('msgs');const d=document.cre
 function hideTyp(){document.getElementById('typ')?.remove();}
 async function sendChat(){if(chatLoading)return;const inp=document.getElementById('cin'),txt=inp.value.trim();if(!txt)return;inp.value='';const ce=document.getElementById('cerr');if(ce)ce.style.display='none';addMsg('user',txt);hist.push({role:'user',content:txt});chatLoading=true;const sb2=document.getElementById('sbtn');if(sb2)sb2.disabled=true;showTyp();try{const res=await fetch(PROXY+'/anthropic/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:buildSys(),messages:hist})});const data=await res.json();hideTyp();if(data.error)throw new Error(data.error.message);const reply=data.content.filter(b=>b.type==='text').map(b=>b.text).join('');hist.push({role:'assistant',content:reply});const ex=extractActions(reply);addMsg('assistant',reply,ex.length?ex:null);}catch(e){hideTyp();hist.pop();if(ce){ce.textContent='Error: '+e.message;ce.style.display='block';}}chatLoading=false;if(sb2)sb2.disabled=false;}
 
+async function runDiagnostic(){
+  const steps=[];
+  const proxy='https://team-facilitator-app-production-bcf4.up.railway.app';
+  try{
+    steps.push('1. Checking proxy health...');
+    const h=await fetch(proxy+'/health');
+    const hd=await h.json();
+    steps.push('Health: '+JSON.stringify(hd));
+    steps.push('2. Testing Supabase POST to teams...');
+    const r=await fetch(proxy+'/supabase/teams',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'test',members:[],focus:'',slack_webhook:''})});
+    const rd=await r.text();
+    steps.push('POST status: '+r.status+' body: '+rd.substring(0,200));
+  }catch(e){steps.push('ERROR: '+e.message);}
+  alert(steps.join('\n'));
+}
 if(TEAM_ID){document.getElementById('setupOv').style.display='none';loadAll();}
 else document.getElementById('setupOv').style.display='flex';
 </script>
