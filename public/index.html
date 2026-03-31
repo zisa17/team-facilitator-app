@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -324,7 +323,7 @@ body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:v
     <div class="ns">Integrations</div>
     <div class="ni" onclick="go('settings',this)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="2.5"/><path d="M7 1v1.5M7 11.5V13M1 7h1.5M11.5 7H13M2.6 2.6l1 1M10.4 10.4l1 1M11.4 2.6l-1 1M3.6 10.4l-1 1"/></svg>Settings</div>
   </div>
-  <div class="sb-foot"><div class="st-pip"></div>All systems live · <button class="btn bxs" onclick="showSetup()" style="margin-left:4px;background:transparent;border-color:#3d4266;color:var(--sb-t);padding:2px 7px;">⚙</button></div>
+  <div class="sb-foot"><div class="st-pip"></div><span id="teamIdDisplay" style="font-size:10px;color:#3d4266;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:130px;">Connecting…</span> · <button class="btn bxs" onclick="showSetup()" style="margin-left:4px;background:transparent;border-color:#3d4266;color:var(--sb-t);padding:2px 7px;">⚙</button></div>
 </div>
 
 <!-- MAIN -->
@@ -608,17 +607,32 @@ const METAS={home:'Real-time · Supabase',chat:'Powered by Claude',retro:'5 form
 
 function go(id,el){['home','chat','retro','async','actions','pulse','learning','norms','onboarding','settings'].forEach(p=>{const e=document.getElementById('p-'+p);if(e)e.classList.remove('visible');});const p=document.getElementById('p-'+id);if(p)p.classList.add('visible');document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));if(el)el.classList.add('active');else{const m={home:0,chat:1,retro:2,async:3,actions:4,pulse:5,learning:6,norms:7,onboarding:8,settings:9};document.querySelectorAll('.ni')[m[id]]?.classList.add('active');}document.getElementById('ttl').textContent=TITLES[id]||id;document.getElementById('tmt').textContent=METAS[id]||'';}
 
+function setEl(id,val,prop='textContent'){const e=document.getElementById(id);if(e)e[prop]=val;}
 function initUI(){
-  document.getElementById('navName').textContent=T.name||'Facilitator';
-  document.getElementById('teamIdDisplay').textContent='ID: '+TEAM_ID.substring(0,8)+'…';
-  if(document.getElementById('sTeamId'))document.getElementById('sTeamId').textContent=TEAM_ID;
-  if(document.getElementById('sMembers'))document.getElementById('sMembers').textContent=(T.members||[]).join(', ')||'—';
-  if(T.slack_webhook&&document.getElementById('slackin'))document.getElementById('slackin').value=T.slack_webhook;
-  document.getElementById('rdate').textContent=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
-  ['newOwner','lWho'].forEach(id=>{const s=document.getElementById(id);if(!s)return;const f=s.options[0].text;s.innerHTML=`<option value="">${f}</option>`;(T.members||[]).forEach(m=>{const o=document.createElement('option');o.value=m;o.textContent=m;s.appendChild(o);});});
-  initTemplates();renderBoard();renderActions();renderPulseScores();renderPulseSel();refreshDash();renderLearnings();renderNorms();renderNormSugg();calcStreak();
-  const wm=document.getElementById('wMsg');if(wm)wm.innerHTML=`Hi! I'm your AI facilitator for <strong>${T.name}</strong>. Everything is live and shared across your team in real time via Supabase.<br><br>Try <strong>"Pre-retro brief"</strong> before your next session.`;
-  const cc=document.getElementById('chatCtx');if(cc)cc.textContent=`${T.name} · ${(T.members||[]).length} members · live`;
+  setEl('navName',T.name||'Facilitator');
+  setEl('teamIdDisplay','ID: '+TEAM_ID.substring(0,8)+'…');
+  setEl('sTeamId',TEAM_ID);
+  setEl('sMembers',(T.members||[]).join(', ')||'—');
+  setEl('rdate',new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}));
+  if(T.slack_webhook)setEl('slackin',T.slack_webhook,'value');
+  ['newOwner','lWho'].forEach(id=>{
+    const s=document.getElementById(id);if(!s)return;
+    const f=s.options[0].text;
+    s.innerHTML='<option value="">'+f+'</option>';
+    (T.members||[]).forEach(m=>{const o=document.createElement('option');o.value=m;o.textContent=m;s.appendChild(o);});
+  });
+  try{initTemplates();}catch(e){console.warn('initTemplates',e);}
+  try{renderBoard();}catch(e){console.warn('renderBoard',e);}
+  try{renderActions();}catch(e){console.warn('renderActions',e);}
+  try{renderPulseScores();}catch(e){console.warn('renderPulseScores',e);}
+  try{renderPulseSel();}catch(e){console.warn('renderPulseSel',e);}
+  try{refreshDash();}catch(e){console.warn('refreshDash',e);}
+  try{renderLearnings();}catch(e){console.warn('renderLearnings',e);}
+  try{renderNorms();}catch(e){console.warn('renderNorms',e);}
+  try{renderNormSugg();}catch(e){console.warn('renderNormSugg',e);}
+  try{calcStreak();}catch(e){console.warn('calcStreak',e);}
+  setEl('wMsg',`Hi! I'm your AI facilitator for <strong>${T.name}</strong>. Everything is live and shared across your team in real time.<br><br>Try <strong>"Pre-retro brief"</strong> before your next session.`,'innerHTML');
+  setEl('chatCtx',`${T.name} · ${(T.members||[]).length} members · live`);
 }
 
 function getWk(d){const s=new Date(d);s.setHours(0,0,0,0);s.setDate(s.getDate()+4-(s.getDay()||7));const y=new Date(s.getFullYear(),0,1);return Math.ceil(((s-y)/864e5+1)/7);}
