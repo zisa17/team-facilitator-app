@@ -143,6 +143,11 @@ body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:v
 .vcnt{font-size:10px;font-weight:600;color:var(--acc-t);background:var(--acc-l);padding:1px 5px;border-radius:99px;}
 .an{font-size:12px;color:var(--tx3);cursor:pointer;padding:3px 0;}
 .an:hover{color:var(--acc);}
+.note-input-wrap{display:flex;gap:5px;margin-top:5px;}
+.note-input{flex:1;font-size:12px;padding:5px 8px;border:1px solid var(--bor);border-radius:var(--rs);background:var(--sur);color:var(--tx);outline:none;font-family:inherit;resize:none;line-height:1.4;}
+.note-input:focus{border-color:var(--acc);}
+.note-add-btn{padding:4px 8px;border:1px solid var(--bor);border-radius:var(--rs);background:var(--acc);color:#fff;font-size:11px;cursor:pointer;font-family:inherit;flex-shrink:0;}
+.note-add-btn:hover{background:#5a52d5;}
 /* async badge */
 .async-note{border-left:3px solid var(--acc);}
 .async-who{font-size:10px;color:var(--acc-t);font-weight:500;margin-bottom:2px;}
@@ -690,10 +695,35 @@ function renderBoard(){
   const el=document.getElementById('retroCols');if(!el)return;
   const cols=TEMPLATES[curTmpl];
   el.style.gridTemplateColumns=`repeat(${cols.length},1fr)`;
-  el.innerHTML=cols.map(c=>{const notes=board.filter(n=>n.zone===c.id);return`<div class="zone"><div class="zh"><div class="zp" style="background:${c.color};"></div><div class="zl" style="color:${c.tc};">${c.label}</div><span class="note-cnt">${notes.length||''}</span></div><div>${notes.map(n=>`<div class="sticky">${n.votes>0?`<span class="vcnt">+${n.votes}</span>`:''}<span class="st-t">${n.text}</span><span class="vbtn" onclick="voteNote('${n.id}',${n.votes||0})">▲</span></div>`).join('')}</div><div class="an" onclick="addNote('${c.id}')">+ Add note</div></div>`;}).join('');
+  el.innerHTML=cols.map(c=>{
+    const notes=board.filter(n=>n.zone===c.id);
+    return`<div class="zone">
+      <div class="zh"><div class="zp" style="background:${c.color};"></div><div class="zl" style="color:${c.tc};">${c.label}</div><span class="note-cnt">${notes.length||''}</span></div>
+      <div id="notes-${c.id}">${notes.map(n=>`<div class="sticky">${n.votes>0?`<span class="vcnt">+${n.votes}</span>`:''}<span class="st-t">${n.text}</span><span class="vbtn" onclick="voteNote('${n.id}',${n.votes||0})">▲</span></div>`).join('')}</div>
+      <div class="note-input-wrap">
+        <textarea class="note-input" id="input-${c.id}" placeholder="Add a note…" rows="1"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();submitNote('${c.id}');}"
+          oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+        <button class="note-add-btn" onclick="submitNote('${c.id}')">Add</button>
+      </div>
+    </div>`;
+  }).join('');
 }
 
-async function addNote(zone){const t=prompt('Add a note:');if(!t?.trim())return;await sb('POST','retro_board',{team_id:TEAM_ID,zone,text:t.trim(),votes:0});await loadBoard();renderBoard();}
+async function submitNote(zone){
+  const inp=document.getElementById('input-'+zone);
+  if(!inp)return;
+  const t=inp.value.trim();
+  if(!t)return;
+  inp.value='';inp.style.height='auto';
+  await sb('POST','retro_board',{team_id:TEAM_ID,zone,text:t,votes:0});
+  await loadBoard();renderBoard();
+  // Refocus the input after adding
+  const newInp=document.getElementById('input-'+zone);
+  if(newInp)newInp.focus();
+}
+
+async function addNote(zone){await submitNote(zone);}
 async function voteNote(id,cur){await sb('PATCH','retro_board',{votes:cur+1},{id:'eq.'+id});await loadBoard();renderBoard();}
 
 function setSave(st,lb){const d=document.getElementById('sdot');const s=document.getElementById('slbl');if(d)d.className='sd'+(st?' '+st:'');if(s)s.textContent=lb;}
