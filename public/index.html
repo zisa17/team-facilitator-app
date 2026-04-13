@@ -744,7 +744,13 @@ async function saveRetro(){
     const now=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
     setSave('saved','Saved · '+now);const nl=document.getElementById('nlast');if(nl)nl.textContent=now;
     renderBoard();refreshDash();
-    if(T.slack_webhook)postSlack(buildMsg('celebration'));
+    // Trigger agent auto-summary
+    if(T.slack_webhook){
+      fetch(PROXY+'/agent/retro-summary/'+TEAM_ID,{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({well,improve,actions:acts,experiments:exps})
+      }).catch(e=>console.warn('agent summary',e));
+    }
     if(retros.length===1)celebrate('🎉','First retro saved!','Your team is on the board!');
     else if(retros.length%5===0)celebrate('🔥',retros.length+' retros!','Your team has built a real continuous improvement habit.');
   }catch(e){setSave('error','Failed: '+e.message);}
